@@ -1,0 +1,112 @@
+package com.app.azkary.data.local.dao
+
+import androidx.room.*
+import com.app.azkary.data.local.entities.*
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface CategoryDao {
+    @Query("SELECT * FROM categories WHERE isArchived = 0 ORDER BY sortOrder")
+    fun getActiveCategoriesOrdered(): Flow<List<CategoryEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCategory(category: CategoryEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCategories(categories: List<CategoryEntity>)
+
+    @Update
+    suspend fun updateCategory(category: CategoryEntity)
+
+    @Query("UPDATE categories SET isArchived = 1 WHERE categoryId = :categoryId AND type = 'USER'")
+    suspend fun archiveCategory(categoryId: String)
+
+    @Query("UPDATE categories SET sortOrder = :sortOrder WHERE categoryId = :categoryId")
+    suspend fun updateSortOrder(categoryId: String, sortOrder: Int)
+}
+
+@Dao
+interface CategoryTextDao {
+    @Upsert
+    suspend fun upsertCategoryTexts(texts: List<CategoryTextEntity>)
+
+    @Query("SELECT * FROM category_texts WHERE categoryId = :categoryId")
+    fun getCategoryTexts(categoryId: String): Flow<List<CategoryTextEntity>>
+}
+
+@Dao
+interface AzkarItemDao {
+    @Upsert
+    suspend fun upsertItems(items: List<AzkarItemEntity>)
+
+    @Query("SELECT * FROM azkar_items WHERE itemId = :itemId")
+    fun getItemById(itemId: String): Flow<AzkarItemEntity?>
+}
+
+@Dao
+interface AzkarTextDao {
+    @Upsert
+    suspend fun upsertTexts(texts: List<AzkarTextEntity>)
+
+    @Query("SELECT * FROM azkar_texts WHERE itemId = :itemId")
+    fun getTextsForItem(itemId: String): Flow<List<AzkarTextEntity>>
+}
+
+data class ItemWithTextProjection(
+    @Embedded(prefix = "item_") val item: AzkarItemEntity,
+    @Embedded(prefix = "text_") val text: AzkarTextEntity,
+    val sortOrder: Int
+)
+
+data class ItemWeightProjection(
+    val itemId: String,
+    val requiredRepeats: Int,
+    @ColumnInfo(name = "arabicText")
+    val arabicText: String?
+)
+
+@Dao
+interface CategoryItemDao {
+    @Transaction
+    @Query("""
+        SELECT 
+            ai.itemId as item_itemId, ai.requiredRepeats as item_requiredRepeats, ai.source as item_source, ai.createdAt as item_createdAt, ai.updatedAt as item_updatedAt,
+            at.itemId as text_itemId, at.langTag as text_langTag, at.title as text_title, at.text as text_text, at.translation as text_translation, at.referenceText as text_referenceText,
+            cicr.sortOrder 
+        FROM azkar_items ai
+        JOIN category_item_crossrefs cicr ON ai.itemId = cicr.itemId
+        LEFT JOIN azkar_texts at ON ai.itemId = at.itemId AND at.langTag = :langTag
+        WHERE cicr.categoryId = :categoryId AND cicr.isEnabled = 1
+        ORDER BY cicr.sortOrder
+    """)
+    fun getEnabledItemsWithText(categoryId: String, langTag: String): Flow<List<ItemWithTextProjection>>
+
+    @Query("""
+        SELECT ai.itemId, ai.requiredRepeats, at.text as arabicText FROM azkar_items ai
+        JOIN category_item_crossrefs cicr ON ai.itemId = cicr.itemId
+        LEFT JOIN azkar_texts at ON ai.itemId = at.itemId AND at.langTag = 'ar'
+        WHERE cicr.categoryId = :categoryId AND cicr.isEnabled = 1
+    """)
+    fun getWeightsForCategory(categoryId: String): Flow<List<ItemWeightProjection>>
+
+    @Query("SELECT * FROM category_item_crossrefs WHERE categoryId = :categoryId ORDER BY sortOrder")
+    fun getAllCrossRefsForCategory(categoryId: String): Flow<List<CategoryItemCrossRefEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCrossRef(crossRef: CategoryItemCrossRefEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCrossRefs(crossRefs: List<CategoryItemCrossRefEntity>)
+}
+
+@Dao
+interface ProgressDao {
+    @Query("SELECT * FROM user_progress WHERE categoryId = :categoryId AND date = :date")
+    fun observeProgressForCategoryDate(categoryId: String, date: String): Flow<List<UserProgressEntity>>
+
+    @Query("SELECT * FROM user_progress WHERE categoryId = :categoryId AND itemId = :itemId AND date = :date")
+    fun observeProgressForItem(categoryId: String, itemId: String, date: String): Flow<UserProgressEntity?>
+
+    @Upsert
+    suspend fun upsertProgress(progress: UserProgressEntity)
+}
