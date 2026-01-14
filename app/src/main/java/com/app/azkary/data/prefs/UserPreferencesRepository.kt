@@ -12,26 +12,24 @@ import javax.inject.Singleton
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-enum class LayoutDirection {
-    SYSTEM, RTL, LTR
+enum class AppLanguage(val tag: String, val displayName: String) {
+    SYSTEM("system", "System Default"),
+    ARABIC("ar", "العربية"),
+    ENGLISH("en", "English")
 }
 
 @Singleton
 class UserPreferencesRepository @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    private val LAYOUT_DIRECTION = stringPreferencesKey("layout_direction")
-    private val ARABIC_FONT_SIZE = floatPreferencesKey("arabic_font_size")
-    private val TRANSLATION_FONT_SIZE = floatPreferencesKey("translation_font_size")
-    private val SHOW_TRANSLATION = booleanPreferencesKey("show_translation")
+    private val APP_LANGUAGE = stringPreferencesKey("app_language")
 
-    val layoutDirection: Flow<LayoutDirection> = context.dataStore.data.map { preferences ->
-        LayoutDirection.valueOf(preferences[LAYOUT_DIRECTION] ?: LayoutDirection.SYSTEM.name)
+    val appLanguage: Flow<AppLanguage> = context.dataStore.data.map { preferences ->
+        val tag = preferences[APP_LANGUAGE] ?: AppLanguage.SYSTEM.tag
+        AppLanguage.entries.find { it.tag == tag } ?: AppLanguage.SYSTEM
     }
 
-    val arabicFontSize: Flow<Float> = context.dataStore.data.map { it[ARABIC_FONT_SIZE] ?: 28f }
-
-    suspend fun setLayoutDirection(direction: LayoutDirection) {
-        context.dataStore.edit { it[LAYOUT_DIRECTION] = direction.name }
+    suspend fun setAppLanguage(language: AppLanguage) {
+        context.dataStore.edit { it[APP_LANGUAGE] = language.tag }
     }
 }

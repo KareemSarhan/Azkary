@@ -42,6 +42,7 @@ class SeedManager @Inject constructor(
             val crossRefDao = database.categoryItemDao()
 
             // 1. Insert all items first
+            val availableItemIds = mutableSetOf<String>()
             seedPack.items.forEach { seedItem ->
                 itemDao.upsertItems(listOf(
                     AzkarItemEntity(
@@ -62,6 +63,7 @@ class SeedManager @Inject constructor(
                     )
                 }
                 textDao.upsertTexts(itemTexts)
+                availableItemIds.add(seedItem.itemId)
             }
 
             // 2. Insert all categories
@@ -82,15 +84,18 @@ class SeedManager @Inject constructor(
                 categoryTextDao.upsertCategoryTexts(categoryTexts)
 
                 // 3. Link items to categories via crossrefs
+                // ONLY if the item was defined in the 'items' array to avoid FK constraint failure
                 seedCat.items.forEach { ref ->
-                    crossRefDao.insertCrossRef(
-                        CategoryItemCrossRefEntity(
-                            categoryId = seedCat.categoryId,
-                            itemId = ref.itemId,
-                            sortOrder = ref.sortOrder,
-                            isEnabled = ref.isEnabled
+                    if (availableItemIds.contains(ref.itemId)) {
+                        crossRefDao.insertCrossRef(
+                            CategoryItemCrossRefEntity(
+                                categoryId = seedCat.categoryId,
+                                itemId = ref.itemId,
+                                sortOrder = ref.sortOrder,
+                                isEnabled = ref.isEnabled
+                            )
                         )
-                    )
+                    }
                 }
             }
         }

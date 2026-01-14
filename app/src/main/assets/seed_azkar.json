@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "generatedAt": "2026-01-13T00:00:00Z",
   "categories": [
     {
@@ -19,127 +19,127 @@
       "items": [
         {
           "itemId": "itm-hamd-salah-001",
-          "sortOrder": -1,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-ayat-al-kursi-1",
-          "sortOrder": -0.1,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-asbahna-mulk-1",
           "sortOrder": 0,
           "isEnabled": true
         },
         {
-          "itemId": "itm-allahumma-bika-001",
-          "sortOrder": 0.1,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-sayyidul-istighfar-1",
+          "itemId": "itm-ayat-al-kursi-1",
           "sortOrder": 1,
           "isEnabled": true
         },
         {
-          "itemId": "itm-ushhiduka-004",
+          "itemId": "itm-asbahna-mulk-1",
           "sortOrder": 2,
           "isEnabled": true
         },
         {
-          "itemId": "itm-niamah-shukr-001",
-          "sortOrder": 2.1,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-afini-body-hearing-sight-3",
-          "sortOrder": 2.2,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-hasbiyallahu-7",
-          "sortOrder": 2.3,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-afiyah-1",
-          "sortOrder": 2.31,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-alimal-ghayb-001",
-          "sortOrder": 2.31,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-bismillah-3",
-          "sortOrder": 2.32,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-raditu-billahi-3",
-          "sortOrder": 2.4,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-ya-hayyu-ya-qayyum-1",
-          "sortOrder": 2.42,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-asbahnal-mulk-001",
+          "itemId": "itm-allahumma-bika-001",
           "sortOrder": 3,
           "isEnabled": true
         },
         {
-          "itemId": "itm-fitrah-islam-001",
-          "sortOrder": 3.1,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-subhanallah-wabihamdihi-100",
-          "sortOrder": 3.2,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-tahlil-100",
+          "itemId": "itm-sayyidul-istighfar-1",
           "sortOrder": 4,
           "isEnabled": true
         },
         {
-          "itemId": "itm-subhan-bihamdih-003",
+          "itemId": "itm-ushhiduka-004",
           "sortOrder": 5,
           "isEnabled": true
         },
         {
-          "itemId": "itm-ilman-rizqan-001",
-          "sortOrder": 5.1,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-istighfar-tawbah-100",
-          "sortOrder": 5.12,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-salah-nabi-010",
-          "sortOrder": 5.13,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-ikhlas-003",
+          "itemId": "itm-niamah-shukr-001",
           "sortOrder": 6,
           "isEnabled": true
         },
         {
-          "itemId": "itm-falaq-003",
+          "itemId": "itm-afini-body-hearing-sight-3",
           "sortOrder": 7,
           "isEnabled": true
         },
         {
-          "itemId": "itm-nas-003",
+          "itemId": "itm-hasbiyallahu-7",
           "sortOrder": 8,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-afiyah-1",
+          "sortOrder": 9,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-alimal-ghayb-001",
+          "sortOrder": 10,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-bismillah-3",
+          "sortOrder": 11,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-raditu-billahi-3",
+          "sortOrder": 12,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-ya-hayyu-ya-qayyum-1",
+          "sortOrder": 13,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-asbahnal-mulk-001",
+          "sortOrder": 14,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-fitrah-islam-001",
+          "sortOrder": 15,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-subhanallah-wabihamdihi-100",
+          "sortOrder": 16,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-tahlil-100",
+          "sortOrder": 17,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-subhan-bihamdih-003",
+          "sortOrder": 18,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-ilman-rizqan-001",
+          "sortOrder": 19,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-istighfar-tawbah-100",
+          "sortOrder": 20,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-salah-nabi-010",
+          "sortOrder": 21,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-ikhlas-003",
+          "sortOrder": 22,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-falaq-003",
+          "sortOrder": 23,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-nas-003",
+          "sortOrder": 24,
           "isEnabled": true
         }
       ]
@@ -264,7 +264,6 @@
       "source": "SEEDED",
       "texts": {
         "ar": {
-          "checked": true,
           "title": "دعاء العافية",
           "text": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ. اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي دِينِي وَدُنْيَايَ وَأَهْلِي وَمَالِي. اللَّهُمَّ اسْتُرْ عَوْرَاتِي وَآمِنْ رَوْعَاتِي، وَاحْفَظْنِي مِنْ بَيْنِ يَدَيَّ وَمِنْ خَلْفِي وَعَنْ يَمِينِي وَعَنْ شِمَالِي وَمِنْ فَوْقِي، وَأَعُوذُ بِعَظَمَتِكَ أَنْ أُغْتَالَ مِنْ تَحْتِي",
           "referenceText": "كان النَّبيُّ صلَّى اللهُ عليهِ وسلَّم كَثيرَ الدُّعاءِ لرَبِّه عزَّ وجلَّ، كثيرَ التَّضرُّعِ إليه سُبحانه وتَعالى، وفي هذا الحَديثِ يُخبِرُ الصَّحابيُّ الجَليلُ عبدُ اللهِ بنُ عُمرَ رضِيَ اللهُ عنهما أنَّ النبيَّ صلَّى اللهُ عليهِ وسلَّم كان له دَعواتٌ لا يَترُكُهنَّ أبَدًا، فيقول: \"لم يَكن رسولُ اللهِ صلَّى اللهُ عليهِ وسلَّم يدَعُ\"، أي: يتْرُكُ، \"حين يُمسِي\"، أي: إذا دخَلَ وقْتُ المساءِ، و\"حين يُصبِحُ\"، أي: إذا أقْبَلَ وقْتُ الصَّباحِ، يعني: لا يَترُكُ الدُّعاءِ بهذِه الدَّعواتِ، وهي: \"اللَّهمَّ إنِّي أسأَلُك العافيةَ\"، أي: السَّلامَةَ والنَّجاةَ، \"اللَّهمَّ إنِّي أسألُك العفْوَ\"، أي: المغفِرَةَ والمُسامحَةَ، \"في دِيني ودُنيايَ\"، أي: في الدُّنيا والآخِرةِ، \"وأهْلي\"، أي: زوْجاتي وأَوْلادي وقَرابَتي، \"وَمالي\"، أي: أمْوالي وعمَلي، وما في معنى ذلك منَ التِّجارَةِ والبيْعِ، وغيرِ ذلك، \"اللَّهمَّ استُرْ\"، أي: احفَظْ، \"عوْرَتي\"، أي: كلَّ ما يَسوؤُني نشْرُه؛ من المَعايِبِ، \"وآمِنْ رَوْعاتي\"، أي: وطمْئنِّي وأَمِّنِّي مِن كلِّ ما يُخيفُني ويُسبِّب لي الفَزَعَ، \"اللَّهمَّ احفَظْني من بينِ يدَيَّ ومِن خَلْفي، وعن يَميني وعن شِمالي، ومِن فَوْقي\"، أي: احفَظْني من كلِّ جِهةٍ يُمكِنُ أن يُصيبَني منها مكْروهٌ، \"وأَعوذُ بعَظَمتِك\"، أي: ألْجَأُ وأحْتَمي بعَظَمتِك، وقوَّتِك وقُدرَتِك \"أنْ أُغْتالَ\"، أي: أن يُخسَفَ بي أو أهْلِكَ، \"من تَحْتي\"، وإنَّما بالَغَ في تَحديدِ الخسْفِ والهَلاكِ منَ الجِهةِ التَّحتيَّةِ؛ لشِدَّةِ البلاءِ والشَّرِّ به.\nالراوي : عبدالله بن عمر | المحدث : الألباني | المصدر : صحيح أبي داود\nالصفحة أو الرقم: 5074 | خلاصة حكم المحدث : صحيح\n\nالتخريج : أخرجه أبو داود (5074) واللفظ له، وابن ماجه (3871)، وأحمد (4785)"
