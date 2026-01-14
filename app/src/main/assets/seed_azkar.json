@@ -18,43 +18,128 @@
       },
       "items": [
         {
-          "itemId": "itm-sayyidul-istighfar-1",
-          "sortOrder": 0,
+          "itemId": "itm-hamd-salah-001",
+          "sortOrder": -1,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-ayat-al-kursi-1",
+          "sortOrder": -0.1,
           "isEnabled": true
         },
         {
           "itemId": "itm-asbahna-mulk-1",
+          "sortOrder": 0,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-allahumma-bika-001",
+          "sortOrder": 0.1,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-sayyidul-istighfar-1",
           "sortOrder": 1,
           "isEnabled": true
         },
         {
-          "itemId": "itm-raditu-billahi-3",
+          "itemId": "itm-ushhiduka-004",
           "sortOrder": 2,
           "isEnabled": true
         },
         {
-          "itemId": "itm-bismillah-3",
-          "sortOrder": 3,
+          "itemId": "itm-niamah-shukr-001",
+          "sortOrder": 2.1,
           "isEnabled": true
         },
         {
-          "itemId": "itm-ikhlas-falaq-nas-3",
-          "sortOrder": 4,
+          "itemId": "itm-afini-body-hearing-sight-3",
+          "sortOrder": 2.2,
           "isEnabled": true
         },
         {
-          "itemId": "itm-tahlil-100",
-          "sortOrder": 5,
-          "isEnabled": true
-        },
-        {
-          "itemId": "itm-subhanallah-wabihamdihi-100",
-          "sortOrder": 6,
+          "itemId": "itm-hasbiyallahu-7",
+          "sortOrder": 2.3,
           "isEnabled": true
         },
         {
           "itemId": "itm-afiyah-1",
+          "sortOrder": 2.31,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-alimal-ghayb-001",
+          "sortOrder": 2.31,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-bismillah-3",
+          "sortOrder": 2.32,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-raditu-billahi-3",
+          "sortOrder": 2.4,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-ya-hayyu-ya-qayyum-1",
+          "sortOrder": 2.42,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-asbahnal-mulk-001",
+          "sortOrder": 3,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-fitrah-islam-001",
+          "sortOrder": 3.1,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-subhanallah-wabihamdihi-100",
+          "sortOrder": 3.2,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-tahlil-100",
+          "sortOrder": 4,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-subhan-bihamdih-003",
+          "sortOrder": 5,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-ilman-rizqan-001",
+          "sortOrder": 5.1,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-istighfar-tawbah-100",
+          "sortOrder": 5.12,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-salah-nabi-010",
+          "sortOrder": 5.13,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-ikhlas-003",
+          "sortOrder": 6,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-falaq-003",
           "sortOrder": 7,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-nas-003",
+          "sortOrder": 8,
           "isEnabled": true
         }
       ]
@@ -495,6 +580,258 @@
           "text": "Yaa Hayyu yaa Qayyoomu birahmatika 'astagheethu 'aslih lee sha'nee kullahu wa laa takilnee 'ilaa nafsee tarfata 'aynin.",
           "translation": "O Ever Living One, O Eternal One, by Your mercy I call on You to set right all my affairs. Do not place me in charge of my soul even for the blinking of an eye (i.e. a moment).",
           "referenceText": "[Al-Nasā’ī in Al-Kubra 6/147 and authenticated by Al-Mundhiri]"
+        }
+      }
+    },
+    {
+      "itemId": "itm-hamd-salah-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "الحمد لله وحده والصلاة والسلام على من لا نبي بعده (مرة واحدة)",
+          "text": "الْحَمْدُ لِلَّهِ وَحْدَهُ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى مَنْ لَا نَبِيَّ بَعْدَهُ",
+          "referenceText": "عن أنسٍ رضي الله عنه يرفعه: «لَأَنْ أَقْعُدَ مَعَ قَوْمٍ يَذْكُرُونَ اللَّهَ تَعَالَى مِنْ صَلَاةِ الْغَدَاةِ حَتَّى تَطْلُعَ الشَّمْسُ أَحَبُّ إِلَيَّ مِنْ أَنْ أُعْتِقَ أَرْبَعَةً مِنْ وَلَدِ إِسْمَاعِيلَ، وَلَأَنْ أَقْعُدَ مَعَ قَوْمٍ يَذْكُرُونَ اللَّهَ مِنْ صَلَاةِ الْعَصْرِ إِلَى أَنْ تَغْرُبَ الشَّمْسُ أَحَبُّ إِلَيَّ مِنْ أَنْ أُعْتِقَ أَرْبَعَةً». رواه أبو داود (3667)، وحسنه الألباني في صحيح أبي داود (2/698)."
+        },
+        "en": {
+          "title": "Al-ḥamdu lillāh waḥdah… (1x)",
+          "text": "Al-ḥamdu lillāhi waḥdah, waṣ-ṣalātu was-salāmu ʿalā man lā nabiyya baʿdah.",
+          "translation": "All praise is for Allah alone, and may prayers and peace be upon the one after whom there is no prophet.",
+          "referenceText": "Narrated Anas (marfūʿ): The Prophet ﷺ said: “To sit with people remembering Allah from the Fajr prayer until the sun rises is more beloved to me than freeing four from the descendants of Ismāʿīl; and to sit with people remembering Allah from the ʿAsr prayer until the sun sets is more beloved to me than freeing four.” Sunan Abī Dāwūd (3667); graded ḥasan by al-Albānī in Ṣaḥīḥ Abī Dāwūd (2/698)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-allahumma-bika-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللهم بك أصبحنا وبك أمسينا (مرة واحدة)",
+          "text": "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ.\n\nوَإِذَا أَمْسَى قَالَ: اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ.",
+          "referenceText": "عن أبي هريرة رضي الله عنه أن النبي ﷺ كان إذا أصبح قال: «اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ». وإذا أمسى قال: «اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ». رواه الترمذي (3391)، وصححه الألباني في صحيح الترمذي (3/142)."
+        },
+        "en": {
+          "title": "Allahumma bika aṣbaḥnā… (1x)",
+          "text": "Allahumma bika aṣbaḥnā wa bika amsaynā, wa bika naḥyā wa bika namūtu wa ilaykan-nushūr.\n\n(In the evening): Allahumma bika amsaynā wa bika aṣbaḥnā, wa bika naḥyā wa bika namūtu wa ilaykal-maṣīr.",
+          "translation": "O Allah, by Your leave we have reached the morning and by Your leave we have reached the evening. By Your leave we live and die, and unto You is the resurrection.\n\n(In the evening): O Allah, by Your leave we have reached the evening and by Your leave we have reached the morning. By Your leave we live and die, and unto You is our return.",
+          "referenceText": "The Prophet ﷺ used to say in the morning: “O Allah, by You we enter the morning and by You we enter the evening. By You we live and die, and to You is the resurrection.” And in the evening he would say: “O Allah, by You we enter the evening and by You we enter the morning. By You we live and die, and to You is the return.” Jamiʿ at-Tirmidhi (3391); authenticated by al-Albānī in Ṣaḥīḥ at-Tirmidhi (3/142)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-ushhiduka-004",
+      "requiredRepeats": 4,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللهم إني أصبحت أُشهدك (أربع مرات)",
+          "text": "اللَّهُمَّ إِنِّي أَصْبَحْتُ أُشْهِدُكَ، وَأُشْهِدُ حَمَلَةَ عَرْشِكَ، وَمَلَائِكَتَكَ، وَجَمِيعَ خَلْقِكَ، أَنَّكَ أَنْتَ اللَّهُ لَا إِلَهَ إِلَّا أَنْتَ، وَحْدَكَ لَا شَرِيكَ لَكَ، وَأَنَّ مُحَمَّدًا عَبْدُكَ وَرَسُولُكَ.\n\nوَإِذَا أَمْسَى قَالَ: اللَّهُمَّ إِنِّي أَمْسَيْتُ...",
+          "referenceText": "من قالها حين يصبح أو يمسي أربع مرات أعتقه الله من النار. رواه أبو داود (5071)، والبخاري في الأدب المفرد (1201)، والنسائي في عمل اليوم والليلة (9)، وابن السني (70). وحسّن إسناده سماحة الشيخ ابن باز في تحفة الأخيار (ص 23)."
+        },
+        "en": {
+          "title": "Allahumma innī aṣbaḥtu ushhiduka… (4x)",
+          "text": "Allahumma innī aṣbaḥtu ushhiduka, wa ushhidu ḥamalata ʿarshik, wa malāʾikatak, wa jamīʿa khalqik, annaka anta Allāh, lā ilāha illā ant, waḥdaka lā sharīka lak, wa anna Muḥammadan ʿabduka wa rasūluk.\n\n(In the evening): Allahumma innī amsaytu…",
+          "translation": "O Allah, verily I have reached the morning and I call upon You, the bearers of Your Throne, Your angels, and all of Your creation to witness that You are Allah—none has the right to be worshipped except You, alone without partner—and that Muhammad is Your servant and Messenger.\n\n(In the evening, one says: ‘I have reached the evening’ instead of ‘I have reached the morning’.)",
+          "referenceText": "Whoever says this four times in the morning or evening will be freed by Allah from the Fire. Reported by Abu Dawud (5071), al-Bukhari in al-Adab al-Mufrad (1201), an-Nasa’i in ‘Amal al-Yawm wa al-Laylah (9), and Ibn as-Sunni (70). Its chain was graded hasan by Shaykh Ibn Baz in Tuhfat al-Akhyar (p. 23)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-niamah-shukr-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللهم ما أصبح بي من نعمة (مرة واحدة)",
+          "text": "اللَّهُمَّ مَا أَصْبَحَ بِي مِنْ نِعْمَةٍ، أَوْ بِأَحَدٍ مِنْ خَلْقِكَ، فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ.\n\nوَإِذَا أَمْسَى قَالَ: اللَّهُمَّ مَا أَمْسَى بِي...",
+          "referenceText": "من قالها حين يصبح فقد أدَّى شكر يومه، ومن قالها حين يمسي فقد أدَّى شكر ليلته. رواه أبو داود (5075)، والنسائي في عمل اليوم والليلة (7)، وابن السني (41)، وابن حبان (موارد، 2361). وحسّن إسناده سماحة الشيخ ابن باز في تحفة الأخيار (ص 24)."
+        },
+        "en": {
+          "title": "Allahumma mā aṣbaḥa bī min niʿmah… (1x)",
+          "text": "Allahumma mā aṣbaḥa bī min niʿmatin, aw bi-aḥadin min khalqik, faminka waḥdaka lā sharīka lak, falakal-ḥamdu wa lakash-shukr.\n\n(In the evening): Allahumma mā amsā bī…",
+          "translation": "O Allah, whatever blessing I or any of Your creation have risen upon is from You alone, without partner. So for You is all praise and unto You is all thanks.\n\n(In the evening, one says: ‘whatever blessing I or any of Your creation have reached the evening upon’.)",
+          "referenceText": "Whoever says this in the morning has fulfilled the thanks of his day, and whoever says it in the evening has fulfilled the thanks of his night. Reported by Abu Dawud (5075), an-Nasa’i in ‘Amal al-Yawm wa al-Laylah (7), Ibn as-Sunni (41), and Ibn Hibban (2361). Its chain was graded hasan by Shaykh Ibn Baz in Tuhfat al-Akhyar (p. 24)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-alimal-ghayb-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللهم عالم الغيب والشهادة (مرة واحدة)",
+          "text": "اللَّهُمَّ عَالِمَ الْغَيْبِ وَالشَّهَادَةِ، فَاطِرَ السَّمَاوَاتِ وَالْأَرْضِ، رَبَّ كُلِّ شَيْءٍ وَمَلِيكَهُ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا أَنْتَ، أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي، وَمِنْ شَرِّ الشَّيْطَانِ وَشِرْكِهِ، وَأَنْ أَقْتَرِفَ عَلَى نَفْسِي سُوءًا أَوْ أَجُرَّهُ إِلَى مُسْلِمٍ.",
+          "referenceText": "رواه الترمذي (3392)، وأبو داود (5067). وصححه الألباني في صحيح الترمذي (3/142)."
+        },
+        "en": {
+          "title": "Allahumma ʿālim al-ghaybi wa ash-shahādah… (1x)",
+          "text": "Allahumma ʿālim al-ghaybi wash-shahādah, fāṭiras-samāwāti wal-arḍ, rabba kulli shayʾin wa malīkah, ashhadu an lā ilāha illā ant. Aʿūdhu bika min sharri nafsī, wa min sharrish-shayṭāni wa shirkih, wa an aqtarifa ʿalā nafsī sūʾan aw ajurrahu ilā Muslim.",
+          "translation": "O Allah, Knower of the unseen and the seen, Creator of the heavens and the earth, Lord and Sovereign of all things, I bear witness that none has the right to be worshipped except You. I seek refuge in You from the evil of my soul and from the evil and shirk of the devil, and from committing wrong against myself or bringing such upon another Muslim.",
+          "referenceText": "Reported by at-Tirmidhi (3392) and Abu Dawud (5067). Authenticated by al-Albani in Sahih at-Tirmidhi (3/142)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-asbahnal-mulk-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "أصبحنا وأصبح الملك لله (مرة واحدة)",
+          "text": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ رَبِّ الْعَالَمِينَ، اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَذَا الْيَوْمِ: فَتْحَهُ وَنَصْرَهُ وَنُورَهُ وَبَرَكَتَهُ وَهُدَاهُ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِيهِ وَشَرِّ مَا بَعْدَهُ.\n\nوَإِذَا أَمْسَى قَالَ: أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ رَبِّ الْعَالَمِينَ، اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَذِهِ اللَّيْلَةِ: فَتْحَهَا وَنَصْرَهَا وَنُورَهَا وَبَرَكَتَهَا وَهُدَاهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِيهَا وَشَرِّ مَا بَعْدَهَا.",
+          "referenceText": "رواه أبو داود (5084). وحسّن إسناده شعيب وعبد القادر الأرناؤوط في تحقيق زاد المعاد (2/373)."
+        },
+        "en": {
+          "title": "Aṣbaḥnā wa aṣbaḥal-mulku lillāh… (1x)",
+          "text": "Aṣbaḥnā wa aṣbaḥal-mulku lillāhi rabbil-ʿālamīn. Allāhumma innī asʾaluka khayra hādhā al-yawm: fatḥahu wa naṣrahu wa nūrahu wa barakatahu wa hudāhu, wa aʿūdhu bika min sharri mā fīhi wa sharri mā baʿdah.\n\n(In the evening): Amsaynā wa amsal-mulku lillāhi rabbil-ʿālamīn. Allāhumma innī asʾaluka khayra hādhihil-laylah: fatḥahā wa naṣrahā wa nūrahā wa barakatahā wa hudāhā, wa aʿūdhu bika min sharri mā fīhā wa sharri mā baʿdahā.",
+          "translation": "We have reached the morning and at this very time all sovereignty belongs to Allah, Lord of the worlds. O Allah, I ask You for the good of this day—its triumphs and victories, its light, its blessings, and its guidance—and I seek refuge in You from the evil of this day and the evil that follows it.\n\n(In the evening): We have reached the evening and at this very time all sovereignty belongs to Allah, Lord of the worlds. O Allah, I ask You for the good of this night—its triumphs and victories, its light, its blessings, and its guidance—and I seek refuge in You from the evil of this night and the evil that follows it.",
+          "referenceText": "Reported by Abu Dawud (5084). Its chain was graded hasan by Shuʿayb and ʿAbd al-Qādir al-Arnaʾūṭ in their verification of Zād al-Maʿād (2/373)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-fitrah-islam-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "أصبحنا على فطرة الإسلام (مرة واحدة)",
+          "text": "أَصْبَحْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا، وَمَا كَانَ مِنَ الْمُشْرِكِينَ.\n\nوَإِذَا أَمْسَى قَالَ: أَمْسَيْنَا عَلَى فِطْرَةِ الْإِسْلَامِ...",
+          "referenceText": "رواه الإمام أحمد (15360، 15563)، وابن السني في عمل اليوم والليلة (34). وانظر: صحيح الجامع (4/209)."
+        },
+        "en": {
+          "title": "Aṣbaḥnā ʿalā fiṭratil-Islām… (1x)",
+          "text": "Aṣbaḥnā ʿalā fiṭratil-Islām, wa ʿalā kalimatil-ikhlāṣ, wa ʿalā dīni nabiyyinā Muḥammad ﷺ, wa ʿalā millati abīnā Ibrāhīm, ḥanīfan Musliman, wa mā kāna minal-mushrikīn.\n\n(In the evening): Amsaynā ʿalā fiṭratil-Islām…",
+          "translation": "We rise upon the natural disposition of Islam, upon the word of pure faith, upon the religion of our Prophet Muhammad ﷺ, and upon the religion of our forefather Abraham—upright, a Muslim, and not among those who associate partners with Allah.\n\n(In the evening, one says: ‘We have reached the evening upon the fitrah of Islam’.)",
+          "referenceText": "Reported by Ahmad (15360, 15563) and Ibn as-Sunni in ‘Amal al-Yawm wa al-Laylah (34). See also: Ṣaḥīḥ al-Jāmiʿ (4/209)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-subhan-bihamdih-003",
+      "requiredRepeats": 3,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "سبحان الله وبحمده عدد خلقه (ثلاث مرات)",
+          "text": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، عَدَدَ خَلْقِهِ، وَرِضَا نَفْسِهِ، وَزِنَةَ عَرْشِهِ، وَمِدَادَ كَلِمَاتِهِ.",
+          "referenceText": "رواه مسلم (2726)."
+        },
+        "en": {
+          "title": "Subḥānallāhi wa biḥamdih… (3x)",
+          "text": "Subḥānallāhi wa biḥamdih, ʿadada khalqih, wa riḍā nafsih, wa zinata ʿarshih, wa midāda kalimātih.",
+          "translation": "How perfect Allah is, and I praise Him by the number of His creation, by His pleasure, by the weight of His Throne, and by the ink of His words.",
+          "referenceText": "Reported by Muslim (2726)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-ilman-rizqan-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللهم إني أسألك علمًا نافعًا (مرة واحدة)",
+          "text": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا.",
+          "referenceText": "أخرجه ابن السني في عمل اليوم والليلة (54)، وابن ماجه (925). وحسّن إسناده عبد القادر وشعيب الأرناؤوط في تحقيق زاد المعاد (2/375)."
+        },
+        "en": {
+          "title": "Allahumma innī asʾaluka ʿilman nāfiʿā… (1x)",
+          "text": "Allāhumma innī asʾaluka ʿilman nāfiʿā, wa rizqan ṭayyibā, wa ʿamalan mutaqabbalā.",
+          "translation": "O Allah, I ask You for beneficial knowledge, good and lawful provision, and deeds that are accepted.",
+          "referenceText": "Reported by Ibn as-Sunni in ‘Amal al-Yawm wa al-Laylah (54) and Ibn Mājah (925). Its chain was graded hasan by ʿAbd al-Qādir and Shuʿayb al-Arnaʾūṭ in their verification of Zād al-Maʿād (2/375)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-istighfar-tawbah-100",
+      "requiredRepeats": 100,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "أستغفر الله وأتوب إليه (100 مرة)",
+          "text": "أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ.",
+          "referenceText": "رواه البخاري مع الفتح (6307)، ومسلم (2702)."
+        },
+        "en": {
+          "title": "Astaghfirullāha wa atūbu ilayh (100x)",
+          "text": "Astaghfirullāha wa atūbu ilayh.",
+          "translation": "I seek forgiveness from Allah and I repent to Him.",
+          "referenceText": "Reported by al-Bukhari (6307) and Muslim (2702)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-salah-nabi-010",
+      "requiredRepeats": 10,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللهم صل وسلم على نبينا محمد (10 مرات)",
+          "text": "اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ.",
+          "referenceText": "قال رسول الله ﷺ: «من صلّى عليَّ حين يصبح عشرًا، وحين يمسي عشرًا، أدركته شفاعتي يوم القيامة». أخرجه الطبراني بإسنادين أحدهما جيد. انظر: مجمع الزوائد (10/120)، وصحيح الترغيب والترهيب (1/273)."
+        },
+        "en": {
+          "title": "Allāhumma ṣalli wa sallim ʿalā nabiyyinā Muḥammad (10x)",
+          "text": "Allāhumma ṣalli wa sallim ʿalā nabiyyinā Muḥammad.",
+          "translation": "O Allah, send prayers and peace upon our Prophet Muhammad.",
+          "referenceText": "The Messenger of Allah ﷺ said: “Whoever sends blessings upon me ten times in the morning and ten times in the evening will be granted my intercession on the Day of Resurrection.” Reported by at-Ṭabarānī with two chains, one of which is good. See: Majmaʿ az-Zawāʾid (10/120) and Ṣaḥīḥ at-Targhīb wa at-Tarhīb (1/273)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-ikhlas-003",
+      "requiredRepeats": 3,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "سورة الإخلاص (ثلاث مرات)",
+          "text": "قُلْ هُوَ اللَّهُ أَحَدٌ، اللَّهُ الصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَهُ كُفُوًا أَحَدٌ.",
+          "referenceText": "من قالها ثلاث مرات حين يصبح وحين يمسي كفته من كل شيء. رواه أبو داود (5082)، والترمذي (3575). وانظر: صحيح الترمذي (3/182)."
+        },
+        "en": {
+          "title": "Sūrat al-Ikhlāṣ (3x)",
+          "text": "Qul huwa Allāhu aḥad. Allāhuṣ-ṣamad. Lam yalid wa lam yūlad. Wa lam yakun lahu kufuwan aḥad.",
+          "translation": "Say: He is Allah, the One. Allah, the Self-Sufficient. He neither begets nor is born, and there is none comparable to Him.",
+          "referenceText": "ʿAbdullah ibn Khubayb reported that the Messenger of Allah ﷺ said: “Recite: ‘Qul huwa Allahu ahad’, ‘Qul aʿūdhu birabbil-falaq’, and ‘Qul aʿūdhu birabbin-nās’ three times in the morning and evening, for they will suffice you against everything.” Reported by Abu Dawud (5082) and at-Tirmidhi (3575); authenticated in Sahih at-Tirmidhi (3/182)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-falaq-003",
+      "requiredRepeats": 3,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "سورة الفلق (ثلاث مرات)",
+          "text": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، مِنْ شَرِّ مَا خَلَقَ، وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ، وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ.",
+          "referenceText": "من قالها ثلاث مرات حين يصبح وحين يمسي كفته من كل شيء. رواه أبو داود (5082)، والترمذي (3575). وانظر: صحيح الترمذي (3/182)."
+        },
+        "en": {
+          "title": "Sūrat al-Falaq (3x)",
+          "text": "Qul aʿūdhu birabbil-falaq. Min sharri mā khalaq. Wa min sharri ghāsiqin idhā waqab. Wa min sharri an-naffāthāti fīl-ʿuqad. Wa min sharri ḥāsidin idhā ḥasad.",
+          "translation": "Say: I seek refuge in the Lord of the daybreak, from the evil of what He has created, and from the evil of the darkness when it settles, and from the evil of the blowers in knots, and from the evil of an envier when he envies.",
+          "referenceText": "Whoever recites it three times in the morning and evening will be sufficed against everything. Reported by Abu Dawud (5082) and at-Tirmidhi (3575); authenticated in Sahih at-Tirmidhi (3/182)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-nas-003",
+      "requiredRepeats": 3,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "سورة الناس (ثلاث مرات)",
+          "text": "قُلْ أَعُوذُ بِرَبِّ النَّاسِ، مَلِكِ النَّاسِ، إِلَٰهِ النَّاسِ، مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ، الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ، مِنَ الْجِنَّةِ وَالنَّاسِ.",
+          "referenceText": "من قالها ثلاث مرات حين يصبح وحين يمسي كفته من كل شيء. رواه أبو داود (5082)، والترمذي (3575). وانظر: صحيح الترمذي (3/182)."
+        },
+        "en": {
+          "title": "Sūrat an-Nās (3x)",
+          "text": "Qul aʿūdhu birabbin-nās. Malikin-nās. Ilāhin-nās. Min sharril-waswāsil-khannās. Alladhī yuwaswisu fī ṣudūrin-nās. Minal-jinnati wan-nās.",
+          "translation": "Say: I seek refuge in the Lord of mankind, the King of mankind, the God of mankind, from the evil of the whisperer who withdraws, who whispers in the hearts of mankind, from among jinn and mankind.",
+          "referenceText": "Whoever recites it three times in the morning and evening will be sufficed against everything. Reported by Abu Dawud (5082) and at-Tirmidhi (3575); authenticated in Sahih at-Tirmidhi (3/182)."
         }
       }
     }
