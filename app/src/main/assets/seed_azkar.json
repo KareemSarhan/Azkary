@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "generatedAt": "2026-01-13T00:00:00Z",
   "categories": [
     {
@@ -160,43 +160,113 @@
       },
       "items": [
         {
-          "itemId": "itm-amsayna-mulk-1",
+          "itemId": "itm-ayat-al-kursi-1",
           "sortOrder": 0,
           "isEnabled": true
         },
         {
-          "itemId": "itm-raditu-billahi-3",
+          "itemId": "itm-amsayna-mulk-1",
           "sortOrder": 1,
           "isEnabled": true
         },
         {
-          "itemId": "itm-bismillah-3",
+          "itemId": "itm-evening-allahumma-bika-amsayna-1",
           "sortOrder": 2,
           "isEnabled": true
         },
         {
-          "itemId": "itm-ikhlas-falaq-nas-3",
+          "itemId": "itm-sayyidul-istighfar-1",
           "sortOrder": 3,
           "isEnabled": true
         },
         {
-          "itemId": "itm-keep-safe-words-3-evening",
+          "itemId": "itm-evening-ushhiduka-4",
           "sortOrder": 4,
           "isEnabled": true
         },
         {
-          "itemId": "itm-tahlil-100",
+          "itemId": "itm-niamah-shukr-001",
           "sortOrder": 5,
           "isEnabled": true
         },
         {
-          "itemId": "itm-subhanallah-wabihamdihi-100",
+          "itemId": "itm-afini-body-hearing-sight-3",
           "sortOrder": 6,
           "isEnabled": true
         },
         {
-          "itemId": "itm-afiyah-1",
+          "itemId": "itm-hasbiyallahu-7",
           "sortOrder": 7,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-afiyah-1",
+          "sortOrder": 8,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-alimal-ghayb-001",
+          "sortOrder": 9,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-bismillah-3",
+          "sortOrder": 10,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-raditu-billahi-3",
+          "sortOrder": 11,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-ya-hayyu-ya-qayyum-1",
+          "sortOrder": 12,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-evening-khayr-hadhihi-allaylah-1",
+          "sortOrder": 13,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-evening-ala-fitrati-alislam-1",
+          "sortOrder": 14,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-subhanallah-wabihamdihi-100",
+          "sortOrder": 15,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-istighfar-tawbah-100",
+          "sortOrder": 16,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-evening-audhu-bikalimatillah-3",
+          "sortOrder": 17,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-salah-nabi-010",
+          "sortOrder": 18,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-ikhlas-003",
+          "sortOrder": 19,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-falaq-003",
+          "sortOrder": 20,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-nas-003",
+          "sortOrder": 21,
           "isEnabled": true
         }
       ]
@@ -831,6 +901,96 @@
           "text": "Qul aʿūdhu birabbin-nās. Malikin-nās. Ilāhin-nās. Min sharril-waswāsil-khannās. Alladhī yuwaswisu fī ṣudūrin-nās. Minal-jinnati wan-nās.",
           "translation": "Say: I seek refuge in the Lord of mankind, the King of mankind, the God of mankind, from the evil of the whisperer who withdraws, who whispers in the hearts of mankind, from among jinn and mankind.",
           "referenceText": "Whoever recites it three times in the morning and evening will be sufficed against everything. Reported by Abu Dawud (5082) and at-Tirmidhi (3575); authenticated in Sahih at-Tirmidhi (3/182)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-evening-allahumma-bika-amsayna-1",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "ذكر المساء",
+          "text": "اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ",
+          "referenceText": "ورد في أذكار المساء، وصح عن النبي ﷺ."
+        },
+        "en": {
+          "title": "Evening Supplication",
+          "text": "Allāhumma bika amsaynā, wa bika aṣbaḥnā, wa bika naḥyā, wa bika namūt, wa ilayka al-maṣīr.",
+          "translation": "O Allah, by You we enter the evening, by You we enter the morning, by You we live, and by You we die, and to You is the final return.",
+          "referenceText": "Reported in the authentic evening supplications of the Prophet ﷺ."
+        }
+      }
+    },
+    {
+      "itemId": "itm-evening-ushhiduka-4",
+      "requiredRepeats": 4,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "ذكر الشهادة مساءً",
+          "text": "اللَّهُمَّ إِنِّي أَمْسَيْتُ أُشْهِدُكَ، وَأُشْهِدُ حَمَلَةَ عَرْشِكَ، وَمَلَائِكَتَكَ، وَجَمِيعَ خَلْقِكَ، أَنَّكَ أَنْتَ اللَّهُ لَا إِلَهَ إِلَّا أَنْتَ وَحْدَكَ لَا شَرِيكَ لَكَ، وَأَنَّ مُحَمَّدًا عَبْدُكَ وَرَسُولُكَ",
+          "referenceText": "من قالها حين يصبح وحين يمسي أربع مرات أعتقه الله من النار. أخرجه أبو داود (317)، والبخاري في الأدب المفرد (1201)، والنسائي في عمل اليوم والليلة (9)، وابن السني (70). وحسّن إسناده الشيخ ابن باز."
+        },
+        "en": {
+          "title": "Evening Declaration of Faith",
+          "text": "Allāhumma innī amsaytu ush-hiduka, wa ush-hidu ḥamalata ʿarshik, wa malāʾikatak, wa jamīʿa khalqik, annaka anta Allāh, lā ilāha illā anta waḥdaka lā sharīka lak, wa anna Muḥammadan ʿabduka wa rasūluk.",
+          "translation": "O Allah, I have entered the evening calling You to witness, and calling the bearers of Your Throne, Your angels, and all of Your creation to witness that You are Allah—there is no deity worthy of worship except You alone, with no partner—and that Muhammad is Your servant and Your Messenger.",
+          "referenceText": "Whoever says this four times in the morning and evening, Allah frees him from the Fire. Reported by Abu Dawud, al-Bukhari (Al-Adab Al-Mufrad), an-Nasa’i, and Ibn as-Sunni; graded hasan by Shaykh Ibn Baz."
+        }
+      }
+    },
+    {
+      "itemId": "itm-evening-khayr-hadhihi-allaylah-1",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "ذكر المساء",
+          "text": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ رَبِّ الْعَالَمِينَ، اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَ هَذِهِ اللَّيْلَةِ: فَتْحَهَا وَنَصْرَهَا وَنُورَهَا وَبَرَكَتَهَا وَهُدَاهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِيهَا وَشَرِّ مَا بَعْدَهَا",
+          "referenceText": "أخرجه أبو داود (322)، وحسّن إسناده شعيب وعبد القادر الأرناؤوط في تحقيق زاد المعاد (2/273)."
+        },
+        "en": {
+          "title": "Evening Supplication",
+          "text": "Amsaynā wa amsā al-mulku lillāhi rabbil-ʿālamīn. Allāhumma innī asʾaluka khayra hādhihi al-laylah: fatḥahā wa naṣrahā wa nūrahā wa barakatahā wa hudāhā, wa aʿūdhu bika min sharri mā fīhā wa sharri mā baʿdahā.",
+          "translation": "We have entered the evening and the dominion belongs to Allah, Lord of all worlds. O Allah, I ask You for the good of this night: its success, its victory, its light, its blessings, and its guidance. And I seek refuge in You from the evil within it and the evil that comes after it.",
+          "referenceText": "Reported by Abu Dawud; its chain was graded hasan by Shuʿayb and ʿAbd al-Qadir al-Arna’ut."
+        }
+      }
+    },
+    {
+      "itemId": "itm-evening-ala-fitrati-alislam-1",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "ذكر المساء",
+          "text": "أَمْسَيْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ",
+          "referenceText": "ورد بألفاظ متقاربة عن عبد الرحمن بن أبزى رضي الله عنه، رواه أحمد، والنسائي، وابن أبي شيبة، والبيهقي."
+        },
+        "en": {
+          "title": "Evening Supplication",
+          "text": "Amsaynā ʿalā fiṭrati al-islām, wa ʿalā kalimati al-ikhlāṣ, wa ʿalā dīni nabiyyinā Muḥammadin ṣallallāhu ʿalayhi wa sallam, wa ʿalā millati abīnā Ibrāhīma ḥanīfan musliman wa mā kāna mina al-mushrikīn.",
+          "translation": "We have entered the evening upon the natural disposition of Islam, upon the word of sincerity, upon the religion of our Prophet Muhammad ﷺ, and upon the way of our father Abraham—upright, submitting to Allah—and he was not among the polytheists.",
+          "referenceText": "Reported with similar wordings by Ahmad, an-Nasa’i, Ibn Abi Shaybah, and al-Bayhaqi from ‘Abd al-Rahman ibn Abza (may Allah be pleased with him)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-evening-audhu-bikalimatillah-3",
+      "requiredRepeats": 3,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "الاستعاذة من الشر مساءً",
+          "text": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+          "referenceText": "من قالها حين يمسي ثلاث مرات لم تضرّه حُمَة تلك الليلة. أخرجه أحمد (7898)، والنسائي في عمل اليوم والليلة (590)، وابن السني (68)، وصححه الألباني، وحسنه ابن باز."
+        },
+        "en": {
+          "title": "Evening Protection Supplication",
+          "text": "Aʿūdhu bikalimāti Allāhi at-tāmmāti min sharri mā khalaq.",
+          "translation": "I seek refuge in the perfect words of Allah from the evil of what He has created.",
+          "referenceText": "Whoever says this three times in the evening will not be harmed by any sting that night. Reported by Ahmad, an-Nasa’i, and Ibn as-Sunni; authenticated by scholars."
         }
       }
     }
