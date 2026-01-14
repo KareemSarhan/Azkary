@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "generatedAt": "2026-01-13T00:00:00Z",
   "categories": [
     {
@@ -292,18 +292,78 @@
           "isEnabled": true
         },
         {
-          "itemId": "itm-last-two-baqara-1",
+          "itemId": "itm-ayatain-albaqarah-sleep-001",
           "sortOrder": 1,
           "isEnabled": true
         },
         {
-          "itemId": "itm-fatimah-tasbih-1",
+          "itemId": "itm-bismika-rabbi-wadaatu-janbi-sleep-001",
           "sortOrder": 2,
           "isEnabled": true
         },
         {
-          "itemId": "itm-sleep-bismika-amutu-1",
+          "itemId": "itm-allahumma-innaka-khalaqta-nafsi-sleep-001",
           "sortOrder": 3,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-allahumma-qini-adhabaka-sleep-003",
+          "sortOrder": 4,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-bismika-amootu-ahya-sleep-001",
+          "sortOrder": 5,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-subhanallah-sleep-033",
+          "sortOrder": 6,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-allahumma-rabbas-samawat-sleep-001",
+          "sortOrder": 7,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-alhamdulillah-atamana-sleep-001",
+          "sortOrder": 8,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-recitation-sajdah-mulk-sleep-001",
+          "sortOrder": 9,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-allahumma-aslamtu-nafsi-sleep-001",
+          "sortOrder": 10,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-alhamdulillah-sleep-033",
+          "sortOrder": 11,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-allahu-akbar-sleep-034",
+          "sortOrder": 12,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-ikhlas-003",
+          "sortOrder": 13,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-falaq-003",
+          "sortOrder": 14,
+          "isEnabled": true
+        },
+        {
+          "itemId": "itm-nas-003",
+          "sortOrder": 15,
           "isEnabled": true
         }
       ]
@@ -991,6 +1051,240 @@
           "text": "Aʿūdhu bikalimāti Allāhi at-tāmmāti min sharri mā khalaq.",
           "translation": "I seek refuge in the perfect words of Allah from the evil of what He has created.",
           "referenceText": "Whoever says this three times in the evening will not be harmed by any sting that night. Reported by Ahmad, an-Nasa’i, and Ibn as-Sunni; authenticated by scholars."
+        }
+      }
+    },
+    {
+      "itemId": "itm-allahu-akbar-sleep-034",
+      "requiredRepeats": 34,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللَّهُ أَكْبَرُ (34 مرة)",
+          "text": "اللَّهُ أَكْبَرُ",
+          "referenceText": "من قال ذلك عندما يأوي إلى فراشه كان خيرًا له من خادم. أخرجه البخاري مع الفتح (7/71، رقم 3705) ومسلم (4/2091، رقم 2726)."
+        },
+        "en": {
+          "title": "Allāhu Akbar (34x)",
+          "text": "Allāhu Akbar",
+          "translation": "Allah is the Greatest.",
+          "referenceText": "Whoever says this when going to bed, it is better for them than having a servant. Reported by al-Bukhārī (with al-Fatḥ 7/71, no. 3705) and Muslim (4/2091, no. 2726)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-alhamdulillah-sleep-033",
+      "requiredRepeats": 33,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "الْحَمْدُ لِلَّهِ (33 مرة)",
+          "text": "الْحَمْدُ لِلَّهِ",
+          "referenceText": "من قال ذلك عندما يأوي إلى فراشه كان خيرًا له من خادم. أخرجه البخاري مع الفتح (7/71، رقم 3705) ومسلم (4/2091، رقم 2726)."
+        },
+        "en": {
+          "title": "Al-Ḥamdu lillāh (33x)",
+          "text": "Al-Ḥamdu lillāh",
+          "translation": "All praise is for Allah.",
+          "referenceText": "Whoever says this when going to bed, it is better for them than having a servant. Reported by al-Bukhārī (with al-Fatḥ 7/71, no. 3705) and Muslim (4/2091, no. 2726)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-allahumma-aslamtu-nafsi-sleep-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللَّهُمَّ أَسْلَمْتُ نَفْسِي إِلَيْكَ (مرة واحدة)",
+          "text": "اللَّهُمَّ أَسْلَمْتُ نَفْسِي إِلَيْكَ، وَفَوَّضْتُ أَمْرِي إِلَيْكَ، وَوَجَّهْتُ وَجْهِي إِلَيْكَ، وَأَلْجَأْتُ ظَهْرِي إِلَيْكَ، رَغْبَةً وَرَهْبَةً إِلَيْكَ، لَا مَلْجَأَ وَلَا مَنْجَى مِنْكَ إِلَّا إِلَيْكَ، آمَنْتُ بِكِتَابِكَ الَّذِي أَنْزَلْتَ، وَبِنَبِيِّكَ الَّذِي أَرْسَلْتَ.",
+          "referenceText": "إذا أخذت مضجعك فتوضأ وضوءك للصلاة، ثم اضطجع على شقك الأيمن، ثم قل هذا الدعاء. وقال ﷺ: «فإن متَّ متَّ على الفطرة». أخرجه البخاري مع الفتح (11/113، رقم 6313) ومسلم (4/2081، رقم 2710)."
+        },
+        "en": {
+          "title": "Allahumma aslamtu nafsī ilayk (1x)",
+          "text": "Allāhumma aslamtu nafsī ilayk, wa fawwaḍtu amrī ilayk, wa wajjahtu wajhī ilayk, wa aljaʾtu ẓahrī ilayk, raghbatan wa rahbatan ilayk, lā maljaʾa wa lā manjā minka illā ilayk, āmantu bikitābika alladhī anzalt, wa binabiyyika alladhī arsalt.",
+          "translation": "O Allah, I submit myself to You, entrust my affairs to You, turn my face toward You, and seek refuge in You, in hope and fear of You. There is no refuge nor escape from You except with You. I believe in Your Book which You revealed and in Your Prophet whom You sent.",
+          "referenceText": "When you go to bed, perform ablution as for prayer, then lie on your right side and say this supplication. The Prophet ﷺ said: “If you die, you will die upon the natural faith.” Reported by al-Bukhārī (with al-Fatḥ 11/113, no. 6313) and Muslim (4/2081, no. 2710)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-recitation-sajdah-mulk-sleep-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "قراءة سورة السجدة وسورة الملك (مرة واحدة)",
+          "text": "يَقْرَأُ (الم * تَنْزِيلَ السَّجْدَةِ)، و(تَبَارَكَ الَّذِي بِيَدِهِ الْمُلْكُ).",
+          "referenceText": "كان النبي ﷺ لا ينام حتى يقرأ (الم * تنزيل السجدة) وسورة (تبارك الذي بيده الملك). أخرجه الترمذي (3404)، والنسائي في عمل اليوم والليلة (707)، وصححه الألباني في صحيح الجامع (4/255)."
+        },
+        "en": {
+          "title": "Reciting Sūrah As-Sajdah & Sūrah Al-Mulk (1x)",
+          "text": "He would recite: Alif Lām Mīm. Tanzīl as-Sajdah, and Tabāraka alladhī biyadihi al-mulk.",
+          "translation": "The Prophet ﷺ never used to sleep until he had recited Sūrah As-Sajdah (Chapter 32) and Sūrah Al-Mulk (Chapter 67).",
+          "referenceText": "Reported by at-Tirmidhī (3404) and an-Nasāʾī in ‘Amal al-Yawm wa al-Laylah (707). It was authenticated by al-Albānī in Ṣaḥīḥ al-Jāmiʿ (4/255)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-allahumma-rabbas-samawat-sleep-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ (مرة واحدة)",
+          "text": "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ وَرَبَّ الْأَرْضِ وَرَبَّ الْعَرْشِ الْعَظِيمِ، رَبَّنَا وَرَبَّ كُلِّ شَيْءٍ، فَالِقَ الْحَبِّ وَالنَّوَى، وَمُنْزِلَ التَّوْرَاةِ وَالْإِنْجِيلِ وَالْفُرْقَانِ، أَعُوذُ بِكَ مِنْ شَرِّ كُلِّ شَيْءٍ أَنْتَ آخِذٌ بِنَاصِيَتِهِ. اللَّهُمَّ أَنْتَ الْأَوَّلُ فَلَيْسَ قَبْلَكَ شَيْءٌ، وَأَنْتَ الْآخِرُ فَلَيْسَ بَعْدَكَ شَيْءٌ، وَأَنْتَ الظَّاهِرُ فَلَيْسَ فَوْقَكَ شَيْءٌ، وَأَنْتَ الْبَاطِنُ فَلَيْسَ دُونَكَ شَيْءٌ، اقْضِ عَنَّا الدَّيْنَ، وَأَغْنِنَا مِنَ الْفَقْرِ.",
+          "referenceText": "أخرجه مسلم (4/2084، رقم 2713)."
+        },
+        "en": {
+          "title": "Allahumma rabbas-samāwātis-sabʿ (1x)",
+          "text": "Allahumma rabbas-samāwātis-sabʿ, wa rabbal-arḍi wa rabbal-ʿarshil-ʿaẓīm, rabbanā wa rabba kulli shayʾ, fāliqal-ḥabbi wan-nawā, wa munazzilat-tawrāti wal-injīli wal-furqān, aʿūdhu bika min sharri kulli shayʾin anta ākhidhun bināṣiyatih. Allahumma antal-awwal fa laysa qablaka shayʾ, wa antal-ākhir fa laysa baʿdaka shayʾ, wa antaẓ-ẓāhir fa laysa fawqaka shayʾ, wa antal-bāṭin fa laysa dūnaka shayʾ, iqḍi ʿannad-dayna wa aghninā minal-faqr.",
+          "translation": "O Allah, Lord of the seven heavens, Lord of the earth and Lord of the Mighty Throne, our Lord and the Lord of all things, Splitter of the seed and the date stone, Revealer of the Torah, the Gospel and the Criterion; I seek refuge in You from the evil of all things You have power over. O Allah, You are the First—nothing is before You; You are the Last—nothing is after You; You are the Most High—nothing is above You; and You are the Most Near—nothing is closer than You. Settle our debts for us and spare us from poverty.",
+          "referenceText": "Reported by Muslim (4/2084, no. 2713)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-alhamdulillah-atamana-sleep-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا (مرة واحدة)",
+          "text": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا، وَكَفَانَا وَآوَانَا، فَكَمْ مِمَّنْ لَا كَافِيَ لَهُ وَلَا مُؤْوِيَ.",
+          "referenceText": "أخرجه مسلم (4/2085، رقم 2715)."
+        },
+        "en": {
+          "title": "Al-ḥamdu lillāhilladhī aṭʿamanā wa saqānā (1x)",
+          "text": "Al-ḥamdu lillāhilladhī aṭʿamanā wa saqānā, wa kafānā wa āwānā, fa kam mimman lā kāfiya lahu wa lā muʾwī.",
+          "translation": "All praise is for Allah, Who fed us and gave us drink, and Who is sufficient for us and has sheltered us; for how many have none to suffice them or shelter them.",
+          "referenceText": "Reported by Muslim (4/2085, no. 2715)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-allahumma-rabbas-samawat-sleep-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ (مرة واحدة)",
+          "text": "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ وَرَبَّ الْأَرْضِ وَرَبَّ الْعَرْشِ الْعَظِيمِ، رَبَّنَا وَرَبَّ كُلِّ شَيْءٍ، فَالِقَ الْحَبِّ وَالنَّوَى، وَمُنْزِلَ التَّوْرَاةِ وَالْإِنْجِيلِ وَالْفُرْقَانِ، أَعُوذُ بِكَ مِنْ شَرِّ كُلِّ شَيْءٍ أَنْتَ آخِذٌ بِنَاصِيَتِهِ. اللَّهُمَّ أَنْتَ الْأَوَّلُ فَلَيْسَ قَبْلَكَ شَيْءٌ، وَأَنْتَ الْآخِرُ فَلَيْسَ بَعْدَكَ شَيْءٌ، وَأَنْتَ الظَّاهِرُ فَلَيْسَ فَوْقَكَ شَيْءٌ، وَأَنْتَ الْبَاطِنُ فَلَيْسَ دُونَكَ شَيْءٌ، اقْضِ عَنَّا الدَّيْنَ، وَأَغْنِنَا مِنَ الْفَقْرِ.",
+          "referenceText": "أخرجه مسلم (4/2084، رقم 2713)."
+        },
+        "en": {
+          "title": "Allahumma rabbas-samāwātis-sabʿ (1x)",
+          "text": "Allahumma rabbas-samāwātis-sabʿ, wa rabbal-arḍi wa rabbal-ʿarshil-ʿaẓīm, rabbanā wa rabba kulli shayʾ, fāliqal-ḥabbi wan-nawā, wa munazzilat-tawrāti wal-injīli wal-furqān, aʿūdhu bika min sharri kulli shayʾin anta ākhidhun bināṣiyatih. Allahumma antal-awwal fa laysa qablaka shayʾ, wa antal-ākhir fa laysa baʿdaka shayʾ, wa antaẓ-ẓāhir fa laysa fawqaka shayʾ, wa antal-bāṭin fa laysa dūnaka shayʾ, iqḍi ʿannad-dayna wa aghninā minal-faqr.",
+          "translation": "O Allah, Lord of the seven heavens, Lord of the earth and Lord of the Mighty Throne, our Lord and the Lord of all things, Splitter of the seed and the date stone, Revealer of the Torah, the Gospel and the Criterion; I seek refuge in You from the evil of all things You have power over. O Allah, You are the First, there is nothing before You; You are the Last, there is nothing after You. You are the Most High, nothing is above You; and You are the Most Near, nothing is closer than You. Settle our debts for us and spare us from poverty.",
+          "referenceText": "Reported by Muslim (4/2084, no. 2713)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-subhanallah-sleep-033",
+      "requiredRepeats": 33,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "سُبْحَانَ اللَّهِ (33 مرة)",
+          "text": "سُبْحَانَ اللَّهِ",
+          "referenceText": "قال ﷺ لعلي وفاطمة رضي الله عنهما: «ألا أدلكما على ما هو خير لكما من خادم؟ إذا أويتما إلى فراشكما فسبحا الله ثلاثًا وثلاثين، واحمدا الله ثلاثًا وثلاثين، وكبرا الله أربعًا وثلاثين». أخرجه البخاري مع الفتح (7/71، رقم 3705) ومسلم (4/2091، رقم 2726)."
+        },
+        "en": {
+          "title": "Subḥānallāh (33x)",
+          "text": "Subḥānallāh",
+          "translation": "How perfect Allah is.",
+          "referenceText": "The Prophet ﷺ said to ʿAlī and Fāṭimah (may Allah be pleased with them): “Shall I not direct you to something better than a servant? When you go to bed, say Subḥānallāh thirty-three times, Al-ḥamdu lillāh thirty-three times, and Allāhu akbar thirty-four times.” Reported by al-Bukhārī (with al-Fatḥ 7/71, no. 3705) and Muslim (4/2091, no. 2726)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-bismika-amootu-ahya-sleep-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا (مرة واحدة)",
+          "text": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+          "referenceText": "أخرجه البخاري مع الفتح (11/113، رقم 6324) ومسلم (4/2083، رقم 2711)."
+        },
+        "en": {
+          "title": "Bismika Allāhumma amūtu wa aḥyā (1x)",
+          "text": "Bismika Allāhumma amūtu wa aḥyā",
+          "translation": "In Your name, O Allah, I live and die.",
+          "referenceText": "Reported by al-Bukhārī (with al-Fatḥ 11/113, no. 6324) and Muslim (4/2083, no. 2711)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-allahumma-qini-adhabaka-sleep-003",
+      "requiredRepeats": 3,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللَّهُمَّ قِنِي عَذَابَكَ (3 مرات)",
+          "text": "اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ",
+          "referenceText": "كان النبي ﷺ إذا أراد أن يرقد وضع يده اليمنى تحت خدِّه ثم يقول هذا الدعاء. أخرجه أبو داود (4/311، رقم 5045) والترمذي (3398)، وصححه الألباني في صحيح أبي داود (3/240) وصحيح الترمذي (3/143)."
+        },
+        "en": {
+          "title": "Allahumma qinī ʿadhābaka (3x)",
+          "text": "Allahumma qinī ʿadhābaka yawma tabʿathu ʿibādak.",
+          "translation": "O Allah, protect me from Your punishment on the Day You resurrect Your servants.",
+          "referenceText": "When the Prophet ﷺ was about to sleep, he would place his right hand under his cheek and say this supplication. Reported by Abū Dāwūd (4/311, no. 5045) and at-Tirmidhī (3398), authenticated by al-Albānī in Ṣaḥīḥ Abī Dāwūd (3/240) and Ṣaḥīḥ at-Tirmidhī (3/143)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-allahumma-innaka-khalaqta-nafsi-sleep-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "اللَّهُمَّ إِنَّكَ خَلَقْتَ نَفْسِي (مرة واحدة)",
+          "text": "اللَّهُمَّ إِنَّكَ خَلَقْتَ نَفْسِي وَأَنْتَ تَوَفَّاهَا، لَكَ مَمَاتُهَا وَمَحْيَاهَا، إِنْ أَحْيَيْتَهَا فَاحْفَظْهَا، وَإِنْ أَمَتَّهَا فَاغْفِرْ لَهَا، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَافِيَةَ.",
+          "referenceText": "أخرجه مسلم (4/2083، رقم 2712)، وأحمد بلفظه (2/79، رقم 5502)."
+        },
+        "en": {
+          "title": "Allahumma innaka khalaqta nafsī (1x)",
+          "text": "Allahumma innaka khalaqta nafsī wa anta tawaffāhā, laka mamātuhā wa maḥyāhā, in aḥyaytahā faḥfaẓhā, wa in amattahā faghfir lahā. Allahumma innī asʾalukal-ʿāfiyah.",
+          "translation": "O Allah, indeed You created my soul and You will take its life. To You belongs its life and its death. If You keep it alive, then protect it; and if You take its life, then forgive it. O Allah, I ask You for well-being.",
+          "referenceText": "Reported by Muslim (4/2083, no. 2712) and Aḥmad with similar wording (2/79, no. 5502)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-bismika-rabbi-wadaatu-janbi-sleep-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي (مرة واحدة)",
+          "text": "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي، وَبِكَ أَرْفَعُهُ، فَإِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا بِمَا تَحْفَظُ بِهِ عِبَادَكَ الصَّالِحِينَ.",
+          "referenceText": "إذا قام أحدكم من فراشه ثم رجع إليه فلينفضه بطرف إزاره ثلاث مرات، ثم إذا اضطجع قال هذا الدعاء. أخرجه البخاري مع الفتح (11/126، رقم 6320) ومسلم (4/2084، رقم 2714)."
+        },
+        "en": {
+          "title": "Bismika rabbī waḍaʿtu janbī (1x)",
+          "text": "Bismika rabbī waḍaʿtu janbī, wa bika arfaʿuh, fa in amsakta nafsī farḥamhā, wa in arsaltahā faḥfaẓhā bimā taḥfaẓu bihi ʿibādakas-ṣāliḥīn.",
+          "translation": "In Your name, my Lord, I lie down and in Your name I rise. If You should take my soul, then have mercy upon it; and if You should return it, then protect it in the manner You protect Your righteous servants.",
+          "referenceText": "Reported by al-Bukhārī (with al-Fatḥ 11/126, no. 6320) and Muslim (4/2084, no. 2714)."
+        }
+      }
+    },
+    {
+      "itemId": "itm-ayatain-albaqarah-sleep-001",
+      "requiredRepeats": 1,
+      "source": "SEEDED",
+      "texts": {
+        "ar": {
+          "title": "قراءة آخر آيتين من سورة البقرة (مرة واحدة)",
+          "text": "ءَامَنَ الرَّسُولُ بِمَا أُنزِلَ إِلَيْهِ مِنْ رَبِّهِ وَالْمُؤْمِنُونَ ۚ كُلٌّ آمَنَ بِاللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِنْ رُسُلِهِ ۚ وَقَالُوا سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ الْمَصِيرُ ﴿٢٨٥﴾ لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا اكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَا إِنْ نَسِينَا أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِنْ قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ ۖ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا ۚ أَنْتَ مَوْلَانَا فَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ ﴿٢٨٦﴾",
+          "referenceText": "من قرأهما في ليلة كفتاه. أخرجه البخاري مع الفتح (9/94، رقم 4008) ومسلم (1/554، رقم 807). والآيتان من سورة البقرة (285–286)."
+        },
+        "en": {
+          "title": "Last Two Verses of Sūrah Al-Baqarah (1x)",
+          "text": "Āmana ar-rasūlu bimā unzila ilayhi min rabbihī wal-muʾminūn… (Al-Baqarah 2:285–286)",
+          "translation": "The Messenger has believed in what was revealed to him from his Lord, and so have the believers… [until the end of the chapter].",
+          "referenceText": "The Prophet ﷺ said: “Whoever recites the last two verses of Sūrah Al-Baqarah at night, they will be sufficient for him.” Reported by al-Bukhārī (with al-Fatḥ 9/94, no. 4008) and Muslim (1/554, no. 807)."
         }
       }
     }
