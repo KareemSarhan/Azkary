@@ -24,7 +24,6 @@ import com.app.azkary.data.model.AzkarItemUi
 @Composable
 fun AzkarReadingItem(
     item: AzkarItemUi,
-    currentCount: Int,
     onIncrement: () -> Unit
 ) {
     val colors = MaterialTheme.colorScheme
@@ -32,7 +31,7 @@ fun AzkarReadingItem(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { if (currentCount < item.requiredRepeats) onIncrement() },
+            .clickable { onIncrement() },
         color = colors.background
     ) {
         Column(

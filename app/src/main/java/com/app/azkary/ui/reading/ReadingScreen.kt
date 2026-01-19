@@ -163,8 +163,20 @@ fun ReadingScreen(
 
                 AzkarReadingItem(
                     item = item,
-                    currentCount = item.currentRepeats,
                     onIncrement = {
+                        val isAlreadyComplete = item.currentRepeats >= item.requiredRepeats
+
+                        if (isAlreadyComplete) {
+                            // If already done, just scroll to next if available
+                            if (page < items.size - 1) {
+                                scope.launch {
+                                    performVibration(350L)
+                                    pagerState.animateScrollToPage(page + 1)
+                                }
+                            }
+                            return@AzkarReadingItem
+                        }
+
                         // 1. Immediate Short Vibration (Feedback for tap)
                         performVibration(50L)
                         
