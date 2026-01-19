@@ -33,7 +33,7 @@ fun AzkarReadingItem(
         modifier = Modifier
             .fillMaxSize()
             .clickable { if (currentCount < item.requiredRepeats) onIncrement() },
-        color = colors.background // ✅ respects dark/light
+        color = colors.background
     ) {
         Column(
             modifier = Modifier
@@ -42,24 +42,24 @@ fun AzkarReadingItem(
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Arabic Text (keeps RTL naturally)
+            // Arabic Text
             item.arabicText?.let { arabic ->
                 Text(
                     text = arabic,
                     style = MaterialTheme.typography.headlineMedium.copy(
-                        fontSize = 38.sp,
-                        lineHeight = 58.sp,
+                        fontSize = 28.sp, // Reduced further for better fit
+                        lineHeight = 42.sp,
                         fontFamily = FontFamily.Default,
-                        color = colors.onBackground // ✅ theme aware
+                        color = colors.onBackground
                     ),
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 32.dp)
+                        .padding(vertical = 28.dp)
                 )
             }
 
-            // Transliteration (force LTR)
+            // Transliteration
             if (!item.transliteration.isNullOrBlank()) {
                 ReadingSectionLtr(
                     title = "Transliteration",
@@ -68,7 +68,7 @@ fun AzkarReadingItem(
                 )
             }
 
-            // Translation (force LTR)
+            // Translation
             if (!item.translation.isNullOrBlank()) {
                 ReadingSectionLtr(
                     title = "Translation",
@@ -79,7 +79,7 @@ fun AzkarReadingItem(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Reference card (theme aware + LTR usually better)
+            // Reference card
             if (!item.reference.isNullOrBlank()) {
                 HadithInformationCardLtr(referenceText = item.reference)
             }
@@ -100,26 +100,25 @@ private fun ReadingSectionLtr(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 14.dp),
+            .padding(vertical = 12.dp),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.labelLarge.copy(
+            style = MaterialTheme.typography.labelMedium.copy(
                 color = titleColor,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp
+                letterSpacing = 0.5.sp
             )
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
-        // ✅ Force the CONTENT to render LTR even in RTL app
         LtrText(
             text = content,
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = colors.onBackground.copy(alpha = 0.9f),
-                lineHeight = 24.sp,
-                fontSize = 16.sp
+                lineHeight = 22.sp,
+                fontSize = 15.sp
             )
         )
     }
@@ -130,21 +129,21 @@ private fun HadithInformationCardLtr(referenceText: String) {
     val colors = MaterialTheme.colorScheme
 
     Card(
-        colors = CardDefaults.cardColors(containerColor = colors.surfaceVariant),
-        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = colors.surfaceVariant.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(12.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             LtrText(
                 text = referenceText,
                 style = MaterialTheme.typography.bodySmall.copy(
                     color = colors.onSurfaceVariant.copy(alpha = 0.85f),
-                    lineHeight = 20.sp,
-                    fontSize = 14.sp
+                    lineHeight = 18.sp,
+                    fontSize = 13.sp
                 )
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = "Reference",
@@ -157,10 +156,6 @@ private fun HadithInformationCardLtr(referenceText: String) {
     }
 }
 
-/**
- * Force LTR rendering for English/Latin content in an RTL app.
- * (Fixes BiDi issues and keeps transliteration readable.)
- */
 @Composable
 private fun LtrText(
     text: String,

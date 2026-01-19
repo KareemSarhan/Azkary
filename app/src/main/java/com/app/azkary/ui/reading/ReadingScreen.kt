@@ -1,5 +1,11 @@
 package com.app.azkary.ui.reading
 
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -27,15 +33,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ReadingScreen(
@@ -51,6 +63,24 @@ fun ReadingScreen(
     )
 
     val pagerState = rememberPagerState(pageCount = { items.size })
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    // Initialize Vibrator
+    val vibrator = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+    }
+
+    // Helper to trigger vibration
+    val performVibration: (Long) -> Unit = { duration ->
+        vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+    }
 
     val colors = MaterialTheme.colorScheme
 
@@ -134,19 +164,34 @@ fun ReadingScreen(
                 AzkarReadingItem(
                     item = item,
                     currentCount = item.currentRepeats,
-                    onIncrement = { viewModel.incrementRepeat(item.id) }
+                    onIncrement = {
+                        // 1. Immediate Short Vibration (Feedback for tap)
+                        performVibration(50L)
+                        
+                        // 2. Update Progress in DB
+                        viewModel.incrementRepeat(item.id)
+                        
+                        // 3. Auto-Next Check
+                        val willBeComplete = (item.currentRepeats + 1) >= item.requiredRepeats
+                        if (willBeComplete && page < items.size - 1) {
+                            scope.launch {
+                                // Delay so user sees the final count (e.g. 33/33)
+                                delay(450) 
+                                
+                                // 4. Long Vibration (Feedback for Zikr completion/change)
+                                performVibration(350L)
+                                
+                                // 5. Smooth Scroll to next Zikr
+                                pagerState.animateScrollToPage(page + 1)
+                            }
+                        }
+                    }
                 )
             }
         }
     }
 }
 
-/**
- * ✅ Forces a piece of text to be laid out and rendered as LTR
- * even if the app layout direction is RTL.
- *
- * This fixes "1 of 10" showing in the wrong order in RTL.
- */
 @Composable
 private fun LtrText(
     text: String,
@@ -156,7 +201,6 @@ private fun LtrText(
 ) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Text(
-            // LRM around text makes BiDi stable for numbers/English in RTL context
             text = "\u200E$text\u200E",
             style = style.merge(TextStyle(textDirection = TextDirection.Ltr)),
             color = color,
