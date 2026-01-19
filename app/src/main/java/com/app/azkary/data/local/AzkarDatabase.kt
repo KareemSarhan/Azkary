@@ -15,9 +15,10 @@ import com.app.azkary.data.local.entities.*
         CategoryItemCrossRefEntity::class,
         UserProgressEntity::class
     ],
-    version = 2, // Upgraded version for new schema
+    version = 5, // Incremented to 5 to force a clean seed
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class AzkarDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun categoryTextDao(): CategoryTextDao
