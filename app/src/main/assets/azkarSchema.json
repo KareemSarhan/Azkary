@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/adhkar.schema.json",
+  "title": "Adhkar Catalog Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "generatedAt", "categories", "items"],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 4
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/category" }
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/item" }
+    }
+  },
+  "$defs": {
+    "localizedCategoryTexts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ar", "en"],
+      "properties": {
+        "ar": { "$ref": "#/$defs/categoryTextAr" },
+        "en": { "$ref": "#/$defs/categoryTextEn" }
+      }
+    },
+    "categoryTextAr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 }
+      }
+    },
+    "categoryTextEn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 }
+      }
+    },
+    "categoryItemRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemId", "sortOrder", "isEnabled"],
+      "properties": {
+        "itemId": { "type": "string", "minLength": 1 },
+        "sortOrder": { "type": "integer", "minimum": 0 },
+        "isEnabled": { "type": "boolean" }
+      }
+    },
+    "category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "categoryId",
+        "type",
+        "systemKey",
+        "sortOrder",
+        "isArchived",
+        "texts",
+        "items"
+      ],
+      "properties": {
+        "categoryId": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "minLength": 1 },
+        "systemKey": { "type": "string", "minLength": 1 },
+        "sortOrder": { "type": "integer", "minimum": 0 },
+        "isArchived": { "type": "boolean" },
+        "texts": { "$ref": "#/$defs/localizedCategoryTexts" },
+        "items": {
+          "type": "array",
+          "minItems": 0,
+          "items": { "$ref": "#/$defs/categoryItemRef" }
+        }
+      }
+    },
+
+    "itemSource": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "localizedItemTexts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ar", "en"],
+      "properties": {
+        "ar": { "$ref": "#/$defs/itemTextAr" },
+        "en": { "$ref": "#/$defs/itemTextEn" }
+      }
+    },
+
+    "itemTextAr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "text", "referenceText"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 },
+        "referenceText": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "itemTextEn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "text", "referenceText"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 },
+        "translation": { "type": "string" },
+        "referenceText": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["itemId", "requiredRepeats", "source", "texts"],
+      "properties": {
+        "itemId": { "type": "string", "minLength": 1 },
+        "requiredRepeats": { "type": "integer", "minimum": 1 },
+        "source": { "$ref": "#/$defs/itemSource" },
+        "texts": { "$ref": "#/$defs/localizedItemTexts" }
+      }
+    }
+  }
+}
