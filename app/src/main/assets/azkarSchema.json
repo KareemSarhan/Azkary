@@ -7,8 +7,7 @@
   "required": ["schemaVersion", "generatedAt", "categories", "items"],
   "properties": {
     "schemaVersion": {
-      "type": "integer",
-      "const": 4
+      "type": "integer"
     },
     "generatedAt": {
       "type": "string",

@@ -317,27 +317,27 @@
           "isEnabled": true
         },
         {
-          "itemId": "itm-subhanallah-sleep-033",
+          "itemId": "itm-allahumma-rabbas-samawat-sleep-001",
           "sortOrder": 6,
           "isEnabled": true
         },
         {
-          "itemId": "itm-allahumma-rabbas-samawat-sleep-001",
+          "itemId": "itm-alhamdulillah-atamana-sleep-001",
           "sortOrder": 7,
           "isEnabled": true
         },
         {
-          "itemId": "itm-alhamdulillah-atamana-sleep-001",
+          "itemId": "itm-recitation-sajdah-mulk-sleep-001",
           "sortOrder": 8,
           "isEnabled": true
         },
         {
-          "itemId": "itm-recitation-sajdah-mulk-sleep-001",
+          "itemId": "itm-allahumma-aslamtu-nafsi-sleep-001",
           "sortOrder": 9,
           "isEnabled": true
         },
         {
-          "itemId": "itm-allahumma-aslamtu-nafsi-sleep-001",
+          "itemId": "itm-subhanallah-sleep-033",
           "sortOrder": 10,
           "isEnabled": true
         },

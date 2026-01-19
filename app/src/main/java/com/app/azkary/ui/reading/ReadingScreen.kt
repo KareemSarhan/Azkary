@@ -176,7 +176,7 @@ fun ReadingScreen(
                         if (willBeComplete && page < items.size - 1) {
                             scope.launch {
                                 // Delay so user sees the final count (e.g. 33/33)
-                                delay(450) 
+                                delay(0)
                                 
                                 // 4. Long Vibration (Feedback for Zikr completion/change)
                                 performVibration(350L)

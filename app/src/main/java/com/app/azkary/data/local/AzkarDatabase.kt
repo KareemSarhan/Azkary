@@ -15,7 +15,7 @@ import com.app.azkary.data.local.entities.*
         CategoryItemCrossRefEntity::class,
         UserProgressEntity::class
     ],
-    version = 5, // Incremented to 5 to force a clean seed
+    version = 6, // Incremented to 5 to force a clean seed
     exportSchema = false
 )
 @TypeConverters(Converters::class)
