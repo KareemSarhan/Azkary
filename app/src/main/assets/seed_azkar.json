@@ -413,24 +413,6 @@
       "texts": {
         "ar": {
           "title": "أمسينا وأمسى الملك لله",
-          "text": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ. رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا. رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ. رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ",
-          "referenceText": "من أذكار المساء الواردة في حصن المسلم (أمسينا وأمسى الملك لله...)."
-        },
-        "en": {
-          "title": "We have entered the evening",
-          "text": "Amsaynā wa amsal-mulku lillāh... Rabbī asʾaluka khayra mā fī hādhihil-laylah...",
-          "translation": "We have entered a new evening and with it all dominion is Allah’s... My Lord, I ask You for the good of this night and the good that follows it...",
-          "referenceText": "Recorded in standard evening adhkar compilations (e.g., Hisn al-Muslim) as the evening counterpart of the morning wording."
-        }
-      }
-    },
-    {
-      "itemId": "itm-amsayna-mulk-1",
-      "requiredRepeats": 1,
-      "source": "SEEDED",
-      "texts": {
-        "ar": {
-          "title": "أمسينا وأمسى الملك لله",
           "text": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ. رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا. رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ",
           "referenceText": "[Sahih Muslim, 6909]"
         },
@@ -755,7 +737,7 @@
       "texts": {
         "ar": {
           "title": "اللهم إني أصبحت أُشهدك (أربع مرات)",
-          "text": "اللَّهُمَّ إِنِّي أَصْبَحْتُ أُشْهِدُكَ، وَأُشْهِدُ حَمَلَةَ عَرْشِكَ، وَمَلَائِكَتَكَ، وَجَمِيعَ خَلْقِكَ، أَنَّكَ أَنْتَ اللَّهُ لَا إِلَهَ إِلَّا أَنْتَ، وَحْدَكَ لَا شَرِيكَ لَكَ، وَأَنَّ مُحَمَّدًا عَبْدُكَ وَرَسُولُكَ.\n\nوَإِذَا أَمْسَى قَالَ: اللَّهُمَّ إِنِّي أَمْسَيْتُ...",
+          "text": "اللَّهُمَّ إِنِّي أَصْبَحْتُ أُشْهِدُكَ، وَأُشْهِدُ حَمَلَةَ عَرْشِكَ، وَمَلَائِكَتَكَ، وَجَمِيعَ خَلْقِكَ، أَنَّكَ أَنْتَ اللَّهُ لَا إِلَهَ إِلَّا أَنْتَ، وَحْدَكَ لَا شَرِيكَ لَكَ، وَأَنَّ مُحَمَّدًا عَبْدُكَ وَرَسُولُكَ",
           "referenceText": "من قالها حين يصبح أو يمسي أربع مرات أعتقه الله من النار. رواه أبو داود (5071)، والبخاري في الأدب المفرد (1201)، والنسائي في عمل اليوم والليلة (9)، وابن السني (70). وحسّن إسناده سماحة الشيخ ابن باز في تحفة الأخيار (ص 23)."
         },
         "en": {
@@ -773,13 +755,13 @@
       "texts": {
         "ar": {
           "title": "اللهم ما أصبح بي من نعمة (مرة واحدة)",
-          "text": "اللَّهُمَّ مَا أَصْبَحَ بِي مِنْ نِعْمَةٍ، أَوْ بِأَحَدٍ مِنْ خَلْقِكَ، فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ.\n\nوَإِذَا أَمْسَى قَالَ: اللَّهُمَّ مَا أَمْسَى بِي...",
+          "text": "اللَّهُمَّ مَا أَصْبَحَ بِي مِنْ نِعْمَةٍ، أَوْ بِأَحَدٍ مِنْ خَلْقِكَ، فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ.",
           "referenceText": "من قالها حين يصبح فقد أدَّى شكر يومه، ومن قالها حين يمسي فقد أدَّى شكر ليلته. رواه أبو داود (5075)، والنسائي في عمل اليوم والليلة (7)، وابن السني (41)، وابن حبان (موارد، 2361). وحسّن إسناده سماحة الشيخ ابن باز في تحفة الأخيار (ص 24)."
         },
         "en": {
           "title": "Allahumma mā aṣbaḥa bī min niʿmah… (1x)",
-          "text": "Allahumma mā aṣbaḥa bī min niʿmatin, aw bi-aḥadin min khalqik, faminka waḥdaka lā sharīka lak, falakal-ḥamdu wa lakash-shukr.\n\n(In the evening): Allahumma mā amsā bī…",
-          "translation": "O Allah, whatever blessing I or any of Your creation have risen upon is from You alone, without partner. So for You is all praise and unto You is all thanks.\n\n(In the evening, one says: ‘whatever blessing I or any of Your creation have reached the evening upon’.)",
+          "text": "Allahumma mā aṣbaḥa bī min niʿmatin, aw bi-aḥadin min khalqik, faminka waḥdaka lā sharīka lak, falakal-ḥamdu wa lakash-shukr.",
+          "translation": "O Allah, whatever blessing I or any of Your creation have risen upon is from You alone, without partner. So for You is all praise and unto You is all thanks.)",
           "referenceText": "Whoever says this in the morning has fulfilled the thanks of his day, and whoever says it in the evening has fulfilled the thanks of his night. Reported by Abu Dawud (5075), an-Nasa’i in ‘Amal al-Yawm wa al-Laylah (7), Ibn as-Sunni (41), and Ibn Hibban (2361). Its chain was graded hasan by Shaykh Ibn Baz in Tuhfat al-Akhyar (p. 24)."
         }
       }
