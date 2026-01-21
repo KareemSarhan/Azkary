@@ -1,5 +1,10 @@
 package com.app.azkary.ui.settings
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -9,23 +14,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.data.prefs.AppLanguage
-import kotlinx.coroutines.launch
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.ui.draw.alpha
 
 private val NavyDark = Color(0xFF0B1220)
 private val NavyLight = Color(0xFF161D2F)
@@ -33,16 +35,14 @@ private val ToggleRed = Color(0xFFE53935)
 private val ToggleOff = Color(0xFF252D3F)
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val currentLanguage by viewModel.appLanguage.collectAsState(initial = AppLanguage.SYSTEM)
-    val scope = rememberCoroutineScope()
-
-    var showLanguageSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val context = LocalContext.current
 
     Scaffold(
         containerColor = NavyDark, topBar = {
@@ -67,29 +67,12 @@ fun SettingsScreen(
                 .padding(16.dp)
         ) {
             SettingsItem(
-                title = "Language", value = when (currentLanguage) {
-                    AppLanguage.ARABIC -> "العربية"
-                    AppLanguage.ENGLISH -> "English"
-                    AppLanguage.SYSTEM -> "System Default"
-                }, onClick = { showLanguageSheet = true })
-        }
-
-        if (showLanguageSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showLanguageSheet = false },
-                sheetState = sheetState,
-                containerColor = NavyLight,
-                scrimColor = Color.Black.copy(alpha = 0.6f),
-                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-            ) {
-                LanguageSelectionContent(
-                    selectedLanguage = currentLanguage, onLanguageSelected = { lang ->
-                        scope.launch {
-                            viewModel.setAppLanguage(lang)
-                            showLanguageSheet = false
-                        }
-                    })
-            }
+                title = "Language", value = currentLanguage.name, onClick = {
+                    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                    }
+                    context.startActivity(intent)
+                })
         }
     }
 }
@@ -122,90 +105,6 @@ fun SettingsItem(
                 Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
                 tint = Color.White.copy(alpha = 0.6f)
-            )
-        }
-    }
-}
-
-@Composable
-fun LanguageSelectionContent(
-    selectedLanguage: AppLanguage, onLanguageSelected: (AppLanguage) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 18.dp)
-            .padding(bottom = 28.dp)
-    ) {
-        // Optional small handle spacing is already provided by sheet
-        Text(
-            text = "App Language",
-            color = Color.White,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        // “Card” container
-        Surface(
-            color = Color(0xFF2A3448), // slightly lighter than NavyLight for contrast
-            shape = RoundedCornerShape(20.dp),
-            shadowElevation = 6.dp,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-
-                LanguageOptionRow(
-                    label = "System Default",
-                    isSelected = selectedLanguage == AppLanguage.SYSTEM,
-                    onClick = { onLanguageSelected(AppLanguage.SYSTEM) })
-
-                HorizontalDivider(color = Color.White.copy(alpha = 0.06f), thickness = 1.dp)
-
-                LanguageOptionRow(
-                    label = "العربية",
-                    isSelected = selectedLanguage == AppLanguage.ARABIC,
-                    onClick = { onLanguageSelected(AppLanguage.ARABIC) })
-
-                HorizontalDivider(color = Color.White.copy(alpha = 0.06f), thickness = 1.dp)
-
-                LanguageOptionRow(
-                    label = "English",
-                    isSelected = selectedLanguage == AppLanguage.ENGLISH,
-                    onClick = { onLanguageSelected(AppLanguage.ENGLISH) })
-            }
-        }
-
-        Spacer(Modifier.height(18.dp))
-    }
-}
-
-@Composable
-private fun LanguageOptionRow(
-    label: String, isSelected: Boolean, onClick: () -> Unit
-) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .height(78.dp)
-        .clickable { onClick() }
-        .padding(horizontal = 18.dp), verticalAlignment = Alignment.CenterVertically) {
-        // Toggle on the LEFT (like your reference)
-        CustomIosToggle(
-            isOn = isSelected, onToggle = onClick
-        )
-
-        Spacer(Modifier.width(14.dp))
-
-        // Label on the RIGHT: use a Box to force right alignment cleanly
-        Box(
-            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd
-        ) {
-            Text(
-                text = label,
-                color = if (isSelected) Color.White else Color.White.copy(alpha = 0.65f),
-                fontSize = 20.sp,
-                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                textAlign = TextAlign.End
             )
         }
     }
