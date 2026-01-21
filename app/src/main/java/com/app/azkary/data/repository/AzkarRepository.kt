@@ -1,11 +1,15 @@
 package com.app.azkary.data.repository
 
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
-import com.app.azkary.data.local.dao.*
-import com.app.azkary.data.local.entities.*
-import com.app.azkary.data.model.*
+import com.app.azkary.data.local.dao.AzkarItemDao
+import com.app.azkary.data.local.dao.AzkarTextDao
+import com.app.azkary.data.local.dao.CategoryDao
+import com.app.azkary.data.local.dao.CategoryItemDao
+import com.app.azkary.data.local.dao.CategoryTextDao
+import com.app.azkary.data.local.dao.ProgressDao
+import com.app.azkary.data.local.entities.UserProgressEntity
+import com.app.azkary.data.model.AzkarItemUi
+import com.app.azkary.data.model.CategoryUi
 import com.app.azkary.data.seed.SeedManager
 import com.app.azkary.util.ArabicNormalizer
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -45,7 +49,6 @@ class AzkarRepository @Inject constructor(
         return texts.first()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun observeCategoriesWithDisplayName(
         langTag: String,
         fallbackTags: List<String>

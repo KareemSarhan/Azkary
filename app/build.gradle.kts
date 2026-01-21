@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
@@ -9,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.app.azkary"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.app.azkary"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 33
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -37,9 +36,27 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+    //noinspection WrongGradleMethod
+    androidComponents {
+        onVariants(selector().all()) { variant ->
+            afterEvaluate {
+                val kspTaskName = "ksp${variant.name.replaceFirstChar { it.uppercase() }}Kotlin"
+                val kspTask = tasks.findByName(kspTaskName) as? TaskProvider<*>
+
+                if (kspTask != null) {
+                    // Ensure kspOutputDir is a DirectoryProperty
+                    val kspOutputDir = project.objects.directoryProperty().fileValue(file("${layout.buildDirectory.get()}/generated/ksp/${variant.name}/kotlin"))
+
+                    // Ensure that kspTask is a TaskProvider<Task>
+                    variant.sources.java?.addGeneratedSourceDirectory(
+                        kspTask
+                    ) { kspOutputDir }
+                }
+            }
+        }
     }
+
+
     buildFeatures {
         compose = true
     }
@@ -62,14 +79,16 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
-    
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.icons.extended.v130)
+
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
-    
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    
+
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
 

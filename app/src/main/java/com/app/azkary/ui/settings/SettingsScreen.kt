@@ -25,9 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.app.azkary.data.prefs.AppLanguage
 
 private val NavyDark = Color(0xFF0B1220)
 private val NavyLight = Color(0xFF161D2F)
@@ -41,7 +40,6 @@ private val ToggleOff = Color(0xFF252D3F)
 fun SettingsScreen(
     onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val currentLanguage by viewModel.appLanguage.collectAsState(initial = AppLanguage.SYSTEM)
     val context = LocalContext.current
 
     Scaffold(
@@ -67,7 +65,7 @@ fun SettingsScreen(
                 .padding(16.dp)
         ) {
             SettingsItem(
-                title = "Language", value = currentLanguage.name, onClick = {
+                title = "Language",  onClick = {
                     val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
                         data = Uri.fromParts("package", context.packageName, null)
                     }
@@ -79,7 +77,7 @@ fun SettingsScreen(
 
 @Composable
 fun SettingsItem(
-    title: String, value: String, onClick: () -> Unit
+    title: String, onClick: () -> Unit
 ) {
     Surface(
         onClick = onClick,
@@ -98,7 +96,6 @@ fun SettingsItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(title, color = Color.White, fontWeight = FontWeight.Medium)
                 Spacer(Modifier.height(2.dp))
-                Text(value, color = Color.White.copy(alpha = 0.55f), fontSize = 14.sp)
             }
 
             Icon(

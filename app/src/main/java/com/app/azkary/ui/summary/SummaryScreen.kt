@@ -1,7 +1,5 @@
 package com.app.azkary.ui.summary
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,7 +43,6 @@ import com.app.azkary.data.model.CategoryUi
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SummaryScreen(
