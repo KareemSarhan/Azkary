@@ -23,6 +23,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindLocationRepository(impl: LocationRepositoryImpl): LocationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGeocodingRepository(impl: com.app.azkary.data.repository.GeocodingRepositoryImpl): com.app.azkary.data.repository.GeocodingRepository
 }
 
 @Module

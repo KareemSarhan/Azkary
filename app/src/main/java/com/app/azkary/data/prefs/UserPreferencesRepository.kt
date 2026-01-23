@@ -23,7 +23,8 @@ enum class AppLanguage(val tag: String, val displayName: String) {
 
 data class LocationPreferences(
     val useLocation: Boolean = true,
-    val lastResolvedLocation: LatLng? = null
+    val lastResolvedLocation: LatLng? = null,
+    val locationName: String? = null
 )
 
 @Singleton
@@ -34,6 +35,7 @@ class UserPreferencesRepository @Inject constructor(
     private val APP_LANGUAGE = stringPreferencesKey("app_language")
     private val USE_LOCATION = booleanPreferencesKey("use_location")
     private val LAST_RESOLVED_LOCATION = stringPreferencesKey("last_resolved_location")
+    private val LOCATION_NAME = stringPreferencesKey("location_name")
 
     val appLanguage: Flow<AppLanguage> = context.dataStore.data.map { preferences ->
         val tag = preferences[APP_LANGUAGE] ?: AppLanguage.SYSTEM.tag
@@ -45,7 +47,8 @@ class UserPreferencesRepository @Inject constructor(
             useLocation = preferences[USE_LOCATION] ?: true,
             lastResolvedLocation = preferences[LAST_RESOLVED_LOCATION]?.let {
                 try { json.decodeFromString<LatLng>(it) } catch (e: Exception) { null }
-            }
+            },
+            locationName = preferences[LOCATION_NAME]
         )
     }
 
@@ -63,6 +66,16 @@ class UserPreferencesRepository @Inject constructor(
                 it[LAST_RESOLVED_LOCATION] = json.encodeToString(location)
             } else {
                 it.remove(LAST_RESOLVED_LOCATION)
+            }
+        }
+    }
+
+    suspend fun setLocationName(name: String?) {
+        context.dataStore.edit {
+            if (name != null) {
+                it[LOCATION_NAME] = name
+            } else {
+                it.remove(LOCATION_NAME)
             }
         }
     }

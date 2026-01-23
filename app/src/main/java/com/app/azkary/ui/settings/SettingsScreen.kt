@@ -149,6 +149,7 @@ fun SettingsScreen(
                 Column {
                     LocationDisplayItem(
                         location = locationPrefs.lastResolvedLocation,
+                        locationName = locationPrefs.locationName,
                         isRefreshing = isRefreshing,
                         onRefresh = {
                             permissionLauncher.launch(
@@ -222,6 +223,7 @@ fun LocationToggleItem(
 @Composable
 fun LocationDisplayItem(
     location: com.app.azkary.data.model.LatLng?,
+    locationName: String?,
     isRefreshing: Boolean,
     onRefresh: () -> Unit
 ) {
@@ -245,11 +247,38 @@ fun LocationDisplayItem(
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(Modifier.height(4.dp))
-                Text(
-                    location?.toString() ?: "Not available",
-                    color = Color.White.copy(alpha = 0.6f),
-                    fontSize = 13.sp
-                )
+
+                // Show city name if available, otherwise coordinates
+                when {
+                    locationName != null -> {
+                        Text(
+                            locationName,
+                            color = Color.White.copy(alpha = 0.8f),
+                            fontSize = 14.sp
+                        )
+                        location?.let {
+                            Text(
+                                it.toString(),
+                                color = Color.White.copy(alpha = 0.5f),
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                    location != null -> {
+                        Text(
+                            location.toString(),
+                            color = Color.White.copy(alpha = 0.6f),
+                            fontSize = 13.sp
+                        )
+                    }
+                    else -> {
+                        Text(
+                            "Not available",
+                            color = Color.White.copy(alpha = 0.6f),
+                            fontSize = 13.sp
+                        )
+                    }
+                }
             }
 
             if (isRefreshing) {

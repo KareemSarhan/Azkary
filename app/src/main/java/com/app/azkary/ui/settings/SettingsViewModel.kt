@@ -18,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val locationRepository: LocationRepository
+    private val locationRepository: LocationRepository,
+    private val geocodingRepository: com.app.azkary.data.repository.GeocodingRepository
 ) : ViewModel() {
     val appLanguage = userPreferencesRepository.appLanguage
 
@@ -60,6 +61,13 @@ class SettingsViewModel @Inject constructor(
                 if (location != null) {
                     val latLng = LatLng(location.latitude, location.longitude)
                     userPreferencesRepository.setLastResolvedLocation(latLng)
+
+                    // Reverse geocode to get city name
+                    val cityName = geocodingRepository.getCityName(
+                        latLng.latitude,
+                        latLng.longitude
+                    )
+                    userPreferencesRepository.setLocationName(cityName)
                 } else {
                     _locationError.value = "Unable to get location. Check permissions."
                 }
