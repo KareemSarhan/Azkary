@@ -4,6 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import com.app.azkary.data.local.AzkarDatabase
 import com.app.azkary.data.local.dao.*
+import com.app.azkary.data.repository.LocationRepository
+import com.app.azkary.data.repository.LocationRepositoryImpl
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,6 +16,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+    @Binds
+    @Singleton
+    abstract fun bindLocationRepository(impl: LocationRepositoryImpl): LocationRepository
+}
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -24,7 +37,7 @@ object AppModule {
             AzkarDatabase::class.java,
             "azkar_db"
         )
-        .fallbackToDestructiveMigration() // Resetting for the final schema version
+            .fallbackToDestructiveMigration(false) // Resetting for the final schema version
         .build()
     }
 
@@ -52,5 +65,11 @@ object AppModule {
         ignoreUnknownKeys = true
         coerceInputValues = true
         isLenient = true
+    }
+
+    @Provides
+    @Singleton
+    fun provideFusedLocationProviderClient(@ApplicationContext context: Context): FusedLocationProviderClient {
+        return LocationServices.getFusedLocationProviderClient(context)
     }
 }

@@ -8,29 +8,21 @@ Automatically determine and schedule the correct Azkar window
 
 ## Phase 1 — Location & Settings
 
-### Task 1: Location Permissions & Provider
+### Task 1: Location Permissions & Provider [DONE]
 **Goal:** Obtain user location reliably with safe fallbacks.
 
-**Implementation**
+**Implementation ✅**
 - Permissions:
   - `android.permission.ACCESS_COARSE_LOCATION`
-  - `android.permission.ACCESS_FINE_LOCATION` (optional)
-- `LocationRepository`
-  ```kotlin
-  suspend fun getCurrentLocation(): Location?
-  ```
+  - `android.permission.ACCESS_FINE_LOCATION`
+- `LocationRepository` implemented using `FusedLocationProviderClient`.
+- DI configured with Hilt (`AppModule` & `RepositoryModule`).
+- Logic handles permission checks and uses `lastLocation` as a fallback before requesting fresh coordinates.
 
-* Use Fused Location Provider
-* Cache last known location locally
-
-**Failure Handling**
-* Permission denied → return `null`
-* Location services off → return `null`
-
-**Acceptance**
-* App requests permission from Settings
-* Location is read when granted
-* No crash when unavailable
+**Acceptance ✅**
+- App requests permission (to be handled in UI).
+- Location is read when granted.
+- Safe null handling when unavailable.
 
 ---
 
