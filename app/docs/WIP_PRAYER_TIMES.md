@@ -300,25 +300,7 @@ Parsing rules:
    - Return updated data
 3. If network is unavailable:
    - Return cached data
-   - If no cache exists, throw `NoCachedDataException`
-
-### Cache Key
-- year
-- month
-- rounded latitude / longitude (2–3 decimals)
-- method
-- school
-
----
-
-## Error Handling (MVP)
-
-Domain-level exceptions:
-- `NetworkException` — connectivity, timeout, DNS failures
-- `ApiException` — non-2xx HTTP responses
-- `ParsingException` — serialization or time parsing failures
-- `NoCachedDataException` — offline with no cached data
-
+   - If no cache exists
 ---
 
 ## Dependency Injection
@@ -343,7 +325,6 @@ Provide via Hilt:
 - Works fully offline after first successful sync
 - Gracefully handles network, API, and parsing errors
 - Uses suspend-based Retrofit APIs
-- Enables HTTP logging only in debug builds
 ```
 
 ### Task 4: Local Cache — Room
