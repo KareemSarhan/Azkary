@@ -28,27 +28,55 @@ Automatically determine and schedule the correct Azkar window
 
 ### Task 2: Settings UI — Location Controls
 
-**Goal:** Let user control how location is resolved.
+**Goal:** Let user control location-based prayer times.
 
-**UI**
-* Toggle: `Use location for prayer times`
-* Row: Current resolved location (lat/lng or city)
-* Button: Refresh location
+**Implementation ✅**
 
-**Manual Mode**
-* City/Country or Lat/Lng input
-* Persist manual coordinates
+**UI Components:**
+* Toggle: `Use location for prayer times` with iOS-style animated switch
+* Location display row showing:
+    - **City name** as primary text (e.g., "Riyadh, SA")
+    - GPS coordinates as secondary detail
+    - Refresh button with loading indicator
+* Permission request flow integrated
+* Snackbar notifications for errors
+* Smooth expand/collapse animations
 
-**DataStore**
-```kotlin
-useLocation: Boolean
-manualLocation: LatLng?
-lastResolvedLocation: LatLng?
-```
+**Architecture:**
+* `LocationRepository` - GPS location via FusedLocationProviderClient
+* `GeocodingRepository` - Reverse geocoding using Android Geocoder API
+    - Converts coordinates → city names
+    - Graceful fallback to coordinates if geocoding fails
+    - Runs on IO dispatcher for performance
+* `SettingsViewModel` - State management with:
+    - `toggleUseLocation()` - enable/disable with auto-refresh
+    - `refreshLocation()` - fetch GPS + reverse geocode
+    - Loading states and error handling
+* `SettingsScreen` - Polished UI with:
+    - Organized sections (PRAYER TIMES / GENERAL)
+    - Navy theme styling consistency
+    - Accessibility considerations
 
-**Acceptance**
-* Switching modes works instantly
-* Values persist across restarts
+**DataStore Persistence:**
+kotlin data class LocationPreferences
+
+**Files Added/Modified:**
+* `data/repository/GeocodingRepository.kt` (new)
+* `data/model/LatLng.kt` (new)
+* `data/prefs/UserPreferencesRepository.kt` (updated)
+* `ui/settings/SettingsViewModel.kt` (updated)
+* `ui/settings/SettingsScreen.kt` (updated)
+* `di/AppModule.kt` (updated with GeocodingRepository binding)
+
+**Acceptance ✅**
+* Toggle works instantly
+* Values persist across app restarts
+* Location refresh with runtime permission checks
+* **City name displayed** (e.g., "Dubai, AE") instead of raw coordinates
+* Coordinates shown as fallback when geocoding unavailable
+* Clean error messages via Snackbar
+* Loading indicator during location fetch
+* Smooth UI animations
 
 ---
 
