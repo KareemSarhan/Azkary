@@ -21,17 +21,18 @@ class SeedManager @Inject constructor(
     }
 
     suspend fun seedIfNeeded(context: Context) {
-        // Check if any categories exist
-        if (database.categoryDao().getActiveCategoriesOrdered().first().isNotEmpty()) return
-
         try {
-            val jsonString = context.assets.open("seed_azkar.json").bufferedReader().use { it.readText() }
+            val jsonString =
+                context.assets.open("seed_azkar.json").bufferedReader().use { it.readText() }
+
             val seedPack = jsonConfig.decodeFromString<SeedPack>(jsonString)
-            importSeedPack(seedPack)
+            if (database.getDbVersion() < seedPack.schemaVersion)
+                importSeedPack(seedPack)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
+
 
     private suspend fun importSeedPack(seedPack: SeedPack) {
         database.withTransaction {
@@ -44,13 +45,15 @@ class SeedManager @Inject constructor(
             // 1. Insert all items first
             val availableItemIds = mutableSetOf<String>()
             seedPack.items.forEach { seedItem ->
-                itemDao.upsertItems(listOf(
-                    AzkarItemEntity(
-                        itemId = seedItem.itemId,
-                        requiredRepeats = seedItem.requiredRepeats,
-                        source = seedItem.source
+                itemDao.upsertItems(
+                    listOf(
+                        AzkarItemEntity(
+                            itemId = seedItem.itemId,
+                            requiredRepeats = seedItem.requiredRepeats,
+                            source = seedItem.source
+                        )
                     )
-                ))
+                )
 
                 val itemTexts = seedItem.texts.map { (lang, content) ->
                     AzkarTextEntity(
@@ -74,7 +77,9 @@ class SeedManager @Inject constructor(
                         type = seedCat.type,
                         systemKey = seedCat.systemKey,
                         sortOrder = seedCat.sortOrder,
-                        isArchived = seedCat.isArchived
+                        isArchived = seedCat.isArchived,
+                        from = seedCat.from,
+                        to = seedCat.to
                     )
                 )
 

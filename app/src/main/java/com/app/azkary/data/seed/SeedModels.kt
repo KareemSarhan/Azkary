@@ -1,9 +1,9 @@
 package com.app.azkary.data.seed
 
-import kotlinx.serialization.Serializable
-import com.app.azkary.data.model.SystemCategoryKey
-import com.app.azkary.data.model.CategoryType
 import com.app.azkary.data.model.AzkarSource
+import com.app.azkary.data.model.CategoryType
+import com.app.azkary.data.model.SystemCategoryKey
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class SeedPack(
@@ -21,7 +21,9 @@ data class SeedCategory(
     val sortOrder: Int,
     val isArchived: Boolean,
     val texts: Map<String, SeedCategoryText>,
-    val items: List<SeedCategoryItemRef>
+    val items: List<SeedCategoryItemRef>,
+    val from: Int,
+    val to: Int
 )
 
 @Serializable

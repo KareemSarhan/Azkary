@@ -70,7 +70,9 @@
         "sortOrder",
         "isArchived",
         "texts",
-        "items"
+        "items",
+        "from",
+        "to"
       ],
       "properties": {
         "categoryId": { "type": "string", "minLength": 1 },

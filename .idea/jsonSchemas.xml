@@ -10,13 +10,6 @@
               <option name="name" value="azkarSchema" />
               <option name="relativePathToSchema" value="app/src/main/assets/azkarSchema.json" />
               <option name="schemaVersion" value="JSON Schema 202,012" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="path" value="app/src/main/assets/seed_azkar.json" />
-                  </Item>
-                </list>
-              </option>
             </SchemaInfo>
           </value>
         </entry>

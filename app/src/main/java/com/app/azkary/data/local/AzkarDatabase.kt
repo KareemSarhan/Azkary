@@ -5,6 +5,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.app.azkary.data.local.dao.*
 import com.app.azkary.data.local.entities.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Database(
     entities = [
@@ -15,7 +17,7 @@ import com.app.azkary.data.local.entities.*
         CategoryItemCrossRefEntity::class,
         UserProgressEntity::class
     ],
-    version = 6, // Incremented to 5 to force a clean seed
+    version = 1,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -26,4 +28,13 @@ abstract class AzkarDatabase : RoomDatabase() {
     abstract fun azkarTextDao(): AzkarTextDao
     abstract fun categoryItemDao(): CategoryItemDao
     abstract fun progressDao(): ProgressDao
+    suspend fun getDbVersion(): Int {
+        return withContext(Dispatchers.IO) {
+            val cursor = this@AzkarDatabase.openHelper.readableDatabase
+                .query("PRAGMA user_version")
+            cursor.use {
+                if (it.moveToFirst()) it.getInt(0) else 0
+            }
+        }
+    }
 }

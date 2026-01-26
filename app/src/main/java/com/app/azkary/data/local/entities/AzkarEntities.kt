@@ -12,7 +12,9 @@ data class CategoryEntity(
     val type: CategoryType,
     val systemKey: SystemCategoryKey? = null,
     val sortOrder: Int,
-    val isArchived: Boolean = false
+    val isArchived: Boolean = false,
+    val from: Int,
+    val to: Int
 )
 
 @Entity(
