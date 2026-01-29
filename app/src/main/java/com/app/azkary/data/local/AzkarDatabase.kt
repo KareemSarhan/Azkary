@@ -1,5 +1,6 @@
 package com.app.azkary.data.local
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -15,7 +16,9 @@ import kotlinx.coroutines.withContext
         AzkarItemEntity::class,
         AzkarTextEntity::class,
         CategoryItemCrossRefEntity::class,
-        UserProgressEntity::class
+        UserProgressEntity::class,
+        PrayerMonthEntity::class,
+        PrayerDayEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -28,6 +31,8 @@ abstract class AzkarDatabase : RoomDatabase() {
     abstract fun azkarTextDao(): AzkarTextDao
     abstract fun categoryItemDao(): CategoryItemDao
     abstract fun progressDao(): ProgressDao
+    abstract fun prayerMonthDao(): PrayerMonthDao
+    abstract fun prayerDayDao(): PrayerDayDao
     suspend fun getDbVersion(): Int {
         return withContext(Dispatchers.IO) {
             val cursor = this@AzkarDatabase.openHelper.readableDatabase

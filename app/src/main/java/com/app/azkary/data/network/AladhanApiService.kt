@@ -1,6 +1,7 @@
 package com.app.azkary.data.network
 
 import com.app.azkary.data.network.dto.PrayerCalendarResponse
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -26,5 +27,5 @@ interface AladhanApiService {
         @Query("longitude") longitude: Double,
         @Query("method") method: Int = 4, // Umm Al-Qura
         @Query("school") school: Int = 0  // Shafi
-    ): PrayerCalendarResponse
+    ): Response<PrayerCalendarResponse>
 }

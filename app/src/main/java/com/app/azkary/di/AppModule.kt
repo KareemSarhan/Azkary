@@ -27,6 +27,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindGeocodingRepository(impl: com.app.azkary.data.repository.GeocodingRepositoryImpl): com.app.azkary.data.repository.GeocodingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPrayerTimesRepository(impl: com.app.azkary.data.repository.PrayerTimesRepositoryImpl): com.app.azkary.data.repository.PrayerTimesRepository
 }
 
 @Module
@@ -64,6 +68,12 @@ object AppModule {
     fun provideProgressDao(db: AzkarDatabase): ProgressDao = db.progressDao()
 
     @Provides
+    fun providePrayerMonthDao(db: AzkarDatabase): PrayerMonthDao = db.prayerMonthDao()
+
+    @Provides
+    fun providePrayerDayDao(db: AzkarDatabase): PrayerDayDao = db.prayerDayDao()
+
+    @Provides
     @Singleton
     fun provideJson(): Json = Json {
         ignoreUnknownKeys = true
@@ -75,5 +85,13 @@ object AppModule {
     @Singleton
     fun provideFusedLocationProviderClient(@ApplicationContext context: Context): FusedLocationProviderClient {
         return LocationServices.getFusedLocationProviderClient(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providePrayerTimesCacheRefreshInterval(): Long {
+        // Cache refresh interval in milliseconds (24 hours by default)
+        // This could be made configurable via preferences in the future
+        return 24 * 60 * 60 * 1000L
     }
 }

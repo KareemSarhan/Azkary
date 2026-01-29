@@ -72,7 +72,9 @@ class AzkarRepository @Inject constructor(
                         name = name,
                         type = cat.type,
                         systemKey = cat.systemKey,
-                        progress = progress
+                        progress = progress,
+                        from = cat.from,
+                        to = cat.to
                     )
                 }
             }

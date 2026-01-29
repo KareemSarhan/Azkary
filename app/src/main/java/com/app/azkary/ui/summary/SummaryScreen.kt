@@ -52,6 +52,7 @@ fun SummaryScreen(
 ) {
     val categories by viewModel.categories.collectAsState(initial = emptyList())
     val currentSession by viewModel.currentSession.collectAsState(initial = null)
+    val sessionEndTime by viewModel.sessionEndTime.collectAsState(initial = null)
 
     val today = androidx.compose.runtime.remember {
         LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE dd MMMM"))
@@ -80,7 +81,9 @@ fun SummaryScreen(
             item {
                 currentSession?.let { session ->
                     CurrentSessionCard(
-                        category = session, onContinue = { onNavigateToCategory(session.id) })
+                        category = session, 
+                        sessionEndTime = sessionEndTime,
+                        onContinue = { onNavigateToCategory(session.id) })
                 }
             }
 
@@ -121,6 +124,7 @@ fun SummaryScreen(
 @Composable
 fun CurrentSessionCard(
     category: CategoryUi,
+    sessionEndTime: String?,
     onContinue: () -> Unit
 ) {
     val progress = category.progress.coerceIn(0f, 1f)
@@ -142,7 +146,10 @@ fun CurrentSessionCard(
         ) {
             Column {
                 Text(category.name, color = Color.White, style = MaterialTheme.typography.headlineSmall)
-                Text("Ends 10:00 AM", color = Color.White.copy(alpha = 0.7f))
+                Text(
+                    text = sessionEndTime?.let { "Ends $it" } ?: "Missed",
+                    color = Color.White.copy(alpha = 0.7f)
+                )
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
