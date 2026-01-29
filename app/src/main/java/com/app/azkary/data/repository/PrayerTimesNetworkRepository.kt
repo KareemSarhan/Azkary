@@ -2,14 +2,8 @@ package com.app.azkary.data.repository
 
 import com.app.azkary.data.network.AladhanApiService
 import com.app.azkary.data.network.dto.PrayerCalendarResponse
-import com.app.azkary.data.network.exception.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.SerializationException
-import retrofit2.HttpException
-import java.io.IOException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
