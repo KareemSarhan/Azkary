@@ -723,14 +723,14 @@
       "texts": {
         "ar": {
           "title": "اللهم بك أصبحنا وبك أمسينا (مرة واحدة)",
-          "text": "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ.\n\nوَإِذَا أَمْسَى قَالَ: اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ.",
-          "referenceText": "عن أبي هريرة رضي الله عنه أن النبي ﷺ كان إذا أصبح قال: «اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ». وإذا أمسى قال: «اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ». رواه الترمذي (3391)، وصححه الألباني في صحيح الترمذي (3/142)."
+          "text": "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ.",
+          "referenceText": "عن أبي هريرة رضي الله عنه أن النبي ﷺ كان إذا أصبح قال: «اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ». رواه الترمذي (3391)، وصححه الألباني في صحيح الترمذي (3/142)."
         },
         "en": {
           "title": "Allahumma bika aṣbaḥnā… (1x)",
-          "text": "Allahumma bika aṣbaḥnā wa bika amsaynā, wa bika naḥyā wa bika namūtu wa ilaykan-nushūr.\n\n(In the evening): Allahumma bika amsaynā wa bika aṣbaḥnā, wa bika naḥyā wa bika namūtu wa ilaykal-maṣīr.",
-          "translation": "O Allah, by Your leave we have reached the morning and by Your leave we have reached the evening. By Your leave we live and die, and unto You is the resurrection.\n\n(In the evening): O Allah, by Your leave we have reached the evening and by Your leave we have reached the morning. By Your leave we live and die, and unto You is our return.",
-          "referenceText": "The Prophet ﷺ used to say in the morning: “O Allah, by You we enter the morning and by You we enter the evening. By You we live and die, and to You is the resurrection.” And in the evening he would say: “O Allah, by You we enter the evening and by You we enter the morning. By You we live and die, and to You is the return.” Jamiʿ at-Tirmidhi (3391); authenticated by al-Albānī in Ṣaḥīḥ at-Tirmidhi (3/142)."
+          "text": "Allahumma bika aṣbaḥnā wa bika amsaynā, wa bika naḥyā wa bika namūtu wa ilaykan-nushūr.",
+          "translation": "O Allah, by Your leave we have reached the morning and by Your leave we have reached the evening. By Your leave we live and die, and unto You is the resurrection.",
+          "referenceText": "The Prophet ﷺ used to say in the morning: “O Allah, by You we enter the morning and by You we enter the evening. By You we live and die, and to You is the resurrection.” Jamiʿ at-Tirmidhi (3391); authenticated by al-Albānī in Ṣaḥīḥ at-Tirmidhi (3/142)."
         }
       }
     },
@@ -746,8 +746,8 @@
         },
         "en": {
           "title": "Allahumma innī aṣbaḥtu ushhiduka… (4x)",
-          "text": "Allahumma innī aṣbaḥtu ushhiduka, wa ushhidu ḥamalata ʿarshik, wa malāʾikatak, wa jamīʿa khalqik, annaka anta Allāh, lā ilāha illā ant, waḥdaka lā sharīka lak, wa anna Muḥammadan ʿabduka wa rasūluk.\n\n(In the evening): Allahumma innī amsaytu…",
-          "translation": "O Allah, verily I have reached the morning and I call upon You, the bearers of Your Throne, Your angels, and all of Your creation to witness that You are Allah—none has the right to be worshipped except You, alone without partner—and that Muhammad is Your servant and Messenger.\n\n(In the evening, one says: ‘I have reached the evening’ instead of ‘I have reached the morning’.)",
+          "text": "Allahumma innī aṣbaḥtu ushhiduka, wa ushhidu ḥamalata ʿarshik, wa malāʾikatak, wa jamīʿa khalqik, annaka anta Allāh, lā ilāha illā ant, waḥdaka lā sharīka lak, wa anna Muḥammadan ʿabduka wa rasūluk.",
+          "translation": "O Allah, verily I have reached the morning and I call upon You, the bearers of Your Throne, Your angels, and all of Your creation to witness that You are Allah—none has the right to be worshipped except You, alone without partner—and that Muhammad is Your servant and Messenger.",
           "referenceText": "Whoever says this four times in the morning or evening will be freed by Allah from the Fire. Reported by Abu Dawud (5071), al-Bukhari in al-Adab al-Mufrad (1201), an-Nasa’i in ‘Amal al-Yawm wa al-Laylah (9), and Ibn as-Sunni (70). Its chain was graded hasan by Shaykh Ibn Baz in Tuhfat al-Akhyar (p. 23)."
         }
       }
@@ -800,8 +800,8 @@
         },
         "en": {
           "title": "Aṣbaḥnā wa aṣbaḥal-mulku lillāh… (1x)",
-          "text": "Aṣbaḥnā wa aṣbaḥal-mulku lillāhi rabbil-ʿālamīn. Allāhumma innī asʾaluka khayra hādhā al-yawm: fatḥahu wa naṣrahu wa nūrahu wa barakatahu wa hudāhu, wa aʿūdhu bika min sharri mā fīhi wa sharri mā baʿdah.\n\n(In the evening): Amsaynā wa amsal-mulku lillāhi rabbil-ʿālamīn. Allāhumma innī asʾaluka khayra hādhihil-laylah: fatḥahā wa naṣrahā wa nūrahā wa barakatahā wa hudāhā, wa aʿūdhu bika min sharri mā fīhā wa sharri mā baʿdahā.",
-          "translation": "We have reached the morning and at this very time all sovereignty belongs to Allah, Lord of the worlds. O Allah, I ask You for the good of this day—its triumphs and victories, its light, its blessings, and its guidance—and I seek refuge in You from the evil of this day and the evil that follows it.\n\n(In the evening): We have reached the evening and at this very time all sovereignty belongs to Allah, Lord of the worlds. O Allah, I ask You for the good of this night—its triumphs and victories, its light, its blessings, and its guidance—and I seek refuge in You from the evil of this night and the evil that follows it.",
+          "text": "Aṣbaḥnā wa aṣbaḥal-mulku lillāhi rabbil-ʿālamīn. Allāhumma innī asʾaluka khayra hādhā al-yawm: fatḥahu wa naṣrahu wa nūrahu wa barakatahu wa hudāhu, wa aʿūdhu bika min sharri mā fīhi wa sharri mā baʿdah.",
+          "translation": "We have reached the morning and at this very time all sovereignty belongs to Allah, Lord of the worlds. O Allah, I ask You for the good of this day—its triumphs and victories, its light, its blessings, and its guidance—and I seek refuge in You from the evil of this day and the evil that follows it.",
           "referenceText": "Reported by Abu Dawud (5084). Its chain was graded hasan by Shuʿayb and ʿAbd al-Qādir al-Arnaʾūṭ in their verification of Zād al-Maʿād (2/373)."
         }
       }
@@ -813,13 +813,13 @@
       "texts": {
         "ar": {
           "title": "أصبحنا على فطرة الإسلام (مرة واحدة)",
-          "text": "أَصْبَحْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا، وَمَا كَانَ مِنَ الْمُشْرِكِينَ.\n\nوَإِذَا أَمْسَى قَالَ: أَمْسَيْنَا عَلَى فِطْرَةِ الْإِسْلَامِ...",
+          "text": "أَصْبَحْنَا عَلَى فِطْرَةِ الْإِسْلَامِ، وَعَلَى كَلِمَةِ الْإِخْلَاصِ، وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا، وَمَا كَانَ مِنَ الْمُشْرِكِينَ.",
           "referenceText": "رواه الإمام أحمد (15360، 15563)، وابن السني في عمل اليوم والليلة (34). وانظر: صحيح الجامع (4/209)."
         },
         "en": {
           "title": "Aṣbaḥnā ʿalā fiṭratil-Islām… (1x)",
-          "text": "Aṣbaḥnā ʿalā fiṭratil-Islām, wa ʿalā kalimatil-ikhlāṣ, wa ʿalā dīni nabiyyinā Muḥammad ﷺ, wa ʿalā millati abīnā Ibrāhīm, ḥanīfan Musliman, wa mā kāna minal-mushrikīn.\n\n(In the evening): Amsaynā ʿalā fiṭratil-Islām…",
-          "translation": "We rise upon the natural disposition of Islam, upon the word of pure faith, upon the religion of our Prophet Muhammad ﷺ, and upon the religion of our forefather Abraham—upright, a Muslim, and not among those who associate partners with Allah.\n\n(In the evening, one says: ‘We have reached the evening upon the fitrah of Islam’.)",
+          "text": "Aṣbaḥnā ʿalā fiṭratil-Islām, wa ʿalā kalimatil-ikhlāṣ, wa ʿalā dīni nabiyyinā Muḥammad ﷺ, wa ʿalā millati abīnā Ibrāhīm, ḥanīfan Musliman, wa mā kāna minal-mushrikīn.",
+          "translation": "We rise upon the natural disposition of Islam, upon the word of pure faith, upon the religion of our Prophet Muhammad ﷺ, and upon the religion of our forefather Abraham—upright, a Muslim, and not among those who associate partners with Allah.",
           "referenceText": "Reported by Ahmad (15360, 15563) and Ibn as-Sunni in ‘Amal al-Yawm wa al-Laylah (34). See also: Ṣaḥīḥ al-Jāmiʿ (4/209)."
         }
       }
