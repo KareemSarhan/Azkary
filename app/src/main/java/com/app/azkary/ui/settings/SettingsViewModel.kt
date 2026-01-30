@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.LatLng
+import com.app.azkary.data.prefs.ThemeMode
+import com.app.azkary.data.prefs.ThemePreferencesRepository
+import com.app.azkary.data.prefs.ThemeSettings
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
@@ -24,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
+    private val themePreferencesRepository: ThemePreferencesRepository,
     private val locationRepository: LocationRepository,
     private val geocodingRepository: com.app.azkary.data.repository.GeocodingRepository,
     private val prayerTimesRepository: PrayerTimesRepository,
@@ -31,6 +35,13 @@ class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
     val appLanguage = userPreferencesRepository.appLanguage
+
+    val themeSettings: StateFlow<ThemeSettings> = themePreferencesRepository.themeSettings
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ThemeSettings()
+        )
 
     val locationPreferences = userPreferencesRepository.locationPreferences
         .stateIn(
@@ -111,6 +122,19 @@ class SettingsViewModel @Inject constructor(
 
     fun clearLocationError() {
         _locationError.value = null
+    }
+
+    // Theme settings methods
+    fun setThemeMode(themeMode: ThemeMode) {
+        viewModelScope.launch {
+            themePreferencesRepository.setThemeMode(themeMode)
+        }
+    }
+
+    fun setUseTrueBlack(useTrueBlack: Boolean) {
+        viewModelScope.launch {
+            themePreferencesRepository.setUseTrueBlack(useTrueBlack)
+        }
     }
 
     // Prayer times methods

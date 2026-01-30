@@ -17,6 +17,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.app.azkary.data.prefs.AppLanguage
+import com.app.azkary.data.prefs.ThemePreferencesRepository
+import com.app.azkary.data.prefs.ThemeSettings
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.ui.reading.ReadingScreen
@@ -33,6 +35,8 @@ class MainActivity : ComponentActivity() {
     
     @Inject lateinit var repository: AzkarRepository
     @Inject lateinit var userPreferencesRepository: UserPreferencesRepository
+    @Inject
+    lateinit var themePreferencesRepository: ThemePreferencesRepository
     @Inject lateinit var localeManager: LocaleManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +44,7 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             val appLanguage by userPreferencesRepository.appLanguage.collectAsState(initial = AppLanguage.SYSTEM)
+            val themeSettings by themePreferencesRepository.themeSettings.collectAsState(initial = ThemeSettings())
             
             val layoutDirection = when (appLanguage) {
                 AppLanguage.ARABIC -> ComposeLayoutDirection.Rtl
@@ -51,7 +56,7 @@ class MainActivity : ComponentActivity() {
             }
 
             CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
-                AzkaryTheme {
+                AzkaryTheme(themeSettings = themeSettings) {
                     LaunchedEffect(Unit) {
                         repository.seedDatabase()
                     }

@@ -32,11 +32,19 @@
     <string name="settings_language">Language</string>
     <string name="settings_language_content_description">Language settings</string>
     <string name="settings_language_subtitle">Change app language</string>
+    <string name="settings_section_theme">THEME</string>
+    <string name="settings_true_black_oled">True Black (OLED)</string>
+    <string name="settings_true_black_description">Pure black background for OLED screens</string>
 
     <!-- Language Options -->
     <string name="language_system_default">System Default</string>
     <string name="language_english">English</string>
     <string name="language_arabic">العربية</string>
+
+    <!-- Theme Options -->
+    <string name="theme_system">System Default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 
     <!-- Date Format (for SummaryScreen) -->
     <string name="date_format_pattern">EEEE dd MMMM</string>

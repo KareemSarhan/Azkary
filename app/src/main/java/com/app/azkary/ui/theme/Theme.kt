@@ -1,7 +1,6 @@
 package com.app.azkary.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -14,6 +13,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.app.azkary.data.prefs.ThemeMode
+import com.app.azkary.data.prefs.ThemeSettings
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -29,12 +30,19 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun AzkaryTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeSettings: ThemeSettings = ThemeSettings(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val darkTheme = when (themeSettings.themeMode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+    }
+
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        darkTheme && themeSettings.useTrueBlack -> TrueBlackColorScheme
+        dynamicColor -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
@@ -46,7 +54,7 @@ fun AzkaryTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 

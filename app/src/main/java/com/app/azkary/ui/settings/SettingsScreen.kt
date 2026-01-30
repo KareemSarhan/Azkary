@@ -31,6 +31,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -46,7 +49,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -55,9 +57,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.R
+import com.app.azkary.data.prefs.ThemeMode
 
-private val NavyDark = Color(0xFF0B1220)
-private val NavyLight = Color(0xFF161D2F)
 private val ToggleRed = Color(0xFFE53935)
 private val ToggleOff = Color(0xFF252D3F)
 private val AccentBlue = Color(0xFF42A5F5)
@@ -66,14 +67,23 @@ private val AccentBlue = Color(0xFF42A5F5)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onBack: () -> Unit,
-    viewModel: SettingsViewModel = hiltViewModel()
+    onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
+    LocalContext.current
     val locationPrefs by viewModel.locationPreferences.collectAsState()
     val isRefreshing by viewModel.isRefreshingLocation.collectAsState()
     val locationError by viewModel.locationError.collectAsState()
     val currentLanguageName = viewModel.getCurrentLanguageDisplayName()
+    val themeSettings by viewModel.themeSettings.collectAsState()
+
+    // Get colors from MaterialTheme
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    MaterialTheme.colorScheme.surfaceVariant
+    val onBackgroundColor = MaterialTheme.colorScheme.onBackground
+    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+    val onSurfaceVariantColor = MaterialTheme.colorScheme.onSurfaceVariant
+    val primaryColor = MaterialTheme.colorScheme.primary
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -97,19 +107,27 @@ fun SettingsScreen(
     }
 
     Scaffold(
-        containerColor = NavyDark,
+        containerColor = backgroundColor,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = NavyDark,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    containerColor = backgroundColor,
+                    titleContentColor = onBackgroundColor,
+                    navigationIconContentColor = onBackgroundColor
                 ),
-                title = { Text(stringResource(R.string.settings_title), fontWeight = FontWeight.SemiBold) },
+                title = {
+                    Text(
+                        stringResource(R.string.settings_title),
+                        fontWeight = FontWeight.SemiBold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.settings_back_content_description))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.settings_back_content_description)
+                        )
                     }
                 })
         }) { padding ->
@@ -117,23 +135,22 @@ fun SettingsScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Brush.verticalGradient(listOf(NavyDark, Color(0xFF050914))))
+                .background(backgroundColor)
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
             // Location Section
-            Text(
-                stringResource(R.string.settings_section_prayer_times),
-                color = Color.White.copy(alpha = 0.5f),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
+            SectionHeader(
+                title = stringResource(R.string.settings_section_prayer_times),
+                color = onBackgroundColor.copy(alpha = 0.6f)
             )
 
-            LocationToggleItem(
+            SettingsToggleItem(
                 title = stringResource(R.string.settings_use_location_title),
                 isEnabled = locationPrefs.useLocation,
-                onToggle = { viewModel.toggleUseLocation(it) }
+                onToggle = { viewModel.toggleUseLocation(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor
             )
 
             Spacer(Modifier.height(8.dp))
@@ -155,7 +172,11 @@ fun SettingsScreen(
                                     Manifest.permission.ACCESS_COARSE_LOCATION
                                 )
                             )
-                        }
+                        },
+                        surfaceColor = surfaceColor,
+                        onSurfaceColor = onSurfaceColor,
+                        onSurfaceVariantColor = onSurfaceVariantColor,
+                        accentColor = AccentBlue
                     )
                     Spacer(Modifier.height(8.dp))
                 }
@@ -164,33 +185,67 @@ fun SettingsScreen(
             Spacer(Modifier.height(16.dp))
 
             // Language Section
-            Text(
-                stringResource(R.string.settings_section_general),
-                color = Color.White.copy(alpha = 0.5f),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
+            SectionHeader(
+                title = stringResource(R.string.settings_section_general),
+                color = onBackgroundColor.copy(alpha = 0.6f)
             )
 
-            LanguageSettingItem(
+            SettingsClickableItem(
                 title = stringResource(R.string.settings_language),
                 subtitle = currentLanguageName,
-                onClick = { viewModel.openLanguageSettings() }
+                onClick = { viewModel.openLanguageSettings() },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            // Theme Section
+            SectionHeader(
+                title = stringResource(R.string.settings_section_theme),
+                color = onBackgroundColor.copy(alpha = 0.6f)
+            )
+
+            ThemeSettingItem(
+                themeMode = themeSettings.themeMode,
+                useTrueBlack = themeSettings.useTrueBlack,
+                onThemeModeChange = { viewModel.setThemeMode(it) },
+                onTrueBlackChange = { viewModel.setUseTrueBlack(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor,
+                primaryColor = primaryColor
             )
         }
     }
 }
 
 @Composable
-fun LocationToggleItem(
+private fun SectionHeader(
+    title: String, color: Color
+) {
+    Text(
+        title,
+        color = color,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
+    )
+}
+
+@Composable
+private fun SettingsToggleItem(
     title: String,
     isEnabled: Boolean,
-    onToggle: (Boolean) -> Unit
+    onToggle: (Boolean) -> Unit,
+    surfaceColor: Color,
+    onSurfaceColor: Color
 ) {
     Surface(
-        color = NavyLight,
+        color = surfaceColor,
         shape = RoundedCornerShape(16.dp),
-        tonalElevation = 0.dp,
+        tonalElevation = 2.dp,
         shadowElevation = 2.dp,
         modifier = Modifier
             .fillMaxWidth()
@@ -202,30 +257,32 @@ fun LocationToggleItem(
         ) {
             Text(
                 title,
-                color = Color.White,
+                color = onSurfaceColor,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.weight(1f)
             )
 
             CustomIosToggle(
-                isOn = isEnabled,
-                onToggle = { onToggle(!isEnabled) }
-            )
+                isOn = isEnabled, onToggle = { onToggle(!isEnabled) })
         }
     }
 }
 
 @Composable
-fun LocationDisplayItem(
+private fun LocationDisplayItem(
     location: com.app.azkary.data.model.LatLng?,
     locationName: String?,
     isRefreshing: Boolean,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    surfaceColor: Color,
+    onSurfaceColor: Color,
+    onSurfaceVariantColor: Color,
+    accentColor: Color
 ) {
     Surface(
-        color = NavyLight,
+        color = surfaceColor,
         shape = RoundedCornerShape(16.dp),
-        tonalElevation = 0.dp,
+        tonalElevation = 2.dp,
         shadowElevation = 2.dp,
         modifier = Modifier
             .fillMaxWidth()
@@ -238,38 +295,35 @@ fun LocationDisplayItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     stringResource(R.string.settings_current_location),
-                    color = Color.White,
+                    color = onSurfaceColor,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(Modifier.height(4.dp))
 
-                // Show city name if available, otherwise coordinates
                 when {
                     locationName != null -> {
                         Text(
                             locationName,
-                            color = Color.White.copy(alpha = 0.8f),
+                            color = onSurfaceColor.copy(alpha = 0.8f),
                             fontSize = 14.sp
                         )
                         location?.let {
                             Text(
-                                it.toString(),
-                                color = Color.White.copy(alpha = 0.5f),
-                                fontSize = 12.sp
+                                it.toString(), color = onSurfaceVariantColor, fontSize = 12.sp
                             )
                         }
                     }
+
                     location != null -> {
                         Text(
-                            location.toString(),
-                            color = Color.White.copy(alpha = 0.6f),
-                            fontSize = 13.sp
+                            location.toString(), color = onSurfaceVariantColor, fontSize = 13.sp
                         )
                     }
+
                     else -> {
                         Text(
                             stringResource(R.string.settings_location_not_available),
-                            color = Color.White.copy(alpha = 0.6f),
+                            color = onSurfaceVariantColor,
                             fontSize = 13.sp
                         )
                     }
@@ -278,16 +332,14 @@ fun LocationDisplayItem(
 
             if (isRefreshing) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = AccentBlue,
-                    strokeWidth = 2.dp
+                    modifier = Modifier.size(24.dp), color = accentColor, strokeWidth = 2.dp
                 )
             } else {
                 IconButton(onClick = onRefresh) {
                     Icon(
                         Icons.Default.Refresh,
                         contentDescription = stringResource(R.string.settings_refresh_location_content_description),
-                        tint = AccentBlue
+                        tint = accentColor
                     )
                 }
             }
@@ -296,36 +348,34 @@ fun LocationDisplayItem(
 }
 
 @Composable
-fun LanguageSettingItem(
+private fun SettingsClickableItem(
     title: String,
     subtitle: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    surfaceColor: Color,
+    onSurfaceColor: Color,
+    onSurfaceVariantColor: Color
 ) {
     Surface(
-        color = NavyLight,
+        color = surfaceColor,
         shape = RoundedCornerShape(16.dp),
-        tonalElevation = 0.dp,
+        tonalElevation = 2.dp,
         shadowElevation = 2.dp,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
-            .clickable { onClick() }
-    ) {
+            .clickable { onClick() }) {
         Row(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    title,
-                    color = Color.White,
-                    fontWeight = FontWeight.Medium
+                    title, color = onSurfaceColor, fontWeight = FontWeight.Medium
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    subtitle,
-                    color = Color.White.copy(alpha = 0.7f),
-                    fontSize = 14.sp
+                    subtitle, color = onSurfaceVariantColor, fontSize = 14.sp
                 )
             }
         }
@@ -333,13 +383,128 @@ fun LanguageSettingItem(
 }
 
 @Composable
+private fun ThemeSettingItem(
+    themeMode: ThemeMode,
+    useTrueBlack: Boolean,
+    onThemeModeChange: (ThemeMode) -> Unit,
+    onTrueBlackChange: (Boolean) -> Unit,
+    surfaceColor: Color,
+    onSurfaceColor: Color,
+    onSurfaceVariantColor: Color,
+    primaryColor: Color
+) {
+    Surface(
+        color = surfaceColor,
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = 2.dp,
+        shadowElevation = 2.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
+        ) {
+            // System option
+            ThemeRadioOption(
+                title = stringResource(R.string.theme_system),
+                isSelected = themeMode == ThemeMode.SYSTEM,
+                onClick = { onThemeModeChange(ThemeMode.SYSTEM) },
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor,
+                primaryColor = primaryColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            // Light option
+            ThemeRadioOption(
+                title = stringResource(R.string.theme_light),
+                isSelected = themeMode == ThemeMode.LIGHT,
+                onClick = { onThemeModeChange(ThemeMode.LIGHT) },
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor,
+                primaryColor = primaryColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            // Dark option
+            ThemeRadioOption(
+                title = stringResource(R.string.theme_dark),
+                isSelected = themeMode == ThemeMode.DARK,
+                onClick = { onThemeModeChange(ThemeMode.DARK) },
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor,
+                primaryColor = primaryColor
+            )
+
+            // True Black toggle (only visible when Dark is selected)
+            AnimatedVisibility(visible = themeMode == ThemeMode.DARK) {
+                Column {
+                    Spacer(Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.settings_true_black_oled),
+                                color = onSurfaceColor,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                stringResource(R.string.settings_true_black_description),
+                                color = onSurfaceVariantColor,
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(top = 2.dp)
+                            )
+                        }
+                        CustomIosToggle(
+                            isOn = useTrueBlack, onToggle = { onTrueBlackChange(!useTrueBlack) })
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ThemeRadioOption(
+    title: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    onSurfaceColor: Color,
+    onSurfaceVariantColor: Color,
+    primaryColor: Color
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(
+            selected = isSelected, onClick = onClick, colors = RadioButtonDefaults.colors(
+                selectedColor = primaryColor, unselectedColor = onSurfaceVariantColor
+            )
+        )
+        Text(
+            text = title,
+            color = onSurfaceColor,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+    }
+}
+
+@Composable
 fun CustomIosToggle(
-    isOn: Boolean,
-    onToggle: () -> Unit
+    isOn: Boolean, onToggle: () -> Unit
 ) {
     val trackColor by animateColorAsState(
-        targetValue = if (isOn) ToggleRed else ToggleOff,
-        label = "trackColor"
+        targetValue = if (isOn) ToggleRed else ToggleOff, label = "trackColor"
     )
 
     // sizes
@@ -351,8 +516,7 @@ fun CustomIosToggle(
     // computed max offset = width - (thumbSize + 2*padding)
     val maxOffset = w - thumbSize - (padding * 2)
     val thumbOffset by animateDpAsState(
-        targetValue = if (isOn) maxOffset else 0.dp,
-        label = "thumbOffset"
+        targetValue = if (isOn) maxOffset else 0.dp, label = "thumbOffset"
     )
 
     Box(

@@ -31,12 +31,20 @@
     <string name="settings_section_general">عام</string>
     <string name="settings_language">اللغة</string>
     <string name="settings_language_content_description">إعدادات اللغة</string>
+    <string name="settings_language_subtitle">غير اللغه</string>
+    <string name="settings_section_theme">المظهر</string>
+    <string name="settings_true_black_oled">أسود حقيقي (OLED)</string>
+    <string name="settings_true_black_description">خلفية سوداء نقية لشاشات OLED</string>
 
     <!-- Language Options -->
-    <string name="settings_language_subtitle">غير اللغه</string>
     <string name="language_system_default">النظام الافتراضي</string>
     <string name="language_english">English</string>
     <string name="language_arabic">العربية</string>
+
+    <!-- Theme Options -->
+    <string name="theme_system">النظام الافتراضي</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
 
     <!-- Date Format (for SummaryScreen) -->
     <string name="date_format_pattern">EEEE dd MMMM</string>
