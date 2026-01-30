@@ -1,8 +1,10 @@
 package com.app.azkary.data.repository
 
+import android.Manifest
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import androidx.annotation.RequiresPermission
 import com.app.azkary.data.local.dao.PrayerDayDao
 import com.app.azkary.data.local.dao.PrayerMonthDao
 import com.app.azkary.data.local.entities.PrayerDayEntity
@@ -14,15 +16,12 @@ import com.app.azkary.domain.AzkarWindowEngine
 import com.app.azkary.domain.model.DayPrayerTimes
 import com.app.azkary.domain.model.WindowCalculationResult
 import com.app.azkary.util.PrayerTimeParser
-import com.app.azkary.util.ParsingException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -42,33 +41,40 @@ class PrayerTimesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMonthlyPrayerTimes(
-        year: Int,
-        month: Int,
-        latitude: Double,
-        longitude: Double,
-        methodId: Int,
-        school: Int
-    ): PrayerCalendarResponse = withContext(Dispatchers.IO) {
-        
+        year: Int, month: Int, latitude: Double, longitude: Double, methodId: Int, school: Int
+    ): PrayerCalendarResponse = withContext(Dispatchers.IO) @RequiresPermission(
+        Manifest.permission.ACCESS_NETWORK_STATE
+    ) {
+
         // First, try to get from cache
         val cachedMonth = prayerMonthDao.getMonth(year, month, latitude, longitude, methodId)
-        
+
         if (cachedMonth != null && !shouldRefreshMonth(cachedMonth)) {
-            // Return cached data if it's fresh enough
+            // Check if cached data is corrupted (0 days)
             val cachedDays = prayerDayDao.getDaysForMonth(cachedMonth.id)
-            return@withContext mapCachedToResponse(cachedMonth, cachedDays)
+            println("DEBUG: PrayerTimesRepositoryImpl - Cached days count: ${cachedDays.size}")
+            
+            // If cache has 0 days, it's corrupted - clear it and force refresh
+            if (cachedDays.isEmpty()) {
+                println("DEBUG: PrayerTimesRepositoryImpl - Detected corrupted cache (0 days), clearing and forcing refresh")
+                clearCorruptedCache(cachedMonth)
+                // Don't return, continue to network fetch
+            } else {
+                // Return cached data if it's fresh and valid
+                return@withContext mapCachedToResponse(cachedMonth, cachedDays)
+            }
         }
-        
+
         // If no cache or needs refresh, try network
         if (isNetworkAvailable()) {
             try {
                 val response = networkRepository.fetchMonthlyPrayerTimes(
                     year, month, latitude, longitude, methodId, school
                 )
-                
+
                 // Cache the response
                 cacheResponse(response, year, month, latitude, longitude, methodId)
-                
+
                 return@withContext response
             } catch (e: Exception) {
                 // Network failed, try to return stale cache if available
@@ -76,7 +82,7 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                     val days = prayerDayDao.getDaysForMonth(month.id)
                     return@withContext mapCachedToResponse(month, days)
                 }
-                
+
                 // No cache available, rethrow the network exception
                 throw e
             }
@@ -84,54 +90,88 @@ class PrayerTimesRepositoryImpl @Inject constructor(
             // No network, return cache if available
             cachedMonth?.let { month ->
                 val days = prayerDayDao.getDaysForMonth(month.id)
+                // Check if cache is corrupted even when offline
+                if (days.isEmpty()) {
+                    println("DEBUG: PrayerTimesRepositoryImpl - Offline but cache is corrupted (0 days)")
+                    throw ApiException("No network connection and corrupted cache data")
+                }
                 return@withContext mapCachedToResponse(month, days)
             }
-            
+
             throw ApiException("No network connection and no cached data available")
         }
     }
 
     override suspend fun getDayPrayerTimes(
-        date: LocalDate,
-        latitude: Double,
-        longitude: Double,
-        methodId: Int,
-        school: Int
-    ): DayPrayerTimes? = withContext(Dispatchers.IO) {
-        
-        // Try to get from cache first
-        val monthEntity = prayerMonthDao.getMonth(
-            date.year, date.monthValue, latitude, longitude, methodId
-        )
-        
-        if (monthEntity != null) {
-            val dayEntity = prayerDayDao.getDay(monthEntity.id, date)
-            if (dayEntity != null) {
-                return@withContext mapEntityToDayPrayerTimes(dayEntity, monthEntity.timezone)
-            }
-        }
-        
-        // If not in cache, fetch month and try again
-        try {
-            getMonthlyPrayerTimes(date.year, date.monthValue, latitude, longitude, methodId, school)
-            
-            // Try cache again after fetch
-            val refreshedMonth = prayerMonthDao.getMonth(
+        date: LocalDate, latitude: Double, longitude: Double, methodId: Int, school: Int
+    ): DayPrayerTimes? =
+        withContext(Dispatchers.IO) @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE) {
+
+            println("DEBUG: PrayerTimesRepositoryImpl - getDayPrayerTimes called for date=$date, lat=$latitude, lon=$longitude")
+
+            // Try to get from cache first
+            val monthEntity = prayerMonthDao.getMonth(
                 date.year, date.monthValue, latitude, longitude, methodId
             )
-            
-            refreshedMonth?.let { month ->
-                val dayEntity = prayerDayDao.getDay(month.id, date)
-                return@withContext dayEntity?.let { 
-                    mapEntityToDayPrayerTimes(it, month.timezone)
+
+            println("DEBUG: PrayerTimesRepositoryImpl - Cached monthEntity: $monthEntity")
+
+            if (monthEntity != null) {
+                val dayEntity = prayerDayDao.getDay(monthEntity.id, date)
+                println("DEBUG: PrayerTimesRepositoryImpl - Cached dayEntity: $dayEntity")
+                if (dayEntity != null) {
+                    val result = mapEntityToDayPrayerTimes(dayEntity, monthEntity.timezone)
+                    println("DEBUG: PrayerTimesRepositoryImpl - Returning cached prayer times: $result")
+                    return@withContext result
                 }
             }
-            
-            return@withContext null
-        } catch (e: Exception) {
-            return@withContext null
+
+            println("DEBUG: PrayerTimesRepositoryImpl - No cache found, checking network availability")
+
+            // Check network availability
+            if (!isNetworkAvailable()) {
+                println("DEBUG: PrayerTimesRepositoryImpl - No network connection, returning null")
+                return@withContext null
+            }
+
+            println("DEBUG: PrayerTimesRepositoryImpl - Network available, fetching from API")
+
+            // If not in cache, fetch month and try again
+            try {
+                println("DEBUG: PrayerTimesRepositoryImpl - Calling getMonthlyPrayerTimes")
+                val monthlyResponse = getMonthlyPrayerTimes(
+                    date.year, date.monthValue, latitude, longitude, methodId, school
+                )
+                println("DEBUG: PrayerTimesRepositoryImpl - Monthly response received: ${monthlyResponse.data.size} days")
+
+                // Try cache again after fetch
+                val refreshedMonth = prayerMonthDao.getMonth(
+                    date.year, date.monthValue, latitude, longitude, methodId
+                )
+
+                println("DEBUG: PrayerTimesRepositoryImpl - Refreshed monthEntity: $refreshedMonth")
+
+                refreshedMonth?.let { month ->
+                    val dayEntity = prayerDayDao.getDay(month.id, date)
+                    println("DEBUG: PrayerTimesRepositoryImpl - Day entity after refresh: $dayEntity")
+                    return@withContext dayEntity?.let {
+                        val result = mapEntityToDayPrayerTimes(it, month.timezone)
+                        println("DEBUG: PrayerTimesRepositoryImpl - Returning fresh prayer times: $result")
+                        result
+                    }
+                }
+
+                println("DEBUG: PrayerTimesRepositoryImpl - No day entity found after refresh, returning null")
+                return@withContext null
+            } catch (e: ApiException) {
+                println("DEBUG: PrayerTimesRepositoryImpl - API Exception: ${e.message}")
+                return@withContext null
+            } catch (e: Exception) {
+                println("DEBUG: PrayerTimesRepositoryImpl - Exception during fetch: ${e.message}")
+                e.printStackTrace()
+                return@withContext null
+            }
         }
-    }
 
     override suspend fun getPrayerTimesInRange(
         startDate: LocalDate,
@@ -141,37 +181,34 @@ class PrayerTimesRepositoryImpl @Inject constructor(
         methodId: Int,
         school: Int
     ): List<DayPrayerTimes> = withContext(Dispatchers.IO) {
-        
+
         if (startDate.isAfter(endDate)) {
             return@withContext emptyList()
         }
-        
+
         val result = mutableListOf<DayPrayerTimes>()
         var currentDate = startDate
-        
+
         while (!currentDate.isAfter(endDate)) {
             val dayTimes = getDayPrayerTimes(currentDate, latitude, longitude, methodId, school)
             dayTimes?.let { result.add(it) }
             currentDate = currentDate.plusDays(1)
         }
-        
+
         result
     }
 
     override suspend fun getCurrentWindows(
-        latitude: Double,
-        longitude: Double,
-        methodId: Int,
-        school: Int
+        latitude: Double, longitude: Double, methodId: Int, school: Int
     ): WindowCalculationResult = withContext(Dispatchers.IO) {
-        
+
         val now = Instant.now()
         val today = LocalDate.now()
         val tomorrow = today.plusDays(1)
-        
+
         val todayTimes = getDayPrayerTimes(today, latitude, longitude, methodId, school)
         val tomorrowTimes = getDayPrayerTimes(tomorrow, latitude, longitude, methodId, school)
-        
+
         if (todayTimes == null) {
             return@withContext WindowCalculationResult(
                 currentWindow = null,
@@ -180,36 +217,58 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                 tomorrowTimes = tomorrowTimes
             )
         }
-        
+
         windowEngine.calculateWindows(now, todayTimes, tomorrowTimes)
     }
 
     override suspend fun refreshMonth(
-        year: Int,
-        month: Int,
-        latitude: Double,
-        longitude: Double,
-        methodId: Int,
-        school: Int
-    ): PrayerCalendarResponse = withContext(Dispatchers.IO) {
-        
+        year: Int, month: Int, latitude: Double, longitude: Double, methodId: Int, school: Int
+    ): PrayerCalendarResponse = withContext(Dispatchers.IO) @RequiresPermission(
+        Manifest.permission.ACCESS_NETWORK_STATE
+    ) {
+
         if (!isNetworkAvailable()) {
             throw ApiException("No network connection available for refresh")
         }
-        
+
         val response = networkRepository.fetchMonthlyPrayerTimes(
             year, month, latitude, longitude, methodId, school
         )
-        
+
         // Force cache update
         cacheResponse(response, year, month, latitude, longitude, methodId)
-        
+
         response
     }
 
     override suspend fun clearOldCache(keepLastMonths: Int) = withContext(Dispatchers.IO) {
         val cutoffDate = Instant.now().minus(keepLastMonths.toLong(), ChronoUnit.MONTHS)
         prayerMonthDao.deleteOldMonths(cutoffDate)
+    }
+
+    // Enhanced mapDtoToEntity method with proper date parsing and error handling
+    private fun mapDtoToEntity(dto: PrayerDayDto, monthId: Long): PrayerDayEntity {
+        try {
+            // Parse DD-MM-YYYY format from API response
+            val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")
+            val date = LocalDate.parse(dto.date.gregorian.date, dateFormatter)
+            println("DEBUG: PrayerTimesRepositoryImpl - Successfully parsed date: ${dto.date.gregorian.date} -> $date")
+            
+            return PrayerDayEntity(
+                monthId = monthId,
+                date = date,
+                fajr = PrayerTimeParser.parseTimeString(dto.timings.Fajr),
+                dhuhr = PrayerTimeParser.parseTimeString(dto.timings.Dhuhr),
+                asr = PrayerTimeParser.parseTimeString(dto.timings.Asr),
+                maghrib = PrayerTimeParser.parseTimeString(dto.timings.Maghrib),
+                isha = PrayerTimeParser.parseTimeString(dto.timings.Isha),
+                sunrise = PrayerTimeParser.parseTimeString(dto.timings.Sunrise),
+                sunset = PrayerTimeParser.parseTimeString(dto.timings.Sunset)
+            )
+        } catch (e: Exception) {
+            println("DEBUG: PrayerTimesRepositoryImpl - Error parsing day entity for date ${dto.date.gregorian.date}: ${e.message}")
+            throw e // Re-throw to prevent silent filtering
+        }
     }
 
     private suspend fun cacheResponse(
@@ -220,7 +279,7 @@ class PrayerTimesRepositoryImpl @Inject constructor(
         longitude: Double,
         methodId: Int
     ) {
-        // Create or update month entity
+        println("DEBUG: PrayerTimesRepositoryImpl - Caching response with ${response.data.size} days")        // Create or update month entity
         val monthEntity = PrayerMonthEntity(
             year = year,
             month = month,
@@ -229,39 +288,37 @@ class PrayerTimesRepositoryImpl @Inject constructor(
             methodId = methodId,
             timezone = response.data.firstOrNull()?.meta?.timezone ?: "UTC"
         )
-        
         val monthId = prayerMonthDao.insertMonth(monthEntity)
-        
-        // Convert and cache day entities
-        val dayEntities = response.data.mapNotNull { dayDto ->
+        println("DEBUG: PrayerTimesRepositoryImpl - Created month entity with ID: $monthId")        // Convert and cache day entities with error tracking
+        val dayEntities = mutableListOf<PrayerDayEntity>()
+        val errors = mutableListOf<String>()
+        response.data.forEachIndexed { index, dayDto ->
             try {
-                mapDtoToEntity(dayDto, monthId)
-            } catch (e: ParsingException) {
-                // Skip invalid prayer times but continue processing others
-                null
+                val entity = mapDtoToEntity(dayDto, monthId)
+                dayEntities.add(entity)
+                println("DEBUG: PrayerTimesRepositoryImpl - Successfully processed day ${index + 1}: ${dayDto.date.gregorian.date}")
+            } catch (e: Exception) {
+                val errorMsg =
+                    "Failed to process day ${index + 1} (${dayDto.date.gregorian.date}): ${e.message}"
+                errors.add(errorMsg)
+                println("DEBUG: PrayerTimesRepositoryImpl - $errorMsg")
             }
         }
-        
-        prayerDayDao.upsertMonth(monthId, dayEntities)
+        println("DEBUG: PrayerTimesRepositoryImpl - Successfully processed ${dayEntities.size} days, ${errors.size} errors")
+        if (errors.isNotEmpty()) {
+            println("DEBUG: PrayerTimesRepositoryImpl - Errors: ${errors.joinToString("; ")}")
+        }
+        if (dayEntities.isNotEmpty()) {
+            prayerDayDao.upsertMonth(monthId, dayEntities)
+            println("DEBUG: PrayerTimesRepositoryImpl - Cached ${dayEntities.size} day entities")
+        } else {
+            println("DEBUG: PrayerTimesRepositoryImpl - No valid day entities to cache!")
+        }
     }
 
-    private fun mapDtoToEntity(dto: PrayerDayDto, monthId: Long): PrayerDayEntity {
-        val date = LocalDate.parse(dto.date.gregorian.date)
-        
-        return PrayerDayEntity(
-            monthId = monthId,
-            date = date,
-            fajr = PrayerTimeParser.parseTimeString(dto.timings.Fajr),
-            dhuhr = PrayerTimeParser.parseTimeString(dto.timings.Dhuhr),
-            asr = PrayerTimeParser.parseTimeString(dto.timings.Asr),
-            maghrib = PrayerTimeParser.parseTimeString(dto.timings.Maghrib),
-            isha = PrayerTimeParser.parseTimeString(dto.timings.Isha),
-            sunrise = PrayerTimeParser.parseTimeString(dto.timings.Sunrise),
-            sunset = PrayerTimeParser.parseTimeString(dto.timings.Sunset)
-        )
-    }
-
-    private fun mapEntityToDayPrayerTimes(entity: PrayerDayEntity, timezone: String): DayPrayerTimes {
+    private fun mapEntityToDayPrayerTimes(
+        entity: PrayerDayEntity, timezone: String
+    ): DayPrayerTimes {
         return DayPrayerTimes(
             date = entity.date,
             fajr = entity.fajr,
@@ -273,7 +330,9 @@ class PrayerTimesRepositoryImpl @Inject constructor(
         )
     }
 
-    private fun mapCachedToResponse(month: PrayerMonthEntity, days: List<PrayerDayEntity>): PrayerCalendarResponse {
+    private fun mapCachedToResponse(
+        month: PrayerMonthEntity, days: List<PrayerDayEntity>
+    ): PrayerCalendarResponse {
         val dayDtos = days.map { entity ->
             PrayerDayDto(
                 timings = com.app.azkary.data.network.dto.PrayerTimingsDto(
@@ -284,28 +343,23 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                     Sunset = entity.sunset.toString(),
                     Maghrib = entity.maghrib.toString(),
                     Isha = entity.isha.toString()
-                ),
-                date = com.app.azkary.data.network.dto.DateDto(
+                ), date = com.app.azkary.data.network.dto.DateDto(
                     gregorian = com.app.azkary.data.network.dto.GregorianDateDto(
                         date = entity.date.toString(),
                         day = entity.date.dayOfMonth.toString(),
                         month = com.app.azkary.data.network.dto.MonthDto(
-                            number = entity.date.monthValue,
-                            en = entity.date.month.name
+                            number = entity.date.monthValue, en = entity.date.month.name
                         ),
                         year = entity.date.year.toString()
                     )
-                ),
-                meta = com.app.azkary.data.network.dto.MetaDto(
+                ), meta = com.app.azkary.data.network.dto.MetaDto(
                     timezone = month.timezone
                 )
             )
         }
-        
+
         return PrayerCalendarResponse(
-            code = 200,
-            status = "OK",
-            data = dayDtos
+            code = 200, status = "OK", data = dayDtos
         )
     }
 
@@ -316,9 +370,33 @@ class PrayerTimesRepositoryImpl @Inject constructor(
         return ageMillis > cacheRefreshInterval
     }
 
+    @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     private fun isNetworkAvailable(): Boolean {
-        val network = connectivityManager.activeNetwork
-        val capabilities = connectivityManager.getNetworkCapabilities(network)
-        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        return try {
+            val network = connectivityManager.activeNetwork
+            val capabilities = connectivityManager.getNetworkCapabilities(network)
+            capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        } catch (e: SecurityException) {
+            // If we don't have ACCESS_NETWORK_STATE permission, assume network is available
+            // This allows the app to attempt API calls even without network state checking
+            println("DEBUG: PrayerTimesRepositoryImpl - No network state permission, assuming network available")
+            true
+        } catch (e: Exception) {
+            // Any other exception, assume no network
+            println("DEBUG: PrayerTimesRepositoryImpl - Error checking network: ${e.message}")
+            false
+        }
+    }
+
+    // Helper method to clear corrupted cache data
+    private suspend fun clearCorruptedCache(monthEntity: PrayerMonthEntity) {
+        println("DEBUG: PrayerTimesRepositoryImpl - Clearing corrupted cache for month: ${monthEntity.year}-${monthEntity.month}")
+         
+        // Delete all day entities for this month
+        prayerDayDao.deleteDaysForMonth(monthEntity.id)
+         
+        // Note: We can't delete the month entity directly as deleteMonth method doesn't exist
+        // The month will be overwritten when new data is cached
+        println("DEBUG: PrayerTimesRepositoryImpl - Corrupted cache cleared successfully")
     }
 }

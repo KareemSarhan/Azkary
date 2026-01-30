@@ -34,7 +34,24 @@ class SummaryViewModel @Inject constructor(
     private val prayerTimesRepository: PrayerTimesRepository
 ) : ViewModel() {
 
-    private val effectiveLang = userPreferencesRepository.appLanguage.map { 
+    init {
+        println("DEBUG: SummaryViewModel - ViewModel initialized")
+        // Auto-refresh prayer times when ViewModel is created and location is enabled
+        viewModelScope.launch {
+            userPreferencesRepository.locationPreferences.collect { prefs ->
+                println("DEBUG: SummaryViewModel - Location prefs changed: useLocation=${prefs.useLocation}, location=${prefs.lastResolvedLocation}")
+                if (prefs.useLocation && prefs.lastResolvedLocation != null) {
+                    println("DEBUG: SummaryViewModel - Location enabled, calling refreshPrayerTimes")
+                    refreshPrayerTimes()
+                } else {
+                    println("DEBUG: SummaryViewModel - Location not enabled or no location, keeping sessionEndTime null")
+                    _sessionEndTime.value = null
+                }
+            }
+        }
+    }
+
+    private val effectiveLang = userPreferencesRepository.appLanguage.map {
         if (it == AppLanguage.SYSTEM) Locale.getDefault().language else it.tag
     }
     private val fallbackTags = listOf("ar", "en")
@@ -62,22 +79,31 @@ class SummaryViewModel @Inject constructor(
     private fun refreshPrayerTimes() {
         viewModelScope.launch {
             try {
+                println("DEBUG: SummaryViewModel - refreshPrayerTimes called")
                 // Get current location preferences without blocking
                 val locationPrefs = userPreferencesRepository.locationPreferences.first()
+                println("DEBUG: SummaryViewModel - Location prefs: useLocation=${locationPrefs.useLocation}, location=${locationPrefs.lastResolvedLocation}")
+                
                 if (!locationPrefs.useLocation || locationPrefs.lastResolvedLocation == null) {
+                    println("DEBUG: SummaryViewModel - Location not enabled or null, keeping sessionEndTime null")
                     // Graceful fallback - keep default behavior if location unavailable
                     _sessionEndTime.value = null
                     return@launch
                 }
                 
                 val location = locationPrefs.lastResolvedLocation
+                println("DEBUG: SummaryViewModel - Getting windows for location: $location")
+                
                 val windows = prayerTimesRepository.getCurrentWindows(
                     latitude = location.latitude,
                     longitude = location.longitude
                 )
+                println("DEBUG: SummaryViewModel - Received windows: currentWindow=${windows.currentWindow}, nextWindow=${windows.nextWindow}")
                 _currentWindows.value = windows
                 updateSessionEndTime(windows)
             } catch (e: Exception) {
+                println("DEBUG: SummaryViewModel - Error in refreshPrayerTimes: ${e.message}")
+                e.printStackTrace()
                 // Graceful fallback - keep default behavior if prayer times unavailable
                 _sessionEndTime.value = null
             }
@@ -85,11 +111,14 @@ class SummaryViewModel @Inject constructor(
     }
 
     private fun updateSessionEndTime(windows: WindowCalculationResult) {
+        println("DEBUG: SummaryViewModel - updateSessionEndTime called with windows: $windows")
         windows.currentWindow?.let { currentWindow ->
             val endTime = currentWindow.end.atZone(ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern("HH:mm"))
+            println("DEBUG: SummaryViewModel - Setting sessionEndTime to: $endTime for window: ${currentWindow.window}")
             _sessionEndTime.value = endTime
         } ?: run {
+            println("DEBUG: SummaryViewModel - No current window found, setting sessionEndTime to null")
             _sessionEndTime.value = null
         }
     }
