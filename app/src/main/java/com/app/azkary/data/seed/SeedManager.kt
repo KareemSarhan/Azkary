@@ -3,9 +3,11 @@ package com.app.azkary.data.seed
 import android.content.Context
 import androidx.room.withTransaction
 import com.app.azkary.data.local.AzkarDatabase
-import com.app.azkary.data.local.entities.*
-import com.app.azkary.data.model.*
-import kotlinx.coroutines.flow.first
+import com.app.azkary.data.local.entities.AzkarItemEntity
+import com.app.azkary.data.local.entities.AzkarTextEntity
+import com.app.azkary.data.local.entities.CategoryEntity
+import com.app.azkary.data.local.entities.CategoryItemCrossRefEntity
+import com.app.azkary.data.local.entities.CategoryTextEntity
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,9 +28,18 @@ class SeedManager @Inject constructor(
                 context.assets.open("seed_azkar.json").bufferedReader().use { it.readText() }
 
             val seedPack = jsonConfig.decodeFromString<SeedPack>(jsonString)
-            if (database.getDbVersion() < seedPack.schemaVersion)
+            val currentDbVersion = database.getDbVersion()
+            println("DEBUG: SeedManager - Current DB version: $currentDbVersion, Seed schema version: ${seedPack.schemaVersion}")
+            
+            if (currentDbVersion < seedPack.schemaVersion) {
+                println("DEBUG: SeedManager - Starting seed import")
                 importSeedPack(seedPack)
+                println("DEBUG: SeedManager - Seed import completed")
+            } else {
+                println("DEBUG: SeedManager - Skipping seed import - DB version is up to date")
+            }
         } catch (e: Exception) {
+            println("DEBUG: SeedManager - Error during seeding: ${e.message}")
             e.printStackTrace()
         }
     }
