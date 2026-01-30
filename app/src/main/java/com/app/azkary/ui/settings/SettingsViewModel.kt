@@ -1,15 +1,17 @@
 package com.app.azkary.ui.settings
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.LatLng
-import com.app.azkary.data.prefs.AppLanguage
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.domain.model.DayPrayerTimes
 import com.app.azkary.domain.model.WindowCalculationResult
+import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +26,9 @@ class SettingsViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val locationRepository: LocationRepository,
     private val geocodingRepository: com.app.azkary.data.repository.GeocodingRepository,
-    private val prayerTimesRepository: PrayerTimesRepository
+    private val prayerTimesRepository: PrayerTimesRepository,
+    private val localeManager: LocaleManager,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
     val appLanguage = userPreferencesRepository.appLanguage
 
@@ -54,10 +58,18 @@ class SettingsViewModel @Inject constructor(
     private val _isRefreshingPrayerTimes = MutableStateFlow(false)
     val isRefreshingPrayerTimes: StateFlow<Boolean> = _isRefreshingPrayerTimes.asStateFlow()
 
-    fun setAppLanguage(language: AppLanguage) {
-        viewModelScope.launch {
-            userPreferencesRepository.setAppLanguage(language)
-        }
+    /**
+     * Get the display name of the current language
+     */
+    fun getCurrentLanguageDisplayName(): String {
+        return localeManager.getCurrentLanguageDisplayName(context)
+    }
+
+    /**
+     * Open the Android app-specific language settings
+     */
+    fun openLanguageSettings() {
+        localeManager.openAppLanguageSettings(context)
     }
 
     fun toggleUseLocation(enabled: Boolean) {

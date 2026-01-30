@@ -23,6 +23,7 @@ import com.app.azkary.ui.reading.ReadingScreen
 import com.app.azkary.ui.settings.SettingsScreen
 import com.app.azkary.ui.summary.SummaryScreen
 import com.app.azkary.ui.theme.AzkaryTheme
+import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.compose.ui.unit.LayoutDirection as ComposeLayoutDirection
@@ -32,9 +33,11 @@ class MainActivity : ComponentActivity() {
     
     @Inject lateinit var repository: AzkarRepository
     @Inject lateinit var userPreferencesRepository: UserPreferencesRepository
+    @Inject lateinit var localeManager: LocaleManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
         setContent {
             val appLanguage by userPreferencesRepository.appLanguage.collectAsState(initial = AppLanguage.SYSTEM)
             

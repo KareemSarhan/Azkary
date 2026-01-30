@@ -36,11 +36,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.azkary.R
+import com.app.azkary.util.BidiHelper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -90,12 +93,16 @@ fun ReadingScreen(
                     title = {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "Reading",
+                                text = stringResource(R.string.reading_title),
                                 style = MaterialTheme.typography.titleMedium
                             )
 
                             if (items.isNotEmpty()) {
-                                val pageText = "${pagerState.currentPage + 1} of ${items.size}"
+                                val pageText = BidiHelper.formatPageCounter(
+                                    pagerState.currentPage + 1,
+                                    items.size,
+                                    context
+                                )
 
                                 LtrText(
                                     text = pageText,
@@ -109,7 +116,7 @@ fun ReadingScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back"
+                                contentDescription = stringResource(R.string.reading_back_content_description)
                             )
                         }
                     },
@@ -122,7 +129,11 @@ fun ReadingScreen(
                                 modifier = Modifier.padding(end = 8.dp)
                             ) {
                                 LtrText(
-                                    text = "${currentItem.currentRepeats} / ${currentItem.requiredRepeats}",
+                                    text = BidiHelper.formatRepeatCounter(
+                                        currentItem.currentRepeats,
+                                        currentItem.requiredRepeats,
+                                        context
+                                    ),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = colors.onSurfaceVariant,
                                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)

@@ -35,13 +35,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.azkary.R
 import com.app.azkary.data.model.CategoryUi
+import com.app.azkary.util.BidiHelper
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,24 +56,26 @@ fun SummaryScreen(
     onNavigateToSettings: () -> Unit,
     viewModel: SummaryViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val categories by viewModel.categories.collectAsState(initial = emptyList())
     val currentSession by viewModel.currentSession.collectAsState(initial = null)
     val sessionEndTime by viewModel.sessionEndTime.collectAsState(initial = null)
 
     val today = androidx.compose.runtime.remember {
-        LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE dd MMMM"))
+        val currentLocale = Locale.getDefault()
+        LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(currentLocale))
     }
 
     Scaffold(
         topBar = {
             TopAppBar(title = {
                 Column {
-                    Text("Summary", style = MaterialTheme.typography.headlineMedium)
+                    Text(stringResource(R.string.summary_title), style = MaterialTheme.typography.headlineMedium)
                     Text(today, style = MaterialTheme.typography.bodyMedium)
                 }
             }, actions = {
                 IconButton(onClick = onNavigateToSettings) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.summary_settings_content_description))
                 }
             })
         }) { padding ->
@@ -89,7 +97,7 @@ fun SummaryScreen(
 
             item {
                 Text(
-                    text = "Today",
+                    text = stringResource(R.string.summary_today),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -104,7 +112,7 @@ fun SummaryScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No categories for today",
+                            text = stringResource(R.string.summary_no_categories),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -127,6 +135,7 @@ fun CurrentSessionCard(
     sessionEndTime: String?,
     onContinue: () -> Unit
 ) {
+    val context = LocalContext.current
     val progress = category.progress.coerceIn(0f, 1f)
 
     Card(
@@ -147,7 +156,7 @@ fun CurrentSessionCard(
             Column {
                 Text(category.name, color = Color.White, style = MaterialTheme.typography.headlineSmall)
                 Text(
-                    text = sessionEndTime?.let { "Ends $it" } ?: "Missed",
+                    text = sessionEndTime?.let { stringResource(R.string.summary_session_ends, it) } ?: stringResource(R.string.summary_session_missed),
                     color = Color.White.copy(alpha = 0.7f)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -160,7 +169,7 @@ fun CurrentSessionCard(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "${(progress * 100).toInt()}% Completed",
+                            text = BidiHelper.formatProgress((progress * 100).toInt(), context),
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
@@ -172,7 +181,7 @@ fun CurrentSessionCard(
                                 contentColor = Color.Black
                             )
                         ) {
-                            Text("Continue")
+                            Text(stringResource(R.string.summary_continue))
                         }
                     }
 
@@ -211,7 +220,7 @@ fun CategoryItem(
         ) {
             Column {
                 Text(category.name, style = MaterialTheme.typography.titleMedium)
-                Text("Scheduled", style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.summary_scheduled), style = MaterialTheme.typography.bodySmall)
             }
 
             RingProgress(

@@ -7,9 +7,9 @@ An Android application for daily Islamic remembrances (Azkar) with progress trac
 ### Core Functionality
 
 #### 🕌 Azkar Categories
-- **Morning Adhkar** (أذكار الصباح) - 25 remembrances
-- **Evening Adhkar** (أذكار المساء) - 22 remembrances  
-- **Sleep Adhkar** (أذكار النوم) - 16 remembrances
+- **Morning Azkar** (أذكار الصباح) - 25 remembrances
+- **Evening Azkar** (أذكار المساء) - 22 remembrances  
+- **Sleep Azkar** (أذكار النوم) - 16 remembrances
 - Each category contains authentic Islamic supplications with references
 
 #### 📖 Reading Experience

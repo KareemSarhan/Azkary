@@ -6,6 +6,7 @@ import com.app.azkary.data.local.AzkarDatabase
 import com.app.azkary.data.local.dao.*
 import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.LocationRepositoryImpl
+import com.app.azkary.util.LocaleManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.Binds
@@ -93,5 +94,13 @@ object AppModule {
         // Cache refresh interval in milliseconds (24 hours by default)
         // This could be made configurable via preferences in the future
         return 24 * 60 * 60 * 1000L
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocaleManager(
+        @ApplicationContext context: Context
+    ): LocaleManager {
+        return LocaleManager(context)
     }
 }

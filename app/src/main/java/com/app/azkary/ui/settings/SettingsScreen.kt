@@ -1,9 +1,6 @@
 package com.app.azkary.ui.settings
 
 import android.Manifest
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -29,7 +26,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,19 +42,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.app.azkary.R
 
 private val NavyDark = Color(0xFF0B1220)
 private val NavyLight = Color(0xFF161D2F)
@@ -77,6 +73,7 @@ fun SettingsScreen(
     val locationPrefs by viewModel.locationPreferences.collectAsState()
     val isRefreshing by viewModel.isRefreshingLocation.collectAsState()
     val locationError by viewModel.locationError.collectAsState()
+    val currentLanguageName = viewModel.getCurrentLanguageDisplayName()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -109,10 +106,10 @@ fun SettingsScreen(
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White
                 ),
-                title = { Text("Settings", fontWeight = FontWeight.SemiBold) },
+                title = { Text(stringResource(R.string.settings_title), fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.settings_back_content_description))
                     }
                 })
         }) { padding ->
@@ -126,7 +123,7 @@ fun SettingsScreen(
         ) {
             // Location Section
             Text(
-                "PRAYER TIMES",
+                stringResource(R.string.settings_section_prayer_times),
                 color = Color.White.copy(alpha = 0.5f),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -134,7 +131,7 @@ fun SettingsScreen(
             )
 
             LocationToggleItem(
-                title = "Use location for prayer times",
+                title = stringResource(R.string.settings_use_location_title),
                 isEnabled = locationPrefs.useLocation,
                 onToggle = { viewModel.toggleUseLocation(it) }
             )
@@ -166,22 +163,20 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // Other Settings
+            // Language Section
             Text(
-                "GENERAL",
+                stringResource(R.string.settings_section_general),
                 color = Color.White.copy(alpha = 0.5f),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
             )
 
-            SettingsItem(
-                title = "Language", onClick = {
-                    val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
-                        data = Uri.fromParts("package", context.packageName, null)
-                    }
-                    context.startActivity(intent)
-                })
+            LanguageSettingItem(
+                title = stringResource(R.string.settings_language),
+                subtitle = currentLanguageName,
+                onClick = { viewModel.openLanguageSettings() }
+            )
         }
     }
 }
@@ -242,7 +237,7 @@ fun LocationDisplayItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    "Current Location",
+                    stringResource(R.string.settings_current_location),
                     color = Color.White,
                     fontWeight = FontWeight.Medium
                 )
@@ -273,7 +268,7 @@ fun LocationDisplayItem(
                     }
                     else -> {
                         Text(
-                            "Not available",
+                            stringResource(R.string.settings_location_not_available),
                             color = Color.White.copy(alpha = 0.6f),
                             fontSize = 13.sp
                         )
@@ -291,7 +286,7 @@ fun LocationDisplayItem(
                 IconButton(onClick = onRefresh) {
                     Icon(
                         Icons.Default.Refresh,
-                        contentDescription = "Refresh location",
+                        contentDescription = stringResource(R.string.settings_refresh_location_content_description),
                         tint = AccentBlue
                     )
                 }
@@ -301,12 +296,12 @@ fun LocationDisplayItem(
 }
 
 @Composable
-fun SettingsItem(
+fun LanguageSettingItem(
     title: String,
+    subtitle: String,
     onClick: () -> Unit
 ) {
     Surface(
-        onClick = onClick,
         color = NavyLight,
         shape = RoundedCornerShape(16.dp),
         tonalElevation = 0.dp,
@@ -314,23 +309,25 @@ fun SettingsItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
+            .clickable { onClick() }
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                title,
-                color = Color.White,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.weight(1f)
-            )
-
-            Icon(
-                Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = Color.White.copy(alpha = 0.6f)
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    title,
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    subtitle,
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 14.sp
+                )
+            }
         }
     }
 }

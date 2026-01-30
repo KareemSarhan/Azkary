@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "generatedAt": "2026-01-13T00:00:00Z",
   "categories": [
     {
@@ -15,7 +15,7 @@
           "name": "أذكار الصباح"
         },
         "en": {
-          "name": "Morning Adhkar"
+          "name": "Morning Azkar"
         }
       },
       "items": [
@@ -158,7 +158,7 @@
           "name": "أذكار المساء"
         },
         "en": {
-          "name": "Evening Adhkar"
+          "name": "Evening Azkar"
         }
       },
       "items": [
@@ -286,7 +286,7 @@
           "name": "أذكار النوم"
         },
         "en": {
-          "name": "Sleep Adhkar"
+          "name": "Sleep Azkar"
         }
       },
       "items": [
@@ -550,7 +550,7 @@
           "title": "Ikhlas + Al-Falaq + An-Nas (3x)",
           "text": "Recite: Qul Huwa Allāhu Aḥad, Qul Aʿūdhu bi Rabbil-Falaq, and Qul Aʿūdhu bi Rabbin-Nās — three times each.",
           "translation": "Recite Surah Al-Ikhlas, Al-Falaq, and An-Nas three times each (morning and evening) for protection.",
-          "referenceText": "This practice is included in standard morning/evening adhkar compilations (e.g., Hisn al-Muslim), with attributions to the Sunan collections."
+          "referenceText": "This practice is included in standard morning/evening azkar compilations (e.g., Hisn al-Muslim), with attributions to the Sunan collections."
         }
       }
     },
@@ -604,7 +604,7 @@
           "title": "Contentment with Allah (3x)",
           "text": "Raḍītu billāhi Rabban, wa bil-Islāmi dīnan, wa bi-Muḥammadin ﷺ nabiyyan.",
           "translation": "I am pleased with Allah as my Lord, with Islam as my religion, and with Muhammad as my Prophet.",
-          "referenceText": "This dhikr is recited three times in the morning and evening. It is commonly cited in the collections of morning/evening adhkar (e.g., Hisn al-Muslim) with attributions to Ahmad, an-Nasa’i, at-Tirmidhi and others.[Abu Dawood 5072]"
+          "referenceText": "This dhikr is recited three times in the morning and evening. It is commonly cited in the collections of morning/evening azkar (e.g., Hisn al-Muslim) with attributions to Ahmad, an-Nasa’i, at-Tirmidhi and others.[Abu Dawood 5072]"
         }
       }
     },

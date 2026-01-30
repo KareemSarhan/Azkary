@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.com/adhkar.schema.json",
-  "title": "Adhkar Catalog Schema",
+  "$id": "https://example.com/azkar.schema.json",
+  "title": "Azkar Catalog Schema",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "generatedAt", "categories", "items"],

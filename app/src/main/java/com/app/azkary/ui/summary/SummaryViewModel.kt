@@ -9,20 +9,20 @@ import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.domain.model.WindowCalculationResult
-
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 import javax.inject.Inject
 
@@ -62,19 +62,32 @@ class SummaryViewModel @Inject constructor(
             fallbackTags = fallbackTags
         )
     }
-    
-    val currentSession: Flow<CategoryUi?> = categories.map { list ->
-        list.find { it.systemKey == SystemCategoryKey.MORNING }
-            ?: list.find { it.systemKey == SystemCategoryKey.NIGHT }
-            ?: list.firstOrNull()
-    }
 
-    // Prayer times state - simplified for now
+    // Prayer times state - must be declared before currentSession uses it
     private val _sessionEndTime = MutableStateFlow<String?>(null)
     val sessionEndTime: StateFlow<String?> = _sessionEndTime.asStateFlow()
 
     private val _currentWindows = MutableStateFlow<WindowCalculationResult?>(null)
     val currentWindows: StateFlow<WindowCalculationResult?> = _currentWindows.asStateFlow()
+
+    /**
+     * Maps AzkarWindow to SystemCategoryKey for category selection
+     */
+    private fun azkarWindowToCategoryKey(window: com.app.azkary.domain.model.AzkarWindow): SystemCategoryKey {
+        return when (window) {
+            com.app.azkary.domain.model.AzkarWindow.MORNING -> SystemCategoryKey.MORNING
+            com.app.azkary.domain.model.AzkarWindow.NIGHT -> SystemCategoryKey.NIGHT
+            com.app.azkary.domain.model.AzkarWindow.SLEEP -> SystemCategoryKey.SLEEP
+        }
+    }
+
+    val currentSession: Flow<CategoryUi?> = categories.combine(currentWindows) { categoryList, windows ->
+        val targetKey = windows?.currentWindow?.window?.let { azkarWindowToCategoryKey(it) }
+        categoryList.find { it.systemKey == targetKey }
+            ?: categoryList.find { it.systemKey == SystemCategoryKey.MORNING }
+            ?: categoryList.find { it.systemKey == SystemCategoryKey.NIGHT }
+            ?: categoryList.firstOrNull()
+    }
 
     private fun refreshPrayerTimes() {
         viewModelScope.launch {
@@ -113,8 +126,11 @@ class SummaryViewModel @Inject constructor(
     private fun updateSessionEndTime(windows: WindowCalculationResult) {
         println("DEBUG: SummaryViewModel - updateSessionEndTime called with windows: $windows")
         windows.currentWindow?.let { currentWindow ->
+            // Get the current locale for formatting
+            val currentLocale = Locale.getDefault()
             val endTime = currentWindow.end.atZone(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("HH:mm"))
+                .toLocalTime()
+                .format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(currentLocale))
             println("DEBUG: SummaryViewModel - Setting sessionEndTime to: $endTime for window: ${currentWindow.window}")
             _sessionEndTime.value = endTime
         } ?: run {

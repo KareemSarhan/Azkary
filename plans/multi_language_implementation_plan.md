@@ -292,7 +292,7 @@ Contains category definitions with multilingual names. Categories are shared acr
           "name": "أذكار الصباح"
         },
         "en": {
-          "name": "Morning Adhkar"
+          "name": "Morning Azkar"
         }
       },
       "items": [
