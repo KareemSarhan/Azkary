@@ -64,7 +64,6 @@ class SummaryViewModel @Inject constructor(
     val categories: Flow<List<CategoryUi>> = flowOf(currentLangTag).flatMapLatest { lang ->
         repository.observeCategoriesWithDisplayName(
             langTag = lang,
-            fallbackTags = fallbackTags
         )
     }
 

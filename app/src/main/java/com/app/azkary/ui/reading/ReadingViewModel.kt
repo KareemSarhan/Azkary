@@ -33,13 +33,10 @@ class ReadingViewModel @Inject constructor(
     private val currentLangTag: String
         get() = localeManager.getCurrentLanguageTag(context)
 
-    private val fallbackTags = listOf("ar", "en")
-
     val items: Flow<List<AzkarItemUi>> = flowOf(currentLangTag).flatMapLatest { lang ->
         repository.observeItemsForCategory(
             categoryId,
             langTag = lang,
-            fallbackTags,
             today
         )
     }

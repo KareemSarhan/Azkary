@@ -14,7 +14,13 @@ import com.app.azkary.data.seed.SeedManager
 import com.app.azkary.util.ArabicNormalizer
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,7 +42,6 @@ class AzkarRepository @Inject constructor(
         texts: List<T>,
         langTagSelector: (T) -> String,
         preferredLang: String,
-        fallbacks: List<String>
     ): T? {
         if (texts.isEmpty()) return null
         val textMap = texts.associateBy { langTagSelector(it) }
@@ -44,14 +49,11 @@ class AzkarRepository @Inject constructor(
         textMap[preferredLang]?.let { return it }
         val baseLang = preferredLang.substringBefore('-')
         textMap[baseLang]?.let { return it }
-        fallbacks.forEach { fallback -> textMap[fallback]?.let { return it } }
-        
         return texts.first()
     }
 
     fun observeCategoriesWithDisplayName(
         langTag: String,
-        fallbackTags: List<String>
     ): Flow<List<CategoryUi>> {
         return categoryDao.getActiveCategoriesOrdered().flatMapLatest { categories ->
             if (categories.isEmpty()) return@flatMapLatest flowOf(emptyList())
@@ -64,7 +66,7 @@ class AzkarRepository @Inject constructor(
                 )
                 
                 categoryTextDao.getCategoryTexts(category.categoryId).map { texts ->
-                    val bestText = selectBestText(texts, { it.langTag }, langTag, fallbackTags)
+                    val bestText = selectBestText(texts, { it.langTag }, langTag)
                     category to (bestText?.name ?: "Unknown")
                 }.combine(weightedProgressFlow) { (cat, name), progress ->
                     CategoryUi(
@@ -85,7 +87,6 @@ class AzkarRepository @Inject constructor(
     fun observeItemsForCategory(
         categoryId: String,
         langTag: String,
-        fallbackTags: List<String>,
         date: String = LocalDate.now().toString()
     ): Flow<List<AzkarItemUi>> {
         return combine(
@@ -101,7 +102,7 @@ class AzkarRepository @Inject constructor(
                     itemDao.getItemById(crossRef.itemId).filterNotNull()
                 ) { texts, item ->
                     val arabicText = texts.find { it.langTag == "ar" }?.text
-                    val bestText = selectBestText(texts, { it.langTag }, langTag, fallbackTags)
+                    val bestText = selectBestText(texts, { it.langTag }, langTag)
                     val progress = progressMap[crossRef.itemId]
                     
                     AzkarItemUi(
