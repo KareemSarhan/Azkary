@@ -3,8 +3,8 @@
   <component name="deploymentTargetSelector">
     <selectionStates>
       <SelectionState runConfigName="app">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-01-28T14:57:13.364869800Z">
+        <option name="selectionMode" value="DIALOG" />
+        <DropdownSelection timestamp="2026-01-31T15:56:08.789270800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\20106\.android\avd\Dark_Ar.avd" />
@@ -15,22 +15,12 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\20106\.android\avd\Pixel_Tablet_10i.avd" />
-              </handle>
-            </Target>
-            <Target type="DEFAULT_BOOT">
-              <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\20106\.android\avd\Dark_Ar.avd" />
-              </handle>
-            </Target>
-            <Target type="DEFAULT_BOOT">
-              <handle>
                 <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\20106\.android\avd\Medium_Phone.avd" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\20106\.android\avd\Pixel_6_Pro_6.7.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\20106\.android\avd\Dark_Ar.avd" />
               </handle>
             </Target>
           </targets>
