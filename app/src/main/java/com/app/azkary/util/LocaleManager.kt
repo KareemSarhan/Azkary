@@ -21,11 +21,6 @@ import javax.inject.Singleton
 class LocaleManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-
-    companion object {
-        private const val TAG = "LocaleManager"
-    }
-
     /**
      * Get the current locale of the application
      *
@@ -69,15 +64,6 @@ class LocaleManager @Inject constructor(
     fun getCurrentLanguageDisplayName(context: Context): String {
         val locale = getCurrentLocale(context)
         return locale.getDisplayName(locale).replaceFirstChar { it.uppercase() }
-    }
-
-    /**
-     * Check if the current language is Arabic
-     *
-     * @return true if Arabic, false otherwise
-     */
-    fun isCurrentLanguageArabic(context: Context): Boolean {
-        return getCurrentLanguageTag(context) == "ar"
     }
 
     /**

@@ -1,15 +1,17 @@
 package com.app.azkary.ui.summary
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.CategoryUi
 import com.app.azkary.data.model.SystemCategoryKey
-import com.app.azkary.data.prefs.AppLanguage
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.domain.model.WindowCalculationResult
+import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -31,7 +33,9 @@ import javax.inject.Inject
 class SummaryViewModel @Inject constructor(
     private val repository: AzkarRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val prayerTimesRepository: PrayerTimesRepository
+    private val prayerTimesRepository: PrayerTimesRepository,
+    private val localeManager: LocaleManager,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     init {
@@ -51,12 +55,13 @@ class SummaryViewModel @Inject constructor(
         }
     }
 
-    private val effectiveLang = userPreferencesRepository.appLanguage.map {
-        if (it == AppLanguage.SYSTEM) Locale.getDefault().language else it.tag
-    }
     private val fallbackTags = listOf("ar", "en")
 
-    val categories: Flow<List<CategoryUi>> = effectiveLang.flatMapLatest { lang ->
+    // Get current language tag directly from LocaleManager
+    private val currentLangTag: String
+        get() = localeManager.getCurrentLanguageTag(context)
+
+    val categories: Flow<List<CategoryUi>> = flowOf(currentLangTag).flatMapLatest { lang ->
         repository.observeCategoriesWithDisplayName(
             langTag = lang,
             fallbackTags = fallbackTags

@@ -34,7 +34,6 @@ class SettingsViewModel @Inject constructor(
     private val localeManager: LocaleManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
-    val appLanguage = userPreferencesRepository.appLanguage
 
     val themeSettings: StateFlow<ThemeSettings> = themePreferencesRepository.themeSettings
         .stateIn(
