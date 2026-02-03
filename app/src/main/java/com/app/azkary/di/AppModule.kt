@@ -3,10 +3,18 @@ package com.app.azkary.di
 import android.content.Context
 import androidx.room.Room
 import com.app.azkary.data.local.AzkarDatabase
-import com.app.azkary.data.local.dao.*
+import com.app.azkary.data.local.dao.AzkarItemDao
+import com.app.azkary.data.local.dao.AzkarTextDao
+import com.app.azkary.data.local.dao.CategoryDao
+import com.app.azkary.data.local.dao.CategoryItemDao
+import com.app.azkary.data.local.dao.CategoryTextDao
+import com.app.azkary.data.local.dao.PrayerDayDao
+import com.app.azkary.data.local.dao.PrayerMonthDao
+import com.app.azkary.data.local.dao.ProgressDao
 import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.LocationRepositoryImpl
 import com.app.azkary.util.LocaleManager
+import com.app.azkary.util.SupportHelper
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.Binds
@@ -47,7 +55,7 @@ object AppModule {
             "azkar_db"
         )
             .fallbackToDestructiveMigration(false) // Resetting for the final schema version
-        .build()
+            .build()
     }
 
     @Provides
@@ -102,5 +110,14 @@ object AppModule {
         @ApplicationContext context: Context
     ): LocaleManager {
         return LocaleManager(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSupportHelper(
+        @ApplicationContext context: Context,
+        localeManager: LocaleManager
+    ): SupportHelper {
+        return SupportHelper(context, localeManager)
     }
 }

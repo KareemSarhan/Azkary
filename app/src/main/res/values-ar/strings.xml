@@ -48,4 +48,20 @@
 
     <!-- Date Format (for SummaryScreen) -->
     <string name="date_format_pattern">EEEE dd MMMM</string>
+
+    <!-- Support / Feedback -->
+    <string name="settings_support_feedback">الدعم / الملاحظات</string>
+    <string name="support_option_email">البريد الإلكتروني</string>
+    <string name="support_email_address">kareemsarhan@gmail.com</string>
+    <string name="support_email_subject">ملاحظات التطبيق / الدعم</string>
+    <string name="support_useful_info_label">[معلومات مفيدة]</string>
+    <string name="support_app_version_label">إصدار التطبيق:</string>
+    <string name="support_build_label">إصدار</string>
+    <string name="support_android_version_label">أندرويد:</string>
+    <string name="support_device_label">الجهاز:</string>
+    <string name="support_locale_label">اللغة:</string>
+    <string name="support_timezone_label">التوقيت:</string>
+    <string name="support_install_id_label">معرف التثبيت:</string>
+    <string name="support_write_message_instruction">======= يرجى كتابة رسالتك أدناه (بأي لغة) =======</string>
+    <string name="support_no_app_found">لم يتم العثور على تطبيق لإكمال هذا الإجراء.</string>
 </resources>

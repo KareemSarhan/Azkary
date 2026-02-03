@@ -48,4 +48,20 @@
 
     <!-- Date Format (for SummaryScreen) -->
     <string name="date_format_pattern">EEEE dd MMMM</string>
+
+    <!-- Support / Feedback -->
+    <string name="settings_support_feedback">Support / Feedback</string>
+    <string name="support_option_email">Email</string>
+    <string name="support_email_address" translatable="false">kareemsarhan@gmail.com</string>
+    <string name="support_email_subject">App Feedback / Support</string>
+    <string name="support_useful_info_label">[Useful Info]</string>
+    <string name="support_app_version_label">App Version:</string>
+    <string name="support_build_label">build</string>
+    <string name="support_android_version_label">Android:</string>
+    <string name="support_device_label">Device:</string>
+    <string name="support_locale_label">Locale:</string>
+    <string name="support_timezone_label">Timezone:</string>
+    <string name="support_install_id_label">Install ID:</string>
+    <string name="support_write_message_instruction">======= Please write your message below (any language) =======</string>
+    <string name="support_no_app_found">No app found to complete this action.</string>
 </resources>

@@ -45,7 +45,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -58,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.R
 import com.app.azkary.data.prefs.ThemeMode
+import kotlinx.coroutines.launch
 
 private val ToggleRed = Color(0xFFE53935)
 private val ToggleOff = Color(0xFF252D3F)
@@ -75,6 +79,10 @@ fun SettingsScreen(
     val locationError by viewModel.locationError.collectAsState()
     val currentLanguageName = viewModel.getCurrentLanguageDisplayName()
     val themeSettings by viewModel.themeSettings.collectAsState()
+
+    // Support/Feedback sheet state
+    var showSupportSheet by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     // Get colors from MaterialTheme
     val backgroundColor = MaterialTheme.colorScheme.background
@@ -199,6 +207,17 @@ fun SettingsScreen(
                 onSurfaceVariantColor = onSurfaceVariantColor
             )
 
+            Spacer(Modifier.height(8.dp))
+
+            SettingsClickableItem(
+                title = stringResource(R.string.settings_support_feedback),
+                subtitle = "",
+                onClick = { showSupportSheet = true },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
+
             Spacer(Modifier.height(16.dp))
 
             // Theme Section
@@ -218,6 +237,18 @@ fun SettingsScreen(
                 primaryColor = primaryColor
             )
         }
+    }
+
+    // Support/Feedback Bottom Sheet
+    if (showSupportSheet) {
+        SupportFeedbackSheet(
+            onDismiss = { showSupportSheet = false },
+            onShowToast = { message ->
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(message)
+                }
+            }
+        )
     }
 }
 
@@ -373,10 +404,12 @@ private fun SettingsClickableItem(
                 Text(
                     title, color = onSurfaceColor, fontWeight = FontWeight.Medium
                 )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    subtitle, color = onSurfaceVariantColor, fontSize = 14.sp
-                )
+                if (subtitle.isNotEmpty()) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        subtitle, color = onSurfaceVariantColor, fontSize = 14.sp
+                    )
+                }
             }
         }
     }
