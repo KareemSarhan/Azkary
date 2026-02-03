@@ -14,8 +14,8 @@ android {
         applicationId = "com.app.azkary"
         minSdk = 33
         targetSdk = 36
-        versionCode = 5
-        versionName = "1.5"
+        versionCode = 6
+        versionName = "1.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -25,11 +25,16 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
+
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
     }
     compileOptions {
@@ -45,7 +50,8 @@ android {
 
                 if (kspTask != null) {
                     // Ensure kspOutputDir is a DirectoryProperty
-                    val kspOutputDir = project.objects.directoryProperty().fileValue(file("${layout.buildDirectory.get()}/generated/ksp/${variant.name}/kotlin"))
+                    val kspOutputDir = project.objects.directoryProperty()
+                        .fileValue(file("${layout.buildDirectory.get()}/generated/ksp/${variant.name}/kotlin"))
 
                     // Ensure that kspTask is a TaskProvider<Task>
                     variant.sources.java?.addGeneratedSourceDirectory(
@@ -91,7 +97,6 @@ dependencies {
 
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
-    
     implementation(libs.play.services.location)
 
     // Networking
