@@ -21,6 +21,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import java.util.UUID
+
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -125,6 +127,41 @@ class CategoryCreationViewModel @Inject constructor(
                         onError(errorMsg)
                     }
                 }
+            }
+        }
+    }
+    
+    fun onAddCustomZikr(
+        arabicText: String,
+        transliteration: String,
+        translation: String,
+        reference: String,
+        requiredRepeats: Int,
+        isInfinite: Boolean
+    ) {
+        viewModelScope.launch {
+            try {
+                val itemId = repository.createCustomZikr(
+                    arabicText = arabicText,
+                    transliteration = transliteration,
+                    translation = translation,
+                    reference = reference,
+                    requiredRepeats = requiredRepeats,
+                    isInfinite = isInfinite,
+                    langTag = localeManager.getCurrentLanguageTag(context)
+                )
+                
+                val selectedItems = _uiState.value.selectedItems.toMutableList()
+                selectedItems.add(
+                    CategoryItemConfig(
+                        itemId = itemId,
+                        requiredRepeats = if (isInfinite) 0 else requiredRepeats,
+                        isInfinite = isInfinite
+                    )
+                )
+                _uiState.value = _uiState.value.copy(selectedItems = selectedItems)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(error = "Failed to create zikr: ${e.message}")
             }
         }
     }

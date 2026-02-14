@@ -9,6 +9,7 @@ import com.app.azkary.data.local.dao.CategoryTextDao
 import com.app.azkary.data.local.dao.ProgressDao
 import com.app.azkary.data.local.entities.UserProgressEntity
 import com.app.azkary.data.local.entities.AzkarItemEntity
+import com.app.azkary.data.local.entities.AzkarTextEntity
 import com.app.azkary.data.local.entities.CategoryEntity
 import com.app.azkary.data.local.entities.CategoryItemCrossRefEntity
 import com.app.azkary.data.local.entities.CategoryTextEntity
@@ -339,6 +340,57 @@ class AzkarRepository @Inject constructor(
     suspend fun deleteCategory(categoryId: String) {
         categoryDao.deleteCategory(categoryId)
     }
+
+    suspend fun createCustomZikr(
+        arabicText: String,
+        transliteration: String,
+        translation: String,
+        reference: String,
+        requiredRepeats: Int,
+        isInfinite: Boolean,
+        langTag: String
+    ): String {
+        val itemId = "user_${UUID.randomUUID().toString()}"
+        
+        itemDao.upsertItem(AzkarItemEntity(
+            itemId = itemId,
+            requiredRepeats = if (isInfinite) 0 else requiredRepeats,
+            source = com.app.azkary.data.model.AzkarSource.USER,
+            isInfinite = isInfinite
+        ))
+        
+        // Save Arabic text
+        textDao.upsertText(AzkarTextEntity(
+            itemId = itemId,
+            langTag = "ar",
+            text = arabicText.ifBlank { null },
+            translation = translation.ifBlank { null },
+            referenceText = reference.ifBlank { null }
+        ))
+        
+        // Save transliteration for current language
+        textDao.upsertText(AzkarTextEntity(
+            itemId = itemId,
+            langTag = langTag,
+            text = transliteration.ifBlank { null },
+            translation = translation.ifBlank { null },
+            referenceText = reference.ifBlank { null }
+        ))
+        
+        // Also save to English as fallback
+        if (langTag != "en") {
+            textDao.upsertText(AzkarTextEntity(
+                itemId = itemId,
+                langTag = "en",
+                text = transliteration.ifBlank { null },
+                translation = translation.ifBlank { null },
+                referenceText = reference.ifBlank { null }
+            ))
+        }
+        
+        return itemId
+    }
+
 
     suspend fun reorderCategories(categoryIds: List<String>) {
         categoryIds.forEachIndexed { index, categoryId ->

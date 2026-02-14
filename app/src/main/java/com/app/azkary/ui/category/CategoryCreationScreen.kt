@@ -105,6 +105,8 @@ fun CategoryCreationScreen(
         }
     }
     
+    var showCustomZikrDialog by remember { mutableStateOf(false) }
+    
     val filteredItems = if (uiState.searchQuery.isBlank()) {
         availableItems
     } else {
@@ -272,13 +274,12 @@ fun CategoryCreationScreen(
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = false
+                    onClick = { showCustomZikrDialog = true },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Add Custom Zikr (Coming Soon)")
+                    Text("Add Custom Zikr")
                 }
             }
             
@@ -286,6 +287,23 @@ fun CategoryCreationScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
+    }
+    
+    if (showCustomZikrDialog) {
+        CustomZikrDialog(
+            onDismiss = { showCustomZikrDialog = false },
+            onSave = { arabic, transliteration, translation, reference, repeats, isInfinite ->
+                viewModel.onAddCustomZikr(
+                    arabicText = arabic,
+                    transliteration = transliteration,
+                    translation = translation,
+                    reference = reference,
+                    requiredRepeats = repeats,
+                    isInfinite = isInfinite
+                )
+                showCustomZikrDialog = false
+            }
+        )
     }
 }
 
