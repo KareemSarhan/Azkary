@@ -23,6 +23,15 @@ interface CategoryDao {
 
     @Query("UPDATE categories SET sortOrder = :sortOrder WHERE categoryId = :categoryId")
     suspend fun updateSortOrder(categoryId: String, sortOrder: Int)
+
+    @Query("DELETE FROM categories WHERE categoryId = :categoryId AND type = 'USER'")
+    suspend fun deleteCategory(categoryId: String)
+
+    @Query("SELECT * FROM categories WHERE categoryId = :categoryId")
+    fun getCategoryById(categoryId: String): Flow<CategoryEntity?>
+
+    @Query("SELECT MAX(sortOrder) FROM categories WHERE isArchived = 0")
+    suspend fun getMaxSortOrder(): Int?
 }
 
 @Dao
@@ -32,6 +41,12 @@ interface CategoryTextDao {
 
     @Query("SELECT * FROM category_texts WHERE categoryId = :categoryId")
     fun getCategoryTexts(categoryId: String): Flow<List<CategoryTextEntity>>
+
+    @Upsert
+    suspend fun upsertCategoryText(text: CategoryTextEntity)
+
+    @Query("DELETE FROM category_texts WHERE categoryId = :categoryId")
+    suspend fun deleteCategoryTexts(categoryId: String)
 }
 
 @Dao
@@ -41,6 +56,15 @@ interface AzkarItemDao {
 
     @Query("SELECT * FROM azkar_items WHERE itemId = :itemId")
     fun getItemById(itemId: String): Flow<AzkarItemEntity?>
+
+    @Upsert
+    suspend fun upsertItem(item: AzkarItemEntity)
+
+    @Query("SELECT * FROM azkar_items WHERE source = 'SEEDED' ORDER BY itemId")
+    fun getSeededItems(): Flow<List<AzkarItemEntity>>
+
+    @Query("DELETE FROM azkar_items WHERE itemId = :itemId AND source = 'USER'")
+    suspend fun deleteCustomItem(itemId: String)
 }
 
 @Dao
@@ -50,6 +74,15 @@ interface AzkarTextDao {
 
     @Query("SELECT * FROM azkar_texts WHERE itemId = :itemId")
     fun getTextsForItem(itemId: String): Flow<List<AzkarTextEntity>>
+
+    @Query("SELECT * FROM azkar_texts WHERE itemId IN (:itemIds) AND langTag = :langTag")
+    fun getTextsForItems(itemIds: List<String>, langTag: String): Flow<List<AzkarTextEntity>>
+
+    @Upsert
+    suspend fun upsertText(text: AzkarTextEntity)
+
+    @Query("DELETE FROM azkar_texts WHERE itemId = :itemId")
+    suspend fun deleteTextsForItem(itemId: String)
 }
 
 data class ItemWithTextProjection(
@@ -61,6 +94,7 @@ data class ItemWithTextProjection(
 data class ItemWeightProjection(
     val itemId: String,
     val requiredRepeats: Int,
+    val isInfinite: Boolean,
     @ColumnInfo(name = "arabicText")
     val arabicText: String?
 )
@@ -70,7 +104,7 @@ interface CategoryItemDao {
     @Transaction
     @Query("""
         SELECT 
-            ai.itemId as item_itemId, ai.requiredRepeats as item_requiredRepeats, ai.source as item_source, ai.createdAt as item_createdAt, ai.updatedAt as item_updatedAt,
+            ai.itemId as item_itemId, ai.requiredRepeats as item_requiredRepeats, ai.source as item_source, ai.createdAt as item_createdAt, ai.updatedAt as item_updatedAt, ai.isInfinite as item_isInfinite,
             at.itemId as text_itemId, at.langTag as text_langTag, at.title as text_title, at.text as text_text, at.translation as text_translation, at.referenceText as text_referenceText,
             cicr.sortOrder 
         FROM azkar_items ai
@@ -82,7 +116,7 @@ interface CategoryItemDao {
     fun getEnabledItemsWithText(categoryId: String, langTag: String): Flow<List<ItemWithTextProjection>>
 
     @Query("""
-        SELECT ai.itemId, ai.requiredRepeats, at.text as arabicText FROM azkar_items ai
+        SELECT ai.itemId, ai.requiredRepeats, ai.isInfinite, at.text as arabicText FROM azkar_items ai
         JOIN category_item_crossrefs cicr ON ai.itemId = cicr.itemId
         LEFT JOIN azkar_texts at ON ai.itemId = at.itemId AND at.langTag = 'ar'
         WHERE cicr.categoryId = :categoryId AND cicr.isEnabled = 1
@@ -97,6 +131,12 @@ interface CategoryItemDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCrossRefs(crossRefs: List<CategoryItemCrossRefEntity>)
+
+    @Query("DELETE FROM category_item_crossrefs WHERE categoryId = :categoryId")
+    suspend fun deleteCategoryItems(categoryId: String)
+
+    @Query("DELETE FROM category_item_crossrefs WHERE categoryId = :categoryId AND itemId = :itemId")
+    suspend fun removeItemFromCategory(categoryId: String, itemId: String)
 }
 
 @Dao
@@ -109,4 +149,7 @@ interface ProgressDao {
 
     @Upsert
     suspend fun upsertProgress(progress: UserProgressEntity)
+
+    @Query("DELETE FROM user_progress WHERE categoryId = :categoryId")
+    suspend fun deleteProgressForCategory(categoryId: String)
 }

@@ -72,6 +72,10 @@ class SummaryViewModel @Inject constructor(
     private val _currentWindows = MutableStateFlow<WindowCalculationResult?>(null)
     val currentWindows: StateFlow<WindowCalculationResult?> = _currentWindows.asStateFlow()
 
+    // Edit mode state
+    private val _isEditMode = MutableStateFlow(false)
+    val isEditMode: StateFlow<Boolean> = _isEditMode.asStateFlow()
+
     /**
      * Maps AzkarWindow to SystemCategoryKey for category selection
      */
@@ -158,6 +162,16 @@ class SummaryViewModel @Inject constructor(
                 // Category is incomplete, mark as complete
                 repository.markCategoryComplete(categoryId, today)
             }
+        }
+    }
+
+    fun toggleEditMode() {
+        _isEditMode.value = !_isEditMode.value
+    }
+
+    fun deleteCategory(categoryId: String) {
+        viewModelScope.launch {
+            repository.deleteCategory(categoryId)
         }
     }
 }

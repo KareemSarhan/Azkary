@@ -138,11 +138,15 @@ fun ReadingScreen(
                                 modifier = Modifier.padding(end = 8.dp)
                             ) {
                                 LtrText(
-                                    text = BidiHelper.formatRepeatCounter(
-                                        currentItem.currentRepeats,
-                                        currentItem.requiredRepeats,
-                                        context
-                                    ),
+                                    text = if (currentItem.isInfinite) {
+                                        currentItem.currentRepeats.toString()
+                                    } else {
+                                        BidiHelper.formatRepeatCounter(
+                                            currentItem.currentRepeats,
+                                            currentItem.requiredRepeats,
+                                            context
+                                        )
+                                    },
                                     style = MaterialTheme.typography.labelMedium,
                                     color = colors.onSurfaceVariant,
                                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
@@ -201,7 +205,7 @@ fun ReadingScreen(
                         
                         // 3. Auto-Next Check
                         val willBeComplete = (item.currentRepeats + 1) >= item.requiredRepeats
-                        if (willBeComplete && page < items.size - 1) {
+                        if (willBeComplete && page < items.size - 1 && !item.isInfinite) {
                             scope.launch {
                                 // Delay so user sees the final count (e.g. 33/33)
                                 delay(0)
@@ -272,3 +276,4 @@ private fun LinearProgressBar(
             }
     )
 }
+

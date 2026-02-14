@@ -12,6 +12,8 @@
     <string name="summary_progress_completed">%d%% Completed</string>
     <string name="summary_continue">Continue</string>
     <string name="summary_scheduled">Scheduled</string>
+    <string name="summary_add_category">Add Category</string>
+    <string name="summary_create_category">Create Category</string>
     <string name="summary_settings_content_description">Settings</string>
 
     <!-- Reading Screen -->

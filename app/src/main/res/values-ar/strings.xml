@@ -12,6 +12,8 @@
     <string name="summary_progress_completed">%d%% مكتمل</string>
     <string name="summary_continue">متابعة</string>
     <string name="summary_scheduled">مجدول</string>
+    <string name="summary_add_category">إضافة تصنيف</string>
+    <string name="summary_create_category">إنشاء تصنيف</string>
     <string name="summary_settings_content_description">الإعدادات</string>
 
     <!-- Reading Screen -->

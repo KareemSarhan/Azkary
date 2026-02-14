@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -54,12 +57,14 @@ import java.util.Locale
 fun SummaryScreen(
     onNavigateToCategory: (String) -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToCreateCategory: () -> Unit,
     viewModel: SummaryViewModel = hiltViewModel()
 ) {
     LocalContext.current
     val categories by viewModel.categories.collectAsState(initial = emptyList())
     val currentSession by viewModel.currentSession.collectAsState(initial = null)
     val sessionEndTime by viewModel.sessionEndTime.collectAsState(initial = null)
+    val isEditMode by viewModel.isEditMode.collectAsState()
 
     val today = androidx.compose.runtime.remember {
         val currentLocale = Locale.getDefault()
@@ -74,6 +79,9 @@ fun SummaryScreen(
                     Text(today, style = MaterialTheme.typography.bodyMedium)
                 }
             }, actions = {
+                IconButton(onClick = { viewModel.toggleEditMode() }) {
+                    Icon(Icons.Default.Edit, contentDescription = null)
+                }
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.summary_settings_content_description))
                 }
@@ -122,7 +130,19 @@ fun SummaryScreen(
                 items(items = categories, key = { it.id } // stable key
                 ) { category ->
                     CategoryItem(
-                        category = category, onClick = { onNavigateToCategory(category.id) })
+                        category = category,
+                        isEditMode = isEditMode,
+                        onClick = { onNavigateToCategory(category.id) },
+                        onDelete = { viewModel.deleteCategory(category.id) }
+                    )
+                }
+
+                if (isEditMode) {
+                    item {
+                        AddCategoryItem(
+                            onClick = onNavigateToCreateCategory
+                        )
+                    }
                 }
             }
         }
@@ -204,12 +224,16 @@ fun CurrentSessionCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryItem(
-    category: CategoryUi, onClick: () -> Unit
+    category: CategoryUi,
+    isEditMode: Boolean,
+    onClick: () -> Unit,
+    onDelete: () -> Unit
 ) {
     val progress = category.progress.coerceIn(0f, 1f)
 
     Card(
-        onClick = onClick, modifier = Modifier.fillMaxWidth()
+        onClick = { if (!isEditMode) onClick() },
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
@@ -218,19 +242,69 @@ fun CategoryItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(category.name, style = MaterialTheme.typography.titleMedium)
                 Text(stringResource(R.string.summary_scheduled), style = MaterialTheme.typography.bodySmall)
             }
 
-            RingProgress(
-                progress = progress,
-                modifier = Modifier.size(32.dp),
-                strokeWidth = 4.dp,
-                color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
-            )
+            if (isEditMode) {
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Default.Delete, contentDescription = null)
+                }
+            } else {
+                RingProgress(
+                    progress = progress,
+                    modifier = Modifier.size(32.dp),
+                    strokeWidth = 4.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
+                )
+            }
 
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddCategoryItem(
+    onClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Add Category", // summary_add_category
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }

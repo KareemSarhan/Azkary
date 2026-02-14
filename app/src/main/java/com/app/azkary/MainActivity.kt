@@ -25,6 +25,7 @@ import com.app.azkary.ui.reading.ReadingScreen
 import com.app.azkary.ui.settings.SettingsScreen
 import com.app.azkary.ui.summary.SummaryScreen
 import com.app.azkary.ui.theme.AzkaryTheme
+import com.app.azkary.ui.category.CategoryCreationScreen
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -78,6 +79,9 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onNavigateToSettings = {
                                             navController.navigate("settings")
+                                        },
+                                        onNavigateToCreateCategory = {
+                                            navController.navigate("category/create")
                                         }
                                     )
                                 }
@@ -88,6 +92,11 @@ class MainActivity : ComponentActivity() {
                                 }
                                 composable("settings") {
                                     SettingsScreen(
+                                        onBack = { navController.popBackStack() }
+                                    )
+                                }
+                                composable("category/create") {
+                                    CategoryCreationScreen(
                                         onBack = { navController.popBackStack() }
                                     )
                                 }

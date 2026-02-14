@@ -44,7 +44,8 @@ data class AzkarItemEntity(
     val requiredRepeats: Int,
     val source: AzkarSource,
     val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+    val isInfinite: Boolean = false
 )
 
 @Entity(
