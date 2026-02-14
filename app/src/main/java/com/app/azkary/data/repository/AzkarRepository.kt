@@ -293,7 +293,16 @@ class AzkarRepository @Inject constructor(
                 isEnabled = true
             ))
             
-            if (config.isInfinite || config.requiredRepeats > 0) {
+            // Always update the item with isInfinite flag and requiredRepeats
+            val existingItem = itemDao.getItemById(config.itemId).first()
+            if (existingItem != null) {
+                itemDao.upsertItem(existingItem.copy(
+                    requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
+                    isInfinite = config.isInfinite,
+                    updatedAt = System.currentTimeMillis()
+                ))
+            } else {
+                // Item doesn't exist, create new one
                 itemDao.upsertItem(AzkarItemEntity(
                     itemId = config.itemId,
                     requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
@@ -353,15 +362,13 @@ class AzkarRepository @Inject constructor(
                         isEnabled = true
                     ))
                     
-                    if (config.requiredRepeats > 0) {
-                        val existingItem = itemDao.getItemById(config.itemId).first()
-                        if (existingItem != null && existingItem.source == com.app.azkary.data.model.AzkarSource.SEEDED) {
-                            itemDao.upsertItem(existingItem.copy(
-                                requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
-                                isInfinite = config.isInfinite,
-                                updatedAt = System.currentTimeMillis()
-                            ))
-                        }
+                    val existingItem = itemDao.getItemById(config.itemId).first()
+                    if (existingItem != null) {
+                        itemDao.upsertItem(existingItem.copy(
+                            requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
+                            isInfinite = config.isInfinite,
+                            updatedAt = System.currentTimeMillis()
+                        ))
                     }
                 }
             }
