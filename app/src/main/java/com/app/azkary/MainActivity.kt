@@ -82,6 +82,9 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onNavigateToCreateCategory = {
                                             navController.navigate("category/create")
+                                        },
+                                        onNavigateToEditCategory = { categoryId ->
+                                            navController.navigate("category/edit/$categoryId")
                                         }
                                     )
                                 }
@@ -98,6 +101,13 @@ class MainActivity : ComponentActivity() {
                                 composable("category/create") {
                                     CategoryCreationScreen(
                                         onBack = { navController.popBackStack() }
+                                    )
+                                }
+                                composable("category/edit/{categoryId}") { backStackEntry ->
+                                    val categoryId = backStackEntry.arguments?.getString("categoryId")
+                                    CategoryCreationScreen(
+                                        onBack = { navController.popBackStack() },
+                                        categoryId = categoryId
                                     )
                                 }
                             }

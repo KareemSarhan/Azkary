@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.AvailableZikr
 import com.app.azkary.data.model.CategoryItemConfig
 import com.app.azkary.data.repository.AzkarRepository
+import com.app.azkary.data.model.AzkarItemUi
+import com.app.azkary.data.model.CategoryUi
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -16,10 +18,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 import java.util.UUID
 
@@ -45,6 +49,40 @@ class CategoryCreationViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+    
+    init {
+        // Load existing category data if editing
+        categoryId?.let { loadCategoryData(it) }
+    }
+    
+    private fun loadCategoryData(catId: String) {
+        viewModelScope.launch {
+            try {
+                val langTag = localeManager.getCurrentLanguageTag(context)
+                val today = LocalDate.now().toString()
+                
+                // Get category name
+                val categories = repository.observeCategoriesWithDisplayName(langTag).first()
+                val category = categories.find { it.id == catId }
+                if (category != null) {
+                    _uiState.value = _uiState.value.copy(categoryName = category.name)
+                }
+                
+                // Get category items
+                val items = repository.observeItemsForCategory(catId, langTag, today).first()
+                val newSelectedItems = items.map { item ->
+                    CategoryItemConfig(
+                        itemId = item.id,
+                        requiredRepeats = if (item.isInfinite) 0 else item.requiredRepeats,
+                        isInfinite = item.isInfinite
+                    )
+                }
+                _uiState.value = _uiState.value.copy(selectedItems = newSelectedItems)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(error = "Failed to load category: ${e.message}")
+            }
+        }
+    }
     
     fun onCategoryNameChange(name: String) {
         _uiState.value = _uiState.value.copy(categoryName = name)
@@ -114,11 +152,21 @@ class CategoryCreationViewModel @Inject constructor(
             else -> {
                 viewModelScope.launch {
                     try {
-                        repository.createCustomCategory(
-                            name = state.categoryName.trim(),
-                            langTag = localeManager.getCurrentLanguageTag(context),
-                            itemConfigs = state.selectedItems
-                        )
+                        if (categoryId != null) {
+                            // Update existing category
+                            repository.updateCustomCategory(
+                                categoryId = categoryId,
+                                name = state.categoryName.trim(),
+                                itemConfigs = state.selectedItems
+                            )
+                        } else {
+                            // Create new category
+                            repository.createCustomCategory(
+                                name = state.categoryName.trim(),
+                                langTag = localeManager.getCurrentLanguageTag(context),
+                                itemConfigs = state.selectedItems
+                            )
+                        }
                         _uiState.value = CategoryCreationUiState()
                         onSuccess()
                     } catch (e: Exception) {

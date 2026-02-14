@@ -60,6 +60,7 @@ fun SummaryScreen(
     onNavigateToCategory: (String) -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToCreateCategory: () -> Unit,
+    onNavigateToEditCategory: (String) -> Unit,
     viewModel: SummaryViewModel = hiltViewModel()
 ) {
     LocalContext.current
@@ -138,6 +139,7 @@ fun SummaryScreen(
                         totalCount = categories.size,
                         isEditMode = isEditMode,
                         onClick = { onNavigateToCategory(category.id) },
+                        onEdit = { if (category.type == com.app.azkary.data.model.CategoryType.USER) onNavigateToEditCategory(category.id) },
                         onDelete = { viewModel.deleteCategory(category.id) },
                         onMoveUp = { if (index > 0) viewModel.moveCategoryUp(index) },
                         onMoveDown = { if (index < categories.size - 1) viewModel.moveCategoryDown(index) }
@@ -236,6 +238,7 @@ fun CategoryItem(
     totalCount: Int,
     isEditMode: Boolean,
     onClick: () -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
     onMoveUp: () -> Unit,
     onMoveDown: () -> Unit
@@ -243,7 +246,12 @@ fun CategoryItem(
     val progress = category.progress.coerceIn(0f, 1f)
 
     Card(
-        onClick = { if (!isEditMode) onClick() },
+        onClick = {
+            when {
+                !isEditMode || category.type != com.app.azkary.data.model.CategoryType.USER -> onClick()
+                else -> onEdit()
+            }
+        },
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -271,6 +279,9 @@ fun CategoryItem(
                         enabled = index < totalCount - 1
                     ) {
                         Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+                    }
+                    IconButton(onClick = onEdit) {
+                        Icon(Icons.Default.Edit, contentDescription = null)
                     }
                     IconButton(onClick = onDelete) {
                         Icon(Icons.Default.Delete, contentDescription = null)
