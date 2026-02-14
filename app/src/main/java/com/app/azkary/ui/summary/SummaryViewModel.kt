@@ -55,8 +55,6 @@ class SummaryViewModel @Inject constructor(
         }
     }
 
-    private val fallbackTags = listOf("ar", "en")
-
     // Get current language tag directly from LocaleManager
     private val currentLangTag: String
         get() = localeManager.getCurrentLanguageTag(context)
@@ -140,6 +138,26 @@ class SummaryViewModel @Inject constructor(
         } ?: run {
             println("DEBUG: SummaryViewModel - No current window found, setting sessionEndTime to null")
             _sessionEndTime.value = null
+        }
+    }
+
+    /**
+     * Toggle category completion status on long-press
+     * If category is incomplete (progress < 100%): Mark all items as complete
+     * If category is complete (progress >= 100%): Mark all items as incomplete
+     */
+    fun toggleCategoryCompletion(categoryId: String) {
+        viewModelScope.launch {
+            val category = categories.first().find { it.id == categoryId } ?: return@launch
+            val today = java.time.LocalDate.now().toString()
+
+            if (category.progress >= 1f) {
+                // Category is complete, mark as incomplete
+                repository.markCategoryIncomplete(categoryId, today)
+            } else {
+                // Category is incomplete, mark as complete
+                repository.markCategoryComplete(categoryId, today)
+            }
         }
     }
 }

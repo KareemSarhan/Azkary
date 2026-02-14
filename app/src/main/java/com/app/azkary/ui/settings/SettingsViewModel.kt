@@ -49,6 +49,13 @@ class SettingsViewModel @Inject constructor(
             initialValue = com.app.azkary.data.prefs.LocationPreferences()
         )
 
+    val holdToComplete: StateFlow<Boolean> = userPreferencesRepository.holdToComplete
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
+
     private val _isRefreshingLocation = MutableStateFlow(false)
     val isRefreshingLocation: StateFlow<Boolean> = _isRefreshingLocation.asStateFlow()
 
@@ -133,6 +140,12 @@ class SettingsViewModel @Inject constructor(
     fun setUseTrueBlack(useTrueBlack: Boolean) {
         viewModelScope.launch {
             themePreferencesRepository.setUseTrueBlack(useTrueBlack)
+        }
+    }
+
+    fun setHoldToComplete(enabled: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.setHoldToComplete(enabled)
         }
     }
 

@@ -56,7 +56,7 @@ fun SummaryScreen(
     onNavigateToSettings: () -> Unit,
     viewModel: SummaryViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
+    LocalContext.current
     val categories by viewModel.categories.collectAsState(initial = emptyList())
     val currentSession by viewModel.currentSession.collectAsState(initial = null)
     val sessionEndTime by viewModel.sessionEndTime.collectAsState(initial = null)
@@ -86,10 +86,10 @@ fun SummaryScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item {
-                currentSession?.let { session ->
+            currentSession?.let { session ->
+                item {
                     CurrentSessionCard(
-                        category = session, 
+                        category = session,
                         sessionEndTime = sessionEndTime,
                         onContinue = { onNavigateToCategory(session.id) })
                 }

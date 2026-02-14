@@ -167,4 +167,67 @@ class AzkarRepository @Inject constructor(
     suspend fun seedDatabase() {
         seedManager.seedIfNeeded(context)
     }
+
+    /**
+     * Mark all items in a category as complete for a given date
+     */
+    suspend fun markCategoryComplete(
+        categoryId: String,
+        date: String = LocalDate.now().toString()
+    ) {
+        val crossRefs = categoryItemDao.getAllCrossRefsForCategory(categoryId).first()
+        crossRefs.filter { it.isEnabled }.forEach { crossRef ->
+            val item = itemDao.getItemById(crossRef.itemId).first() ?: return@forEach
+            progressDao.upsertProgress(
+                UserProgressEntity(
+                    categoryId = categoryId,
+                    itemId = crossRef.itemId,
+                    date = date,
+                    currentRepeats = item.requiredRepeats,
+                    isCompleted = true
+                )
+            )
+        }
+    }
+
+    /**
+     * Mark all items in a category as incomplete for a given date
+     */
+    suspend fun markCategoryIncomplete(
+        categoryId: String,
+        date: String = LocalDate.now().toString()
+    ) {
+        val crossRefs = categoryItemDao.getAllCrossRefsForCategory(categoryId).first()
+        crossRefs.filter { it.isEnabled }.forEach { crossRef ->
+            progressDao.upsertProgress(
+                UserProgressEntity(
+                    categoryId = categoryId,
+                    itemId = crossRef.itemId,
+                    date = date,
+                    currentRepeats = 0,
+                    isCompleted = false
+                )
+            )
+        }
+    }
+
+    /**
+     * Mark a single item as complete
+     */
+    suspend fun markItemComplete(
+        categoryId: String,
+        itemId: String,
+        date: String = LocalDate.now().toString()
+    ) {
+        val item = itemDao.getItemById(itemId).first() ?: return
+        progressDao.upsertProgress(
+            UserProgressEntity(
+                categoryId = categoryId,
+                itemId = itemId,
+                date = date,
+                currentRepeats = item.requiredRepeats,
+                isCompleted = true
+            )
+        )
+    }
 }

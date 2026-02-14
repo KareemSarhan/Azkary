@@ -79,6 +79,7 @@ fun SettingsScreen(
     val locationError by viewModel.locationError.collectAsState()
     val currentLanguageName = viewModel.getCurrentLanguageDisplayName()
     val themeSettings by viewModel.themeSettings.collectAsState()
+    val holdToComplete by viewModel.holdToComplete.collectAsState()
 
     // Support/Feedback sheet state
     var showSupportSheet by remember { mutableStateOf(false) }
@@ -218,6 +219,16 @@ fun SettingsScreen(
                 onSurfaceVariantColor = onSurfaceVariantColor
             )
 
+            Spacer(Modifier.height(8.dp))
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_hold_to_complete_title),
+                isEnabled = holdToComplete,
+                onToggle = { viewModel.setHoldToComplete(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor
+            )
+
             Spacer(Modifier.height(16.dp))
 
             // Theme Section
@@ -235,6 +246,24 @@ fun SettingsScreen(
                 onSurfaceColor = onSurfaceColor,
                 onSurfaceVariantColor = onSurfaceVariantColor,
                 primaryColor = primaryColor
+            )
+
+            Spacer(Modifier.height(32.dp))
+
+            val context = LocalContext.current
+            val versionName = remember {
+                try {
+                    context.packageManager.getPackageInfo(context.packageName, 0).versionName
+                        ?: "Unknown"
+                } catch (e: Exception) {
+                    "Unknown"
+                }
+            }
+            Text(
+                text = stringResource(R.string.settings_version, versionName),
+                color = onSurfaceVariantColor,
+                fontSize = 12.sp,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
     }

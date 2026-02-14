@@ -6,6 +6,7 @@ import android.os.VibratorManager
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,9 +21,10 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -34,6 +36,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -55,6 +60,7 @@ fun ReadingScreen(
 ) {
     val items by viewModel.items.collectAsState(initial = emptyList())
     val weightedProgress by viewModel.weightedProgress.collectAsState(initial = 0f)
+    val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
 
     val animatedProgress by animateFloatAsState(
         targetValue = weightedProgress.coerceIn(0f, 1f),
@@ -64,6 +70,7 @@ fun ReadingScreen(
     val pagerState = rememberPagerState(pageCount = { items.size })
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // Initialize Vibrator
     val vibrator = remember {
@@ -77,8 +84,10 @@ fun ReadingScreen(
     }
 
     val colors = MaterialTheme.colorScheme
+    val holdToCompleteDisabledMessage = stringResource(R.string.hold_to_complete_disabled)
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = colors.surface,
         topBar = {
             Column(modifier = Modifier.background(colors.surface)) {
@@ -142,9 +151,8 @@ fun ReadingScreen(
                         }
                     }
                 )
-
-                LinearProgressIndicator(
-                    progress = { animatedProgress },
+                LinearProgressBar(
+                    progress = animatedProgress,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(2.dp),
@@ -154,7 +162,13 @@ fun ReadingScreen(
             }
         }
     ) { padding ->
-        if (items.isNotEmpty()) {
+        if (weightedProgress >= 1f) {
+            // Show completion screen when progress reaches 100%
+            CompletionScreen(
+                onBackToSummary = onBack,
+                modifier = Modifier.padding(padding)
+            )
+        } else if (items.isNotEmpty()) {
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
@@ -199,6 +213,16 @@ fun ReadingScreen(
                                 pagerState.animateScrollToPage(page + 1)
                             }
                         }
+                    },
+                    onHoldComplete = {
+                        if (holdToComplete) {
+                            performVibration(50L)
+                            viewModel.markItemComplete(item.id)
+                        } else {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(holdToCompleteDisabledMessage)
+                            }
+                        }
                     }
                 )
             }
@@ -221,4 +245,30 @@ private fun LtrText(
             modifier = modifier
         )
     }
+}
+
+@Composable
+private fun LinearProgressBar(
+    progress: Float,
+    modifier: Modifier = Modifier,
+    color: androidx.compose.ui.graphics.Color,
+    trackColor: androidx.compose.ui.graphics.Color
+) {
+    val layoutDirection = LocalLayoutDirection.current
+    Box(
+        modifier = modifier
+            .drawBehind {
+                drawRect(trackColor)
+                if (progress > 0f) {
+                    val progressWidth = size.width * progress.coerceIn(0f, 1f)
+                    val isRtl = layoutDirection == LayoutDirection.Rtl
+                    val startX = if (isRtl) size.width - progressWidth else 0f
+                    drawRect(
+                        color = color,
+                        topLeft = Offset(startX, 0f),
+                        size = Size(progressWidth, size.height)
+                    )
+                }
+            }
+    )
 }

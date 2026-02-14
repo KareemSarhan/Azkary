@@ -23,6 +23,10 @@ data class LocationPreferences(
     val locationName: String? = null
 )
 
+data class ReadingPreferences(
+    val holdToComplete: Boolean = true
+)
+
 @Singleton
 class UserPreferencesRepository @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -31,6 +35,7 @@ class UserPreferencesRepository @Inject constructor(
     private val USE_LOCATION = booleanPreferencesKey("use_location")
     private val LAST_RESOLVED_LOCATION = stringPreferencesKey("last_resolved_location")
     private val LOCATION_NAME = stringPreferencesKey("location_name")
+    private val HOLD_TO_COMPLETE = booleanPreferencesKey("hold_to_complete")
 
     val locationPreferences: Flow<LocationPreferences> = context.dataStore.data.map { preferences ->
         LocationPreferences(
@@ -40,6 +45,10 @@ class UserPreferencesRepository @Inject constructor(
             },
             locationName = preferences[LOCATION_NAME]
         )
+    }
+
+    val holdToComplete: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[HOLD_TO_COMPLETE] ?: true
     }
 
     suspend fun setUseLocation(enabled: Boolean) {
@@ -64,5 +73,9 @@ class UserPreferencesRepository @Inject constructor(
                 it.remove(LOCATION_NAME)
             }
         }
+    }
+
+    suspend fun setHoldToComplete(enabled: Boolean) {
+        context.dataStore.edit { it[HOLD_TO_COMPLETE] = enabled }
     }
 }
