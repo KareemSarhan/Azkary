@@ -176,4 +176,46 @@ class SummaryViewModel @Inject constructor(
             repository.reorderCategories(categoryIds)
         }
     }
+
+    fun moveCategoryUp(index: Int) {
+        viewModelScope.launch {
+            val currentCategories = categories.first().toMutableList()
+            if (index > 0 && index < currentCategories.size) {
+                // Swap with previous item
+                val currentCategory = currentCategories[index]
+                val previousCategory = currentCategories[index - 1]
+                
+                // Only allow moving USER categories (not DEFAULT stock categories)
+                if (currentCategory.type == com.app.azkary.data.model.CategoryType.USER) {
+                    currentCategories[index] = previousCategory
+                    currentCategories[index - 1] = currentCategory
+                    
+                    // Update sort orders in database
+                    val categoryIds = currentCategories.map { it.id }
+                    repository.reorderCategories(categoryIds)
+                }
+            }
+        }
+    }
+
+    fun moveCategoryDown(index: Int) {
+        viewModelScope.launch {
+            val currentCategories = categories.first().toMutableList()
+            if (index >= 0 && index < currentCategories.size - 1) {
+                // Swap with next item
+                val currentCategory = currentCategories[index]
+                val nextCategory = currentCategories[index + 1]
+                
+                // Only allow moving USER categories
+                if (currentCategory.type == com.app.azkary.data.model.CategoryType.USER) {
+                    currentCategories[index] = nextCategory
+                    currentCategories[index + 1] = currentCategory
+                    
+                    // Update sort orders in database
+                    val categoryIds = currentCategories.map { it.id }
+                    repository.reorderCategories(categoryIds)
+                }
+            }
+        }
+    }
 }

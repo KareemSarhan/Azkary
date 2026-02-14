@@ -18,6 +18,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -129,11 +131,16 @@ fun SummaryScreen(
             } else {
                 items(items = categories, key = { it.id } // stable key
                 ) { category ->
+                    val index = categories.indexOf(category)
                     CategoryItem(
                         category = category,
+                        index = index,
+                        totalCount = categories.size,
                         isEditMode = isEditMode,
                         onClick = { onNavigateToCategory(category.id) },
-                        onDelete = { viewModel.deleteCategory(category.id) }
+                        onDelete = { viewModel.deleteCategory(category.id) },
+                        onMoveUp = { if (index > 0) viewModel.moveCategoryUp(index) },
+                        onMoveDown = { if (index < categories.size - 1) viewModel.moveCategoryDown(index) }
                     )
                 }
 
@@ -225,9 +232,13 @@ fun CurrentSessionCard(
 @Composable
 fun CategoryItem(
     category: CategoryUi,
+    index: Int,
+    totalCount: Int,
     isEditMode: Boolean,
     onClick: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onMoveUp: () -> Unit,
+    onMoveDown: () -> Unit
 ) {
     val progress = category.progress.coerceIn(0f, 1f)
 
@@ -248,8 +259,22 @@ fun CategoryItem(
             }
 
             if (isEditMode && category.type == com.app.azkary.data.model.CategoryType.USER) {
-                IconButton(onClick = onDelete) {
-                    Icon(Icons.Default.Delete, contentDescription = null)
+                Row {
+                    IconButton(
+                        onClick = onMoveUp,
+                        enabled = index > 0
+                    ) {
+                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
+                    }
+                    IconButton(
+                        onClick = onMoveDown,
+                        enabled = index < totalCount - 1
+                    ) {
+                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+                    }
+                    IconButton(onClick = onDelete) {
+                        Icon(Icons.Default.Delete, contentDescription = null)
+                    }
                 }
             } else if (!isEditMode) {
                 RingProgress(
