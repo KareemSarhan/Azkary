@@ -199,7 +199,7 @@ fun CategoryCreationScreen(
                 
                 itemsIndexed(
                     items = uiState.selectedItems,
-                    key = { _, it -> it.itemId }
+                    key = { _, it -> "selected_${it.itemId}" }
                 ) { index, config ->
                     val item = availableItems.find { it.id == config.itemId }
                     if (item != null) {
@@ -249,9 +249,11 @@ fun CategoryCreationScreen(
                     }
                 }
             } else {
-                items(
-                    items = filteredItems,
-                    key = { it.id }
+items(
+                    items = filteredItems.filter { item -> 
+                        uiState.selectedItems.none { it.itemId == item.id } 
+                    },
+                    key = { "available_${it.id}" }
                 ) { item ->
                     val isSelected = uiState.selectedItems.any { it.itemId == item.id }
                     AvailableZikrCard(
