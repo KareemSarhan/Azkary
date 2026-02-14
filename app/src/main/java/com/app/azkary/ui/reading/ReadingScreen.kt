@@ -139,7 +139,7 @@ fun ReadingScreen(
                             ) {
                                 LtrText(
                                     text = if (currentItem.isInfinite) {
-                                        currentItem.currentRepeats.toString()
+                                        "${currentItem.currentRepeats}/∞"
                                     } else {
                                         BidiHelper.formatRepeatCounter(
                                             currentItem.currentRepeats,
@@ -184,6 +184,14 @@ fun ReadingScreen(
                 AzkarReadingItem(
                     item = item,
                     onIncrement = {
+                        // For infinite items: always increment, never auto-scroll
+                        if (item.isInfinite) {
+                            performVibration(50L)
+                            viewModel.incrementRepeat(item.id)
+                            return@AzkarReadingItem
+                        }
+                        
+                        // For regular items: check completion
                         val isAlreadyComplete = item.currentRepeats >= item.requiredRepeats
 
                         if (isAlreadyComplete) {
@@ -205,7 +213,7 @@ fun ReadingScreen(
                         
                         // 3. Auto-Next Check
                         val willBeComplete = (item.currentRepeats + 1) >= item.requiredRepeats
-                        if (willBeComplete && page < items.size - 1 && !item.isInfinite) {
+                        if (willBeComplete && page < items.size - 1) {
                             scope.launch {
                                 // Delay so user sees the final count (e.g. 33/33)
                                 delay(0)
