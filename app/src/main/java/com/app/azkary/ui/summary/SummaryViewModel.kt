@@ -55,11 +55,7 @@ class SummaryViewModel @Inject constructor(
         }
     }
 
-    // Get current language tag directly from LocaleManager
-    private val currentLangTag: String
-        get() = localeManager.getCurrentLanguageTag(context)
-
-    val categories: Flow<List<CategoryUi>> = flowOf(currentLangTag).flatMapLatest { lang ->
+    val categories: Flow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         repository.observeCategoriesWithDisplayName(
             langTag = lang,
         )

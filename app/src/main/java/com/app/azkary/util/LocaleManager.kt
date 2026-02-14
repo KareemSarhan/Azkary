@@ -7,6 +7,9 @@ import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.text.layoutDirection
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,6 +24,10 @@ import javax.inject.Singleton
 class LocaleManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+    // Observable language tag that updates on configuration changes
+    private val _currentLangTag = MutableStateFlow(getCurrentLanguageTag(context))
+    val currentLangTagFlow: StateFlow<String> = _currentLangTag.asStateFlow()
+
     /**
      * Get the current locale of the application
      *
@@ -99,6 +106,14 @@ class LocaleManager @Inject constructor(
         } else {
             android.util.Log.e("TAG", "No Activity found to handle app settings intents")
         }
+    }
+
+    /**
+     * Call this when configuration changes (e.g., from MainActivity.onConfigurationChanged)
+     * This notifies all subscribers that the language may have changed
+     */
+    fun notifyLocaleChanged() {
+        _currentLangTag.value = getCurrentLanguageTag(context)
     }
 
 }

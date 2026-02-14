@@ -107,4 +107,10 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Notify LocaleManager that configuration (and potentially locale) has changed
+        localeManager.notifyLocaleChanged()
+    }
 }

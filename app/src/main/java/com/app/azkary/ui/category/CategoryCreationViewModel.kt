@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -34,13 +33,10 @@ class CategoryCreationViewModel @Inject constructor(
     
     val categoryId: String? = savedStateHandle["categoryId"]
     
-    private val currentLangTag: String
-        get() = localeManager.getCurrentLanguageTag(context)
-    
     private val _uiState = MutableStateFlow(CategoryCreationUiState())
     val uiState: StateFlow<CategoryCreationUiState> = _uiState.asStateFlow()
     
-    val availableItems: Flow<List<AvailableZikr>> = flowOf(currentLangTag).flatMapLatest { lang ->
+    val availableItems: Flow<List<AvailableZikr>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         repository.observeAvailableItems(lang)
     }.stateIn(
         scope = viewModelScope,
@@ -118,7 +114,7 @@ class CategoryCreationViewModel @Inject constructor(
                     try {
                         repository.createCustomCategory(
                             name = state.categoryName.trim(),
-                            langTag = currentLangTag,
+                            langTag = localeManager.getCurrentLanguageTag(context),
                             itemConfigs = state.selectedItems
                         )
                         _uiState.value = CategoryCreationUiState()

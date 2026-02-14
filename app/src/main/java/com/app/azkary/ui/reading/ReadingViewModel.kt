@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -32,11 +31,8 @@ class ReadingViewModel @Inject constructor(
 ) : ViewModel() {
     val categoryId: String = checkNotNull(savedStateHandle["categoryId"])
 
-    private val today = LocalDate.now().toString()
-
-    // Get current language tag directly from LocaleManager
-    private val currentLangTag: String
-        get() = localeManager.getCurrentLanguageTag(context)
+    private val today: String
+        get() = LocalDate.now().toString()
 
     val holdToComplete: StateFlow<Boolean> = userPreferencesRepository.holdToComplete
         .stateIn(
@@ -45,7 +41,7 @@ class ReadingViewModel @Inject constructor(
             initialValue = true
         )
 
-    val items: Flow<List<AzkarItemUi>> = flowOf(currentLangTag).flatMapLatest { lang ->
+    val items: Flow<List<AzkarItemUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         repository.observeItemsForCategory(
             categoryId,
             langTag = lang,
@@ -53,7 +49,7 @@ class ReadingViewModel @Inject constructor(
         )
     }
 
-    val weightedProgress: Flow<Float> = flowOf(currentLangTag).flatMapLatest { lang ->
+    val weightedProgress: Flow<Float> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         repository.getWeightedProgress(
             categoryId, today, langTag = lang
         )
