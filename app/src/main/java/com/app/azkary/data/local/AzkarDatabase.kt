@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
         PrayerMonthEntity::class,
         PrayerDayEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

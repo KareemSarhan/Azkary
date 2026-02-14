@@ -54,7 +54,7 @@ object AppModule {
             AzkarDatabase::class.java,
             "azkar_db"
         )
-            .fallbackToDestructiveMigration(false) // Resetting for the final schema version
+            .fallbackToDestructiveMigration(true) // Reset database on schema change (v3 → v4: added isInfinite field)
             .build()
     }
 
