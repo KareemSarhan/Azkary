@@ -31,6 +31,8 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -206,6 +208,7 @@ fun CategoryCreationScreen(
                             config = config,
                             index = index,
                             totalCount = uiState.selectedItems.size,
+                            isStockCategory = uiState.isStockCategory,
                             onRemove = { viewModel.onItemRemove(config.itemId) },
                             onCountChange = { count -> viewModel.onItemCountChange(config.itemId, count) },
                             onInfiniteToggle = { viewModel.onItemInfiniteToggle(config.itemId) },
@@ -277,15 +280,17 @@ fun CategoryCreationScreen(
                 }
             }
             
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = { showCustomZikrDialog = true },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Add Custom Zikr")
+            if (!uiState.isStockCategory) {
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = { showCustomZikrDialog = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Add Custom Zikr")
+                    }
                 }
             }
             
@@ -487,6 +492,7 @@ private fun SelectedItemCard(
     config: CategoryItemConfig,
     index: Int = 0,
     totalCount: Int = 1,
+    isStockCategory: Boolean = false,
     onRemove: () -> Unit,
     onCountChange: (Int) -> Unit,
     onInfiniteToggle: () -> Unit,
@@ -501,41 +507,13 @@ private fun SelectedItemCard(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    item.title?.let { title ->
-                        Text(
-                            text = title,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    }
-                    item.arabicText?.let { arabic ->
-                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                            Text(
-                                text = arabic.take(40) + if (arabic.length > 40) "..." else "",
-                                style = MaterialTheme.typography.bodySmall.merge(TextStyle(textDirection = TextDirection.Rtl)),
-                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
-                            )
-                        }
-                    }
-                }
-                
-                Row {
+            Row {
+                if (!isStockCategory) {
                     IconButton(
                         onClick = onMoveUp,
                         enabled = index > 0,
@@ -554,15 +532,51 @@ private fun SelectedItemCard(
                         onClick = onRemove,
                         modifier = Modifier.size(36.dp)
                     ) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = "Remove",
-                            tint = MaterialTheme.colorScheme.error
+                        Icon(Icons.Default.Delete, contentDescription = "Remove", tint = MaterialTheme.colorScheme.error)
+                    }
+                } else {
+                    IconButton(
+                        onClick = {},
+                        enabled = false,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(Icons.Default.Lock, contentDescription = "Stock category - limited editing", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
+                    }
+                }
+            }
+            IconButton(onClick = {}) {
+                Icon(Icons.Default.Edit, contentDescription = "Edit counts", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                item.title?.let { title ->
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+                item.arabicText?.let { arabic ->
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                        Text(
+                            text = arabic.take(40) + if (arabic.length > 40) "..." else "",
+                            style = MaterialTheme.typography.bodySmall.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                         )
                     }
                 }
             }
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,

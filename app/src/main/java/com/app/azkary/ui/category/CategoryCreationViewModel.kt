@@ -65,7 +65,10 @@ class CategoryCreationViewModel @Inject constructor(
                 val categories = repository.observeCategoriesWithDisplayName(langTag).first()
                 val category = categories.find { it.id == catId }
                 if (category != null) {
-                    _uiState.value = _uiState.value.copy(categoryName = category.name)
+                    _uiState.value = _uiState.value.copy(
+                        categoryName = category.name,
+                        isStockCategory = category.type == com.app.azkary.data.model.CategoryType.DEFAULT
+                    )
                 }
                 
                 // Get category items
@@ -230,5 +233,6 @@ data class CategoryCreationUiState(
     val searchQuery: String = "",
     val selectedItems: List<CategoryItemConfig> = emptyList(),
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val isStockCategory: Boolean = false
 )

@@ -311,7 +311,12 @@ class AzkarRepository @Inject constructor(
         name: String? = null,
         itemConfigs: List<CategoryItemConfig>? = null
     ) {
-        if (name != null) {
+        // Check if this is a stock category
+        val category = categoryDao.getCategoryById(categoryId).first()
+        val isStockCategory = category?.type == com.app.azkary.data.model.CategoryType.DEFAULT
+        
+        if (name != null && !isStockCategory) {
+            // Only allow renaming custom categories
             categoryTextDao.upsertCategoryText(CategoryTextEntity(
                 categoryId = categoryId,
                 langTag = "en",
@@ -325,14 +330,40 @@ class AzkarRepository @Inject constructor(
         }
         
         if (itemConfigs != null) {
-            categoryItemDao.deleteCategoryItems(categoryId)
-            itemConfigs.forEachIndexed { index, config ->
-                categoryItemDao.insertCrossRef(CategoryItemCrossRefEntity(
-                    categoryId = categoryId,
-                    itemId = config.itemId,
-                    sortOrder = index,
-                    isEnabled = true
-                ))
+            if (isStockCategory) {
+                // For stock categories: only update item counts, don't add/remove items
+                for (config in itemConfigs) {
+                    val existingItem = itemDao.getItemById(config.itemId).first()
+                    if (existingItem != null && existingItem.source == com.app.azkary.data.model.AzkarSource.SEEDED) {
+                        itemDao.upsertItem(existingItem.copy(
+                            requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
+                            isInfinite = config.isInfinite,
+                            updatedAt = System.currentTimeMillis()
+                        ))
+                    }
+                }
+            } else {
+                // For user categories: full update including items
+                categoryItemDao.deleteCategoryItems(categoryId)
+                itemConfigs.forEachIndexed { index, config ->
+                    categoryItemDao.insertCrossRef(CategoryItemCrossRefEntity(
+                        categoryId = categoryId,
+                        itemId = config.itemId,
+                        sortOrder = index,
+                        isEnabled = true
+                    ))
+                    
+                    if (config.requiredRepeats > 0) {
+                        val existingItem = itemDao.getItemById(config.itemId).first()
+                        if (existingItem != null && existingItem.source == com.app.azkary.data.model.AzkarSource.SEEDED) {
+                            itemDao.upsertItem(existingItem.copy(
+                                requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
+                                isInfinite = config.isInfinite,
+                                updatedAt = System.currentTimeMillis()
+                            ))
+                        }
+                    }
+                }
             }
         }
     }

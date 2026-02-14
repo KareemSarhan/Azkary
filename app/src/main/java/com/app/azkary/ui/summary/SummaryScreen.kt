@@ -248,8 +248,8 @@ fun CategoryItem(
     Card(
         onClick = {
             when {
-                !isEditMode || category.type != com.app.azkary.data.model.CategoryType.USER -> onClick()
-                else -> onEdit()
+                !isEditMode -> onClick()
+                else -> onEdit()  // In edit mode, all categories can be edited
             }
         },
         modifier = Modifier.fillMaxWidth()
@@ -266,28 +266,37 @@ fun CategoryItem(
                 Text(stringResource(R.string.summary_scheduled), style = MaterialTheme.typography.bodySmall)
             }
 
-            if (isEditMode && category.type == com.app.azkary.data.model.CategoryType.USER) {
-                Row {
-                    IconButton(
-                        onClick = onMoveUp,
-                        enabled = index > 0
-                    ) {
-                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
+            if (isEditMode) {
+                when (category.type) {
+                    com.app.azkary.data.model.CategoryType.USER -> {
+                        Row {
+                            IconButton(
+                                onClick = onMoveUp,
+                                enabled = index > 0
+                            ) {
+                                Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
+                            }
+                            IconButton(
+                                onClick = onMoveDown,
+                                enabled = index < totalCount - 1
+                            ) {
+                                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+                            }
+                            IconButton(onClick = onEdit) {
+                                Icon(Icons.Default.Edit, contentDescription = null)
+                            }
+                            IconButton(onClick = onDelete) {
+                                Icon(Icons.Default.Delete, contentDescription = null)
+                            }
+                        }
                     }
-                    IconButton(
-                        onClick = onMoveDown,
-                        enabled = index < totalCount - 1
-                    ) {
-                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
-                    }
-                    IconButton(onClick = onEdit) {
-                        Icon(Icons.Default.Edit, contentDescription = null)
-                    }
-                    IconButton(onClick = onDelete) {
-                        Icon(Icons.Default.Delete, contentDescription = null)
+                    com.app.azkary.data.model.CategoryType.DEFAULT -> {
+                        IconButton(onClick = onEdit) {
+                            Icon(Icons.Default.Edit, contentDescription = "Edit category", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
                     }
                 }
-            } else if (!isEditMode) {
+            } else {
                 RingProgress(
                     progress = progress,
                     modifier = Modifier.size(32.dp),
