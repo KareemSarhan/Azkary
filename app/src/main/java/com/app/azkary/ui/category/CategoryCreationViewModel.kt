@@ -95,7 +95,8 @@ class CategoryCreationViewModel @Inject constructor(
     fun onItemSelect(item: AvailableZikr) {
         val selectedItems = _uiState.value.selectedItems.toMutableList()
         if (!selectedItems.any { it.itemId == item.id }) {
-            selectedItems.add(
+            // Add to the top of the selected items list
+            selectedItems.add(0,
                 CategoryItemConfig(
                     itemId = item.id,
                     requiredRepeats = item.requiredRepeats,
@@ -131,6 +132,15 @@ class CategoryCreationViewModel @Inject constructor(
             }
         }
         _uiState.value = _uiState.value.copy(selectedItems = selectedItems)
+    }
+    
+    fun moveSelectedItem(fromIndex: Int, toIndex: Int) {
+        val selectedItems = _uiState.value.selectedItems.toMutableList()
+        if (fromIndex in selectedItems.indices && toIndex in selectedItems.indices && fromIndex != toIndex) {
+            val item = selectedItems.removeAt(fromIndex)
+            selectedItems.add(toIndex, item)
+            _uiState.value = _uiState.value.copy(selectedItems = selectedItems)
+        }
     }
     
     fun clearError() {

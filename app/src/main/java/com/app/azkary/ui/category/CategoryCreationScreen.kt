@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -28,6 +29,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -187,6 +190,33 @@ fun CategoryCreationScreen(
                 )
             }
             
+            if (uiState.selectedItems.isNotEmpty()) {
+                item {
+                    SectionHeader(text = "Selected Items")
+                }
+                
+                itemsIndexed(
+                    items = uiState.selectedItems,
+                    key = { _, it -> it.itemId }
+                ) { index, config ->
+                    val item = availableItems.find { it.id == config.itemId }
+                    if (item != null) {
+                        SelectedItemCard(
+                            item = item,
+                            config = config,
+                            index = index,
+                            totalCount = uiState.selectedItems.size,
+                            onRemove = { viewModel.onItemRemove(config.itemId) },
+                            onCountChange = { count -> viewModel.onItemCountChange(config.itemId, count) },
+                            onInfiniteToggle = { viewModel.onItemInfiniteToggle(config.itemId) },
+                            onMoveUp = { if (index > 0) viewModel.moveSelectedItem(index, index - 1) },
+                            onMoveDown = { if (index < uiState.selectedItems.size - 1) viewModel.moveSelectedItem(index, index + 1) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+            
             item {
                 SectionHeader(text = "Choose Zikr")
             }
@@ -243,30 +273,6 @@ fun CategoryCreationScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
-                }
-            }
-            
-            if (uiState.selectedItems.isNotEmpty()) {
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    SectionHeader(text = "Selected Items")
-                }
-                
-                items(
-                    items = uiState.selectedItems,
-                    key = { it.itemId }
-                ) { config ->
-                    val item = availableItems.find { it.id == config.itemId }
-                    if (item != null) {
-                        SelectedItemCard(
-                            item = item,
-                            config = config,
-                            onRemove = { viewModel.onItemRemove(config.itemId) },
-                            onCountChange = { count -> viewModel.onItemCountChange(config.itemId, count) },
-                            onInfiniteToggle = { viewModel.onItemInfiniteToggle(config.itemId) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
                 }
             }
@@ -479,9 +485,13 @@ private fun AvailableZikrCard(
 private fun SelectedItemCard(
     item: AvailableZikr,
     config: CategoryItemConfig,
+    index: Int = 0,
+    totalCount: Int = 1,
     onRemove: () -> Unit,
     onCountChange: (Int) -> Unit,
     onInfiniteToggle: () -> Unit,
+    onMoveUp: () -> Unit = {},
+    onMoveDown: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -525,15 +535,31 @@ private fun SelectedItemCard(
                     }
                 }
                 
-                IconButton(
-                    onClick = onRemove,
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = "Remove",
-                        tint = MaterialTheme.colorScheme.error
-                    )
+                Row {
+                    IconButton(
+                        onClick = onMoveUp,
+                        enabled = index > 0,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Move up", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    IconButton(
+                        onClick = onMoveDown,
+                        enabled = index < totalCount - 1,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Move down", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    IconButton(
+                        onClick = onRemove,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Remove",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
             
