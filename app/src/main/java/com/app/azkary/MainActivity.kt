@@ -113,4 +113,10 @@ class MainActivity : ComponentActivity() {
         // Notify LocaleManager that configuration (and potentially locale) has changed
         localeManager.notifyLocaleChanged()
     }
+
+    override fun onResume() {
+        super.onResume()
+        // Check for language changes when returning from settings
+        localeManager.notifyLocaleChanged()
+    }
 }

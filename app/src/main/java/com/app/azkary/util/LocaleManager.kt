@@ -113,7 +113,13 @@ class LocaleManager @Inject constructor(
      * This notifies all subscribers that the language may have changed
      */
     fun notifyLocaleChanged() {
-        _currentLangTag.value = getCurrentLanguageTag(context)
+        val newLang = getCurrentLanguageTag(context)
+        val oldLang = _currentLangTag.value
+        println("DEBUG: LocaleManager - Language changed check: old=$oldLang, new=$newLang")
+        if (oldLang != newLang) {
+            println("DEBUG: LocaleManager - Updating language from $oldLang to $newLang")
+            _currentLangTag.value = newLang
+        }
     }
 
 }

@@ -170,4 +170,10 @@ class SummaryViewModel @Inject constructor(
             repository.deleteCategory(categoryId)
         }
     }
+
+    fun reorderCategories(categoryIds: List<String>) {
+        viewModelScope.launch {
+            repository.reorderCategories(categoryIds)
+        }
+    }
 }

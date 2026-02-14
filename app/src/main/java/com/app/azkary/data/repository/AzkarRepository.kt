@@ -340,6 +340,12 @@ class AzkarRepository @Inject constructor(
         categoryDao.deleteCategory(categoryId)
     }
 
+    suspend fun reorderCategories(categoryIds: List<String>) {
+        categoryIds.forEachIndexed { index, categoryId ->
+            categoryDao.updateSortOrder(categoryId, index)
+        }
+    }
+
     fun observeAvailableItems(langTag: String): Flow<List<AvailableZikr>> {
         return itemDao.getSeededItems().flatMapLatest { items ->
             if (items.isEmpty()) return@flatMapLatest flowOf(emptyList())
