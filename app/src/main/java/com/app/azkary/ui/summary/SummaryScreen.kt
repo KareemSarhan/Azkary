@@ -247,11 +247,11 @@ fun CategoryItem(
                 Text(stringResource(R.string.summary_scheduled), style = MaterialTheme.typography.bodySmall)
             }
 
-            if (isEditMode) {
+            if (isEditMode && category.type == com.app.azkary.data.model.CategoryType.USER) {
                 IconButton(onClick = onDelete) {
                     Icon(Icons.Default.Delete, contentDescription = null)
                 }
-            } else {
+            } else if (!isEditMode) {
                 RingProgress(
                     progress = progress,
                     modifier = Modifier.size(32.dp),

@@ -420,20 +420,21 @@ private fun AvailableZikrCard(
             }
             
             if (isSelected) {
-                Surface(
+                // Show remove button to unselect
+                Button(
+                    onClick = onSelect,
                     shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(36.dp),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
                 ) {
-                    Box(
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "✓",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "Remove",
+                        tint = MaterialTheme.colorScheme.onError
+                    )
                 }
             } else {
                 Button(
