@@ -76,6 +76,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import com.app.azkary.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -86,6 +87,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.data.model.AvailableZikr
 import com.app.azkary.data.model.CategoryItemConfig
 import kotlinx.coroutines.launch
+import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -136,7 +138,7 @@ fun CategoryCreationScreen(
                 ),
                 title = {
                     Text(
-                        text = if (categoryId != null) "Edit Category" else "Create Category",
+                        text = if (categoryId != null) stringResource(R.string.category_edit_title) else stringResource(R.string.category_create_title),
                         style = MaterialTheme.typography.titleMedium
                     )
                 },
@@ -144,7 +146,7 @@ fun CategoryCreationScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.category_back_content_description)
                         )
                     }
                 },
@@ -163,7 +165,7 @@ fun CategoryCreationScreen(
                             )
                         }
                     ) {
-                        Icon(Icons.Default.Save, contentDescription = "Save")
+                        Icon(Icons.Default.Save, contentDescription = stringResource(R.string.category_save_content_description))
                     }
                 }
             )
@@ -192,9 +194,9 @@ fun CategoryCreationScreen(
                 )
             }
             
-            if (uiState.selectedItems.isNotEmpty()) {
+             if (uiState.selectedItems.isNotEmpty()) {
                 item {
-                    SectionHeader(text = "Selected Items")
+                    SectionHeader(text = stringResource(R.string.category_selected_items))
                 }
                 
                 itemsIndexed(
@@ -220,8 +222,8 @@ fun CategoryCreationScreen(
                 }
             }
             
-            item {
-                SectionHeader(text = "Choose Zikr")
+             item {
+                SectionHeader(text = stringResource(R.string.category_choose_zikr))
             }
             
             if (availableItems.isEmpty()) {
@@ -240,8 +242,8 @@ fun CategoryCreationScreen(
                                 modifier = Modifier.size(48.dp),
                                 color = MaterialTheme.colorScheme.primary
                             )
-                            Text(
-                                text = "Loading available zikr...",
+                         Text(
+                                text = stringResource(R.string.category_loading_zikr),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -272,8 +274,8 @@ items(
                                 .padding(vertical = 24.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = "No zikr found matching your search",
+                         Text(
+                                text = stringResource(R.string.category_no_zikr_found),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -291,7 +293,7 @@ items(
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Add Custom Zikr")
+                        Text(stringResource(R.string.category_add_custom_zikr))
                     }
                 }
             }
@@ -331,10 +333,10 @@ private fun CategoryNameField(
         onValueChange = onValueChange,
         modifier = modifier,
         label = {
-            Text("Category Name")
+            Text(stringResource(R.string.category_name_label))
         },
         placeholder = {
-            Text("e.g., My Morning Azkar")
+            Text(stringResource(R.string.category_name_placeholder))
         },
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -358,7 +360,7 @@ private fun SearchField(
         onValueChange = onValueChange,
         modifier = modifier,
         placeholder = {
-            Text("Search zikr...")
+            Text(stringResource(R.string.category_search_placeholder))
         },
         leadingIcon = {
             Icon(Icons.Default.Search, contentDescription = null)
@@ -366,7 +368,7 @@ private fun SearchField(
         trailingIcon = {
             AnimatedVisibility(visible = value.isNotEmpty()) {
                 IconButton(onClick = { onValueChange("") }) {
-                    Icon(Icons.Default.Close, contentDescription = "Clear")
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.category_clear_content_description))
                 }
             }
         },
@@ -463,7 +465,7 @@ private fun AvailableZikrCard(
                 ) {
                     Icon(
                         Icons.Default.Close,
-                        contentDescription = "Remove",
+                        contentDescription = stringResource(R.string.category_button_remove),
                         tint = MaterialTheme.colorScheme.onError
                     )
                 }
@@ -479,7 +481,7 @@ private fun AvailableZikrCard(
                 ) {
                     Icon(
                         Icons.Default.Add,
-                        contentDescription = "Add",
+                        contentDescription = stringResource(R.string.category_button_add),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
@@ -521,20 +523,20 @@ private fun SelectedItemCard(
                         enabled = index > 0,
                         modifier = Modifier.size(32.dp)
                     ) {
-                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Move up", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.category_move_up_content_description), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     IconButton(
                         onClick = onMoveDown,
                         enabled = index < totalCount - 1,
                         modifier = Modifier.size(32.dp)
                     ) {
-                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Move down", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = stringResource(R.string.category_move_down_content_description), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     IconButton(
                         onClick = onRemove,
                         modifier = Modifier.size(36.dp)
                     ) {
-                        Icon(Icons.Default.Delete, contentDescription = "Remove", tint = MaterialTheme.colorScheme.error)
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.category_remove_content_description), tint = MaterialTheme.colorScheme.error)
                     }
                 } else {
                     IconButton(
@@ -542,12 +544,12 @@ private fun SelectedItemCard(
                         enabled = false,
                         modifier = Modifier.size(32.dp)
                     ) {
-                        Icon(Icons.Default.Lock, contentDescription = "Stock category - limited editing", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
+                        Icon(Icons.Default.Lock, contentDescription = stringResource(R.string.category_stock_limited_editing_content_description), tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
                     }
                 }
             }
             IconButton(onClick = {}) {
-                Icon(Icons.Default.Edit, contentDescription = "Edit counts", tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
+                Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.category_edit_counts_content_description), tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
             }
         }
         Column(
@@ -589,7 +591,7 @@ private fun SelectedItemCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Count:",
+                        text = stringResource(R.string.category_count_label),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
@@ -630,7 +632,7 @@ private fun SelectedItemCard(
                                 ) {
                                     Icon(
                                         Icons.Default.Remove,
-                                        contentDescription = "Decrease",
+                                        contentDescription = stringResource(R.string.category_decrease_content_description),
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(20.dp)
                                     )
@@ -659,7 +661,7 @@ private fun SelectedItemCard(
                                 ) {
                                     Icon(
                                         Icons.Default.Add,
-                                        contentDescription = "Increase",
+                                        contentDescription = stringResource(R.string.category_increase_content_description),
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(20.dp)
                                     )
@@ -674,7 +676,7 @@ private fun SelectedItemCard(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Infinite",
+                        text = stringResource(R.string.category_infinite_label),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     )

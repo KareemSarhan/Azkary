@@ -80,4 +80,43 @@
     <string name="support_install_id_label">Install ID:</string>
     <string name="support_write_message_instruction">======= Please write your message below (any language) =======</string>
     <string name="support_no_app_found">No app found to complete this action.</string>
+
+    <!-- Category Creation Screen -->
+    <string name="category_create_title">Create Category</string>
+    <string name="category_edit_title">Edit Category</string>
+    <string name="category_back_content_description">Back</string>
+    <string name="category_save_content_description">Save</string>
+    <string name="category_name_label">Category Name</string>
+    <string name="category_name_placeholder">e.g., My Morning Azkar</string>
+    <string name="category_search_placeholder">Search zikr...</string>
+    <string name="category_clear_content_description">Clear</string>
+    <string name="category_selected_items">Selected Items</string>
+    <string name="category_choose_zikr">Choose Zikr</string>
+    <string name="category_loading_zikr">Loading available zikr...</string>
+    <string name="category_no_zikr_found">No zikr found matching your search</string>
+    <string name="category_add_custom_zikr">Add Custom Zikr</string>
+    <string name="category_button_add">Add</string>
+    <string name="category_button_remove">Remove</string>
+    <string name="category_count_label">Count:</string>
+    <string name="category_infinite_label">Infinite</string>
+    <string name="category_move_up_content_description">Move up</string>
+    <string name="category_move_down_content_description">Move down</string>
+    <string name="category_remove_content_description">Remove</string>
+    <string name="category_edit_counts_content_description">Edit counts</string>
+    <string name="category_stock_limited_editing_content_description">Stock category - limited editing</string>
+    <string name="category_decrease_content_description">Decrease</string>
+    <string name="category_increase_content_description">Increase</string>
+
+    <!-- Custom Zikr Dialog -->
+    <string name="custom_zikr_dialog_title">Add Custom Zikr</string>
+    <string name="custom_zikr_arabic_label">Arabic Text</string>
+    <string name="custom_zikr_transliteration_label">Transliteration</string>
+    <string name="custom_zikr_translation_label">Translation (Optional)</string>
+    <string name="custom_zikr_reference_label">Reference (Optional)</string>
+    <string name="custom_zikr_infinite_counter_label">Infinite Counter</string>
+    <string name="custom_zikr_repeat_count_label">Repeat Count</string>
+    <string name="custom_zikr_error_fill_text">Please fill in at least Arabic text or transliteration</string>
+    <string name="custom_zikr_error_min_repeat">Repeat count must be at least 1</string>
+    <string name="custom_zikr_button_cancel">Cancel</string>
+    <string name="custom_zikr_button_save">Save Zikr</string>
 </resources>

@@ -79,5 +79,44 @@
     <string name="support_timezone_label">التوقيت:</string>
     <string name="support_install_id_label">معرف التثبيت:</string>
     <string name="support_write_message_instruction">======= يرجى كتابة رسالتك أدناه (بأي لغة) =======</string>
-    <string name="support_no_app_found">لم يتم العثور على تطبيق لإكمال هذا الإجراء.</string>
+    <string name="support_no_app_found">لم يتم العثور على تطبيق لإكتمال هذا الإجراء.</string>
+
+    <!-- Category Creation Screen -->
+    <string name="category_create_title">إنشاء تصنيف</string>
+    <string name="category_edit_title">تعديل تصنيف</string>
+    <string name="category_back_content_description">رجوع</string>
+    <string name="category_save_content_description">حفظ</string>
+    <string name="category_name_label">اسم التصنيف</string>
+    <string name="category_name_placeholder">مثلاً، أذكاري الصباحية</string>
+    <string name="category_search_placeholder">بحث ذكر...</string>
+    <string name="category_clear_content_description">مسح</string>
+    <string name="category_selected_items">العناصر المحددة</string>
+    <string name="category_choose_zikr">اختر الذكر</string>
+    <string name="category_loading_zikr">جاري تحميل الأذكار المتاحة...</string>
+    <string name="category_no_zikr_found">لم يتم العثور على ذكر يطابق بحثك</string>
+    <string name="category_add_custom_zikr">إضافة ذكر مخصص</string>
+    <string name="category_button_add">إضافة</string>
+    <string name="category_button_remove">إزالة</string>
+    <string name="category_count_label">العدد:</string>
+    <string name="category_infinite_label">لانهائي</string>
+    <string name="category_move_up_content_description">تحريك لأعلى</string>
+    <string name="category_move_down_content_description">تحريك لأسفل</string>
+    <string name="category_remove_content_description">إزالة</string>
+    <string name="category_edit_counts_content_description">تعديل العدادات</string>
+    <string name="category_stock_limited_editing_content_description">تصنيف افتراضي - تعديل محدود</string>
+    <string name="category_decrease_content_description">إنقاص</string>
+    <string name="category_increase_content_description">زيادة</string>
+
+    <!-- Custom Zikr Dialog -->
+    <string name="custom_zikr_dialog_title">إضافة ذكر مخصص</string>
+    <string name="custom_zikr_arabic_label">النص العربي</string>
+    <string name="custom_zikr_transliteration_label">النحو</string>
+    <string name="custom_zikr_translation_label">الترجمة (اختياري)</string>
+    <string name="custom_zikr_reference_label">المصدر (اختياري)</string>
+    <string name="custom_zikr_infinite_counter_label">عداد لانهائي</string>
+    <string name="custom_zikr_repeat_count_label">عدد التكرارات</string>
+    <string name="custom_zikr_error_fill_text">يرجى ملء النص العربي أو النحو على الأقل</string>
+    <string name="custom_zikr_error_min_repeat">يجب أن يكون عدد التكرارات 1 على الأقل</string>
+    <string name="custom_zikr_button_cancel">إلغاء</string>
+    <string name="custom_zikr_button_save">حفظ الذكر</string>
 </resources>

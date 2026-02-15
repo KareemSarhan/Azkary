@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.res.stringResource
+import com.app.azkary.R
 import com.app.azkary.data.model.CategoryItemConfig
 import kotlinx.coroutines.flow.Flow
 
@@ -52,7 +54,7 @@ fun CustomZikrDialog(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Add Custom Zikr",
+                    text = stringResource(R.string.custom_zikr_dialog_title),
                     style = MaterialTheme.typography.headlineSmall
                 )
                 
@@ -61,7 +63,7 @@ fun CustomZikrDialog(
                 TextField(
                     value = arabicText,
                     onValueChange = { arabicText = it },
-                    label = { Text("Arabic Text") },
+                    label = { Text(stringResource(R.string.custom_zikr_arabic_label)) },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3,
                     isError = showError != null && arabicText.isEmpty()
@@ -72,7 +74,7 @@ fun CustomZikrDialog(
                 TextField(
                     value = transliteration,
                     onValueChange = { transliteration = it },
-                    label = { Text("Transliteration") },
+                    label = { Text(stringResource(R.string.custom_zikr_transliteration_label)) },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3
                 )
@@ -82,7 +84,7 @@ fun CustomZikrDialog(
                 TextField(
                     value = translation,
                     onValueChange = { translation = it },
-                    label = { Text("Translation (Optional)") },
+                    label = { Text(stringResource(R.string.custom_zikr_translation_label)) },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3
                 )
@@ -92,7 +94,7 @@ fun CustomZikrDialog(
                 TextField(
                     value = reference,
                     onValueChange = { reference = it },
-                    label = { Text("Reference (Optional)") },
+                    label = { Text(stringResource(R.string.custom_zikr_reference_label)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -104,7 +106,7 @@ fun CustomZikrDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Infinite Counter",
+                        text = stringResource(R.string.custom_zikr_infinite_counter_label),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Switch(
@@ -117,7 +119,7 @@ fun CustomZikrDialog(
                 
                 if (!isInfinite) {
                     Text(
-                        text = "Repeat Count",
+                        text = stringResource(R.string.custom_zikr_repeat_count_label),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -166,23 +168,23 @@ fun CustomZikrDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.custom_zikr_button_cancel))
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
                             if (!isValid) {
-                                showError = "Please fill in at least Arabic text or transliteration"
+                                showError = stringResource(R.string.custom_zikr_error_fill_text)
                                 return@Button
                             }
                             if (!isInfinite && requiredRepeats < 1) {
-                                showError = "Repeat count must be at least 1"
+                                showError = stringResource(R.string.custom_zikr_error_min_repeat)
                                 return@Button
                             }
                             onSave(arabicText, transliteration, translation, reference, requiredRepeats, isInfinite)
                         }
                     ) {
-                        Text("Save Zikr")
+                        Text(stringResource(R.string.custom_zikr_button_save))
                     }
                 }
             }

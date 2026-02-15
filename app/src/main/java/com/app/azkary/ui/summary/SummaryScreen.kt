@@ -139,7 +139,6 @@ fun SummaryScreen(
                         totalCount = categories.size,
                         isEditMode = isEditMode,
                         onClick = { onNavigateToCategory(category.id) },
-                        onEdit = { if (category.type == com.app.azkary.data.model.CategoryType.USER) onNavigateToEditCategory(category.id) },
                         onDelete = { viewModel.deleteCategory(category.id) },
                         onMoveUp = { if (index > 0) viewModel.moveCategoryUp(index) },
                         onMoveDown = { if (index < categories.size - 1) viewModel.moveCategoryDown(index) }
@@ -238,7 +237,6 @@ fun CategoryItem(
     totalCount: Int,
     isEditMode: Boolean,
     onClick: () -> Unit,
-    onEdit: () -> Unit,
     onDelete: () -> Unit,
     onMoveUp: () -> Unit,
     onMoveDown: () -> Unit
@@ -247,9 +245,10 @@ fun CategoryItem(
 
     Card(
         onClick = {
-            when {
-                !isEditMode -> onClick()
-                else -> onEdit()  // In edit mode, all categories can be edited
+            if (category.type == com.app.azkary.data.model.CategoryType.USER || !isEditMode) {
+                onClick()
+            } else if (isEditMode) {
+                onClick()
             }
         },
         modifier = Modifier.fillMaxWidth()
@@ -282,18 +281,12 @@ fun CategoryItem(
                             ) {
                                 Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
                             }
-                            IconButton(onClick = onEdit) {
-                                Icon(Icons.Default.Edit, contentDescription = null)
-                            }
                             IconButton(onClick = onDelete) {
                                 Icon(Icons.Default.Delete, contentDescription = null)
                             }
                         }
                     }
                     com.app.azkary.data.model.CategoryType.DEFAULT -> {
-                        IconButton(onClick = onEdit) {
-                            Icon(Icons.Default.Edit, contentDescription = "Edit category", tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
                     }
                 }
             } else {
@@ -345,7 +338,7 @@ fun AddCategoryItem(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Add Category", // summary_add_category
+                    text = stringResource(R.string.summary_add_category),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
