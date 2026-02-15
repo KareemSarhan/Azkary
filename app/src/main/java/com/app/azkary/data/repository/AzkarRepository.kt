@@ -262,7 +262,9 @@ class AzkarRepository @Inject constructor(
     suspend fun createCustomCategory(
         name: String,
         langTag: String,
-        itemConfigs: List<CategoryItemConfig>
+        itemConfigs: List<CategoryItemConfig>,
+        from: Int = 0,
+        to: Int = 6
     ): String {
         val categoryId = "user_${UUID.randomUUID().toString()}"
         
@@ -274,8 +276,8 @@ class AzkarRepository @Inject constructor(
             systemKey = null,
             sortOrder = maxSortOrder + 1,
             isArchived = false,
-            from = 0,
-            to = 23
+            from = from,
+            to = to
         ))
         
         categoryTextDao.upsertCategoryText(CategoryTextEntity(
@@ -312,7 +314,9 @@ class AzkarRepository @Inject constructor(
     suspend fun updateCustomCategory(
         categoryId: String,
         name: String? = null,
-        itemConfigs: List<CategoryItemConfig>? = null
+        itemConfigs: List<CategoryItemConfig>? = null,
+        from: Int? = null,
+        to: Int? = null
     ) {
         // Check if this is a stock category
         val category = categoryDao.getCategoryById(categoryId).first()
@@ -329,6 +333,14 @@ class AzkarRepository @Inject constructor(
                 categoryId = categoryId,
                 langTag = "ar",
                 name = name
+            ))
+        }
+        
+        // Update schedule for user categories only
+        if ((from != null || to != null) && !isStockCategory && category != null) {
+            categoryDao.updateCategory(category.copy(
+                from = from ?: category.from,
+                to = to ?: category.to
             ))
         }
         

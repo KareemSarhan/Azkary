@@ -119,4 +119,17 @@
     <string name="custom_zikr_error_min_repeat">Repeat count must be at least 1</string>
     <string name="custom_zikr_button_cancel">Cancel</string>
     <string name="custom_zikr_button_save">Save Zikr</string>
+
+    <!-- Schedule / Prayer Times -->
+    <string name="section_schedule">Schedule</string>
+    <string name="schedule_from_label">From</string>
+    <string name="schedule_to_label">To</string>
+    <string name="schedule_to">→</string>
+    <string name="schedule_all_day">All Day</string>
+    <string name="schedule_fajr">Fajr</string>
+    <string name="schedule_shrouq">Shrouq</string>
+    <string name="schedule_dhuhr">Dhuhr</string>
+    <string name="schedule_asr">Asr</string>
+    <string name="schedule_maghrib">Maghrib</string>
+    <string name="schedule_isha">Isha</string>
 </resources>

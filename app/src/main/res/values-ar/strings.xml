@@ -119,4 +119,17 @@
     <string name="custom_zikr_error_min_repeat">يجب أن يكون عدد التكرارات 1 على الأقل</string>
     <string name="custom_zikr_button_cancel">إلغاء</string>
     <string name="custom_zikr_button_save">حفظ الذكر</string>
+
+    <!-- Schedule / Prayer Times -->
+    <string name="section_schedule">الجدول</string>
+    <string name="schedule_from_label">من</string>
+    <string name="schedule_to_label">إلى</string>
+    <string name="schedule_to">→</string>
+    <string name="schedule_all_day">طوال اليوم</string>
+    <string name="schedule_fajr">الفجر</string>
+    <string name="schedule_shrouq">الشروق</string>
+    <string name="schedule_dhuhr">الظهر</string>
+    <string name="schedule_asr">العصر</string>
+    <string name="schedule_maghrib">المغرب</string>
+    <string name="schedule_isha">العشاء</string>
 </resources>

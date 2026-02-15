@@ -139,6 +139,7 @@ fun SummaryScreen(
                         totalCount = categories.size,
                         isEditMode = isEditMode,
                         onClick = { onNavigateToCategory(category.id) },
+                        onEdit = { onNavigateToEditCategory(category.id) },
                         onDelete = { viewModel.deleteCategory(category.id) },
                         onMoveUp = { if (index > 0) viewModel.moveCategoryUp(index) },
                         onMoveDown = { if (index < categories.size - 1) viewModel.moveCategoryDown(index) }
@@ -237,6 +238,7 @@ fun CategoryItem(
     totalCount: Int,
     isEditMode: Boolean,
     onClick: () -> Unit,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
     onMoveUp: () -> Unit,
     onMoveDown: () -> Unit
@@ -245,9 +247,9 @@ fun CategoryItem(
 
     Card(
         onClick = {
-            if (category.type == com.app.azkary.data.model.CategoryType.USER || !isEditMode) {
-                onClick()
-            } else if (isEditMode) {
+            if (isEditMode && category.type == com.app.azkary.data.model.CategoryType.USER) {
+                onEdit()
+            } else {
                 onClick()
             }
         },
@@ -262,7 +264,7 @@ fun CategoryItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(category.name, style = MaterialTheme.typography.titleMedium)
-                Text(stringResource(R.string.summary_scheduled), style = MaterialTheme.typography.bodySmall)
+                Text(formatScheduleText(category.from, category.to), style = MaterialTheme.typography.bodySmall)
             }
 
             if (isEditMode) {
@@ -287,6 +289,20 @@ fun CategoryItem(
                         }
                     }
                     com.app.azkary.data.model.CategoryType.DEFAULT -> {
+                        Row {
+                            IconButton(
+                                onClick = onMoveUp,
+                                enabled = index > 0
+                            ) {
+                                Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
+                            }
+                            IconButton(
+                                onClick = onMoveDown,
+                                enabled = index < totalCount - 1
+                            ) {
+                                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+                            }
+                        }
                     }
                 }
             } else {
@@ -300,6 +316,37 @@ fun CategoryItem(
             }
 
         }
+    }
+}
+
+@Composable
+private fun formatScheduleText(from: Int, to: Int): String {
+    val fromName = when (from) {
+        0 -> stringResource(R.string.schedule_fajr)
+        1 -> stringResource(R.string.schedule_shrouq)
+        2 -> stringResource(R.string.schedule_dhuhr)
+        3 -> stringResource(R.string.schedule_asr)
+        4 -> stringResource(R.string.schedule_maghrib)
+        5 -> stringResource(R.string.schedule_isha)
+        6 -> stringResource(R.string.schedule_all_day)
+        else -> from.toString()
+    }
+    
+    val toName = when (to) {
+        0 -> stringResource(R.string.schedule_fajr)
+        1 -> stringResource(R.string.schedule_shrouq)
+        2 -> stringResource(R.string.schedule_dhuhr)
+        3 -> stringResource(R.string.schedule_asr)
+        4 -> stringResource(R.string.schedule_maghrib)
+        5 -> stringResource(R.string.schedule_isha)
+        6 -> stringResource(R.string.schedule_all_day)
+        else -> to.toString()
+    }
+    
+    return if (from == 0 && to == 6) {
+        stringResource(R.string.schedule_all_day)
+    } else {
+        "$fromName ${stringResource(R.string.schedule_to)} $toName"
     }
 }
 
