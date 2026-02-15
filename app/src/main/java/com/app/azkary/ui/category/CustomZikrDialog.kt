@@ -35,6 +35,9 @@ fun CustomZikrDialog(
     var isInfinite by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf<String?>(null) }
 
+    val errorFillText = stringResource(R.string.custom_zikr_error_fill_text)
+    val errorMinRepeat = stringResource(R.string.custom_zikr_error_min_repeat)
+
     val isValid = if (isInfinite) {
         arabicText.isNotEmpty() || transliteration.isNotEmpty()
     } else {
@@ -174,11 +177,11 @@ fun CustomZikrDialog(
                     Button(
                         onClick = {
                             if (!isValid) {
-                                showError = stringResource(R.string.custom_zikr_error_fill_text)
+                                showError = errorFillText
                                 return@Button
                             }
                             if (!isInfinite && requiredRepeats < 1) {
-                                showError = stringResource(R.string.custom_zikr_error_min_repeat)
+                                showError = errorMinRepeat
                                 return@Button
                             }
                             onSave(arabicText, transliteration, translation, reference, requiredRepeats, isInfinite)
