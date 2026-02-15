@@ -96,7 +96,9 @@ data class CategoryItemCrossRefEntity(
     val categoryId: String,
     val itemId: String,
     val sortOrder: Int,
-    val isEnabled: Boolean = true
+    val isEnabled: Boolean = true,
+    val requiredRepeats: Int = 1,
+    val isInfinite: Boolean = false
 )
 
 @Entity(

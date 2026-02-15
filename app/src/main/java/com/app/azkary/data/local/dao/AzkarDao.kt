@@ -86,9 +86,19 @@ interface AzkarTextDao {
 }
 
 data class ItemWithTextProjection(
-    @Embedded(prefix = "item_") val item: AzkarItemEntity,
-    @Embedded(prefix = "text_") val text: AzkarTextEntity,
-    val sortOrder: Int
+    val item_itemId: String,
+    val item_source: com.app.azkary.data.model.AzkarSource,
+    val item_createdAt: Long,
+    val item_updatedAt: Long,
+    val text_itemId: String,
+    val text_langTag: String,
+    val text_title: String?,
+    val text_text: String?,
+    val text_translation: String?,
+    val text_referenceText: String?,
+    val sortOrder: Int,
+    val requiredRepeats: Int,
+    val isInfinite: Boolean
 )
 
 data class ItemWeightProjection(
@@ -104,9 +114,11 @@ interface CategoryItemDao {
     @Transaction
     @Query("""
         SELECT 
-            ai.itemId as item_itemId, ai.requiredRepeats as item_requiredRepeats, ai.source as item_source, ai.createdAt as item_createdAt, ai.updatedAt as item_updatedAt, ai.isInfinite as item_isInfinite,
+            ai.itemId as item_itemId, ai.source as item_source, ai.createdAt as item_createdAt, ai.updatedAt as item_updatedAt,
             at.itemId as text_itemId, at.langTag as text_langTag, at.title as text_title, at.text as text_text, at.translation as text_translation, at.referenceText as text_referenceText,
-            cicr.sortOrder 
+            cicr.sortOrder,
+            cicr.requiredRepeats,
+            cicr.isInfinite
         FROM azkar_items ai
         JOIN category_item_crossrefs cicr ON ai.itemId = cicr.itemId
         LEFT JOIN azkar_texts at ON ai.itemId = at.itemId AND at.langTag = :langTag
@@ -116,7 +128,7 @@ interface CategoryItemDao {
     fun getEnabledItemsWithText(categoryId: String, langTag: String): Flow<List<ItemWithTextProjection>>
 
     @Query("""
-        SELECT ai.itemId, ai.requiredRepeats, ai.isInfinite, at.text as arabicText FROM azkar_items ai
+        SELECT ai.itemId, cicr.requiredRepeats, cicr.isInfinite, at.text as arabicText FROM azkar_items ai
         JOIN category_item_crossrefs cicr ON ai.itemId = cicr.itemId
         LEFT JOIN azkar_texts at ON ai.itemId = at.itemId AND at.langTag = 'ar'
         WHERE cicr.categoryId = :categoryId AND cicr.isEnabled = 1
@@ -131,6 +143,9 @@ interface CategoryItemDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCrossRefs(crossRefs: List<CategoryItemCrossRefEntity>)
+
+    @Update
+    suspend fun updateCrossRef(crossRef: CategoryItemCrossRefEntity)
 
     @Query("DELETE FROM category_item_crossrefs WHERE categoryId = :categoryId")
     suspend fun deleteCategoryItems(categoryId: String)

@@ -120,10 +120,10 @@ class AzkarRepository @Inject constructor(
                         transliteration = if (langTag != "ar") bestText?.text else null,
                         translation = bestText?.translation,
                         reference = bestText?.referenceText,
-                        requiredRepeats = item.requiredRepeats,
+                        requiredRepeats = crossRef.requiredRepeats,
                         currentRepeats = progress?.currentRepeats ?: 0,
                         isCompleted = progress?.isCompleted ?: false,
-                        isInfinite = item.isInfinite
+                        isInfinite = crossRef.isInfinite
                     )
                 }
             }
@@ -134,9 +134,9 @@ class AzkarRepository @Inject constructor(
     }
 
     suspend fun incrementRepeat(categoryId: String, itemId: String, date: String) {
-        val item = itemDao.getItemById(itemId).first() ?: return
+        val crossRef = categoryItemDao.getAllCrossRefsForCategory(categoryId).first().find { it.itemId == itemId } ?: return
         
-        if (item.isInfinite) {
+        if (crossRef.isInfinite) {
             val currentProgress = progressDao.observeProgressForItem(categoryId, itemId, date).first()
             val currentCount = currentProgress?.currentRepeats ?: 0
             val newCount = currentCount + 1
@@ -163,7 +163,7 @@ class AzkarRepository @Inject constructor(
                 itemId = itemId,
                 date = date,
                 currentRepeats = newCount,
-                isCompleted = newCount >= item.requiredRepeats
+                isCompleted = newCount >= crossRef.requiredRepeats
             )
         )
     }
@@ -178,12 +178,12 @@ class AzkarRepository @Inject constructor(
                 var completedWeight = 0L
                 
                 projections.forEach { projection ->
-                    if (projection.item.isInfinite) return@forEach
-                    val weightPerOne = ArabicNormalizer.normalize(projection.text.text).length
-                    totalWeight += weightPerOne.toLong() * projection.item.requiredRepeats
+                    if (projection.isInfinite) return@forEach
+                    val weightPerOne = ArabicNormalizer.normalize(projection.text_text).length
+                    totalWeight += weightPerOne.toLong() * projection.requiredRepeats
                     
-                    val progress = progressMap[projection.item.itemId]
-                    val doneRepeats = progress?.currentRepeats?.coerceAtMost(projection.item.requiredRepeats) ?: 0
+                    val progress = progressMap[projection.item_itemId]
+                    val doneRepeats = progress?.currentRepeats?.coerceAtMost(projection.requiredRepeats) ?: 0
                     completedWeight += weightPerOne.toLong() * doneRepeats
                 }
                 
@@ -205,14 +205,13 @@ class AzkarRepository @Inject constructor(
     ) {
         val crossRefs = categoryItemDao.getAllCrossRefsForCategory(categoryId).first()
         crossRefs.filter { it.isEnabled }.forEach { crossRef ->
-            val item = itemDao.getItemById(crossRef.itemId).first() ?: return@forEach
-            if (item.isInfinite) return@forEach
+            if (crossRef.isInfinite) return@forEach
             progressDao.upsertProgress(
                 UserProgressEntity(
                     categoryId = categoryId,
                     itemId = crossRef.itemId,
                     date = date,
-                    currentRepeats = item.requiredRepeats,
+                    currentRepeats = crossRef.requiredRepeats,
                     isCompleted = true
                 )
             )
@@ -248,13 +247,13 @@ class AzkarRepository @Inject constructor(
         itemId: String,
         date: String = LocalDate.now().toString()
     ) {
-        val item = itemDao.getItemById(itemId).first() ?: return
+        val crossRef = categoryItemDao.getAllCrossRefsForCategory(categoryId).first().find { it.itemId == itemId } ?: return
         progressDao.upsertProgress(
             UserProgressEntity(
                 categoryId = categoryId,
                 itemId = itemId,
                 date = date,
-                currentRepeats = item.requiredRepeats,
+                currentRepeats = crossRef.requiredRepeats,
                 isCompleted = true
             )
         )
@@ -290,19 +289,14 @@ class AzkarRepository @Inject constructor(
                 categoryId = categoryId,
                 itemId = config.itemId,
                 sortOrder = index,
-                isEnabled = true
+                isEnabled = true,
+                requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
+                isInfinite = config.isInfinite
             ))
             
-            // Always update the item with isInfinite flag and requiredRepeats
+            // Ensure the item exists
             val existingItem = itemDao.getItemById(config.itemId).first()
-            if (existingItem != null) {
-                itemDao.upsertItem(existingItem.copy(
-                    requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
-                    isInfinite = config.isInfinite,
-                    updatedAt = System.currentTimeMillis()
-                ))
-            } else {
-                // Item doesn't exist, create new one
+            if (existingItem == null) {
                 itemDao.upsertItem(AzkarItemEntity(
                     itemId = config.itemId,
                     requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
@@ -341,13 +335,15 @@ class AzkarRepository @Inject constructor(
         if (itemConfigs != null) {
             if (isStockCategory) {
                 // For stock categories: only update item counts, don't add/remove items
+                val existingCrossRefs = categoryItemDao.getAllCrossRefsForCategory(categoryId).first()
+                val crossRefMap = existingCrossRefs.associateBy { it.itemId }
+                
                 for (config in itemConfigs) {
-                    val existingItem = itemDao.getItemById(config.itemId).first()
-                    if (existingItem != null && existingItem.source == com.app.azkary.data.model.AzkarSource.SEEDED) {
-                        itemDao.upsertItem(existingItem.copy(
+                    val existingCrossRef = crossRefMap[config.itemId]
+                    if (existingCrossRef != null) {
+                        categoryItemDao.updateCrossRef(existingCrossRef.copy(
                             requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
-                            isInfinite = config.isInfinite,
-                            updatedAt = System.currentTimeMillis()
+                            isInfinite = config.isInfinite
                         ))
                     }
                 }
@@ -359,17 +355,10 @@ class AzkarRepository @Inject constructor(
                         categoryId = categoryId,
                         itemId = config.itemId,
                         sortOrder = index,
-                        isEnabled = true
+                        isEnabled = true,
+                        requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
+                        isInfinite = config.isInfinite
                     ))
-                    
-                    val existingItem = itemDao.getItemById(config.itemId).first()
-                    if (existingItem != null) {
-                        itemDao.upsertItem(existingItem.copy(
-                            requiredRepeats = if (config.isInfinite) 0 else config.requiredRepeats,
-                            isInfinite = config.isInfinite,
-                            updatedAt = System.currentTimeMillis()
-                        ))
-                    }
                 }
             }
         }

@@ -62,6 +62,7 @@ class SeedManager @Inject constructor(
 
             // 1. Insert all items first
             val availableItemIds = mutableSetOf<String>()
+            val itemMap = mutableMapOf<String, SeedItem>()  // Map itemId -> SeedItem
             seedPack.items.forEach { seedItem ->
                 itemDao.upsertItems(
                     listOf(
@@ -84,6 +85,7 @@ class SeedManager @Inject constructor(
                     )
                 }
                 textDao.upsertTexts(itemTexts)
+                itemMap[seedItem.itemId] = seedItem
                 availableItemIds.add(seedItem.itemId)
             }
 
@@ -110,12 +112,15 @@ class SeedManager @Inject constructor(
                 // ONLY if the item was defined in the 'items' array to avoid FK constraint failure
                 seedCat.items.forEach { ref ->
                     if (availableItemIds.contains(ref.itemId)) {
+                        val seedItem = itemMap[ref.itemId]!!
                         crossRefDao.insertCrossRef(
                             CategoryItemCrossRefEntity(
                                 categoryId = seedCat.categoryId,
                                 itemId = ref.itemId,
                                 sortOrder = ref.sortOrder,
-                                isEnabled = ref.isEnabled
+                                isEnabled = ref.isEnabled,
+                                requiredRepeats = seedItem.requiredRepeats,  // From seed item
+                                isInfinite = false  // Default, seed data doesn't specify
                             )
                         )
                     }
