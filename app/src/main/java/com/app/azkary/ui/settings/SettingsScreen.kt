@@ -239,9 +239,7 @@ fun SettingsScreen(
 
             ThemeSettingItem(
                 themeMode = themeSettings.themeMode,
-                useTrueBlack = themeSettings.useTrueBlack,
                 onThemeModeChange = { viewModel.setThemeMode(it) },
-                onTrueBlackChange = { viewModel.setUseTrueBlack(it) },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor,
                 onSurfaceVariantColor = onSurfaceVariantColor,
@@ -447,9 +445,7 @@ private fun SettingsClickableItem(
 @Composable
 private fun ThemeSettingItem(
     themeMode: ThemeMode,
-    useTrueBlack: Boolean,
     onThemeModeChange: (ThemeMode) -> Unit,
-    onTrueBlackChange: (Boolean) -> Unit,
     surfaceColor: Color,
     onSurfaceColor: Color,
     onSurfaceVariantColor: Color,
@@ -500,33 +496,6 @@ private fun ThemeSettingItem(
                 onSurfaceVariantColor = onSurfaceVariantColor,
                 primaryColor = primaryColor
             )
-
-            // True Black toggle (only visible when Dark is selected)
-            AnimatedVisibility(visible = themeMode == ThemeMode.DARK) {
-                Column {
-                    Spacer(Modifier.height(16.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                stringResource(R.string.settings_true_black_oled),
-                                color = onSurfaceColor,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Text(
-                                stringResource(R.string.settings_true_black_description),
-                                color = onSurfaceVariantColor,
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(top = 2.dp)
-                            )
-                        }
-                        CustomIosToggle(
-                            isOn = useTrueBlack, onToggle = { onTrueBlackChange(!useTrueBlack) })
-                    }
-                }
-            }
         }
     }
 }
