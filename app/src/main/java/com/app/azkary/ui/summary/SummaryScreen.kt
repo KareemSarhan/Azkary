@@ -1,6 +1,8 @@
 package com.app.azkary.ui.summary
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,6 +73,7 @@ fun SummaryScreen(
     val currentSession by viewModel.currentSession.collectAsState(initial = null)
     val sessionEndTime by viewModel.sessionEndTime.collectAsState(initial = null)
     val isEditMode by viewModel.isEditMode.collectAsState()
+    val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
 
     val today = androidx.compose.runtime.remember {
         val currentLocale = Locale.getDefault()
@@ -145,7 +148,9 @@ fun SummaryScreen(
                         onEdit = { onNavigateToEditCategory(category.id) },
                         onDelete = { viewModel.deleteCategory(category.id) },
                         onMoveUp = { if (index > 0) viewModel.moveCategoryUp(index) },
-                        onMoveDown = { if (index < categories.size - 1) viewModel.moveCategoryDown(index) }
+                        onMoveDown = { if (index < categories.size - 1) viewModel.moveCategoryDown(index) },
+                        holdToComplete = holdToComplete,
+                        onHoldComplete = { viewModel.toggleCategoryCompletion(category.id) }
                     )
                 }
 
@@ -233,7 +238,7 @@ fun CurrentSessionCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CategoryItem(
     category: CategoryUi,
@@ -244,19 +249,29 @@ fun CategoryItem(
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     onMoveUp: () -> Unit,
-    onMoveDown: () -> Unit
+    onMoveDown: () -> Unit,
+    holdToComplete: Boolean = true,
+    onHoldComplete: () -> Unit = {}
 ) {
     val progress = category.progress.coerceIn(0f, 1f)
 
     Card(
-        onClick = {
-            if (isEditMode && category.type == com.app.azkary.data.model.CategoryType.USER) {
-                onEdit()
-            } else {
-                onClick()
-            }
-        },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = {
+                    if (isEditMode && category.type == com.app.azkary.data.model.CategoryType.USER) {
+                        onEdit()
+                    } else {
+                        onClick()
+                    }
+                },
+                onLongClick = {
+                    if (holdToComplete && !isEditMode) {
+                        onHoldComplete()
+                    }
+                }
+            )
     ) {
         Row(
             modifier = Modifier
