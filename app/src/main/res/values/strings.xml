@@ -63,7 +63,6 @@
     <string name="completion_title">MashaAllah!</string>
     <string name="completion_message">You have completed this category</string>
     <string name="completion_back_to_summary">Back to Summary</string>
-    <string name="completion_review_last">Review Last Zikr</string>
 
     <!-- Support / Feedback -->
     <string name="settings_support_feedback">Support / Feedback</string>

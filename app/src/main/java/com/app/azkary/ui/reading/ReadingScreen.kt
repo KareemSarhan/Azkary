@@ -68,7 +68,8 @@ fun ReadingScreen(
         label = "weightedProgressAnimation"
     )
 
-    val pagerState = rememberPagerState(pageCount = { items.size })
+    val isComplete = weightedProgress >= 1f
+    val pagerState = rememberPagerState(pageCount = { if (isComplete) items.size + 1 else items.size })
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -117,7 +118,7 @@ fun ReadingScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
 
-                            if (items.isNotEmpty()) {
+                            if (items.isNotEmpty() && !(isComplete && pagerState.currentPage == items.size)) {
                                 val pageText = BidiHelper.formatPageCounter(
                                     pagerState.currentPage + 1,
                                     items.size,
@@ -141,7 +142,7 @@ fun ReadingScreen(
                         }
                     },
                     actions = {
-                        val currentItem = items.getOrNull(pagerState.currentPage)
+                        val currentItem = if (isComplete && pagerState.currentPage == items.size) null else items.getOrNull(pagerState.currentPage)
                         if (currentItem != null) {
                             Surface(
                                 color = colors.surfaceVariant,
@@ -177,40 +178,32 @@ fun ReadingScreen(
             }
         }
     ) { padding ->
-        if (weightedProgress >= 1f) {
-            CompletionScreen(
-                onBackToSummary = onBack,
-                onReviewLastZikr = {
-                    scope.launch {
-                        pagerState.scrollToPage(items.size - 1)
-                    }
-                },
-                modifier = Modifier.padding(padding)
-            )
-        } else if (items.isNotEmpty()) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) { page ->
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) { page ->
+            if (isComplete && page == items.size) {
+                CompletionScreen(
+                    onBackToSummary = onBack,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else if (items.isNotEmpty()) {
                 val item = items[page]
 
                 AzkarReadingItem(
                     item = item,
                     onIncrement = {
-                        // For infinite items: always increment, never auto-scroll
                         if (item.isInfinite) {
                             performVibration(50L)
                             viewModel.incrementRepeat(item.id)
                             return@AzkarReadingItem
                         }
-                        
-                        // For regular items: check completion
+
                         val isAlreadyComplete = item.currentRepeats >= item.requiredRepeats
 
                         if (isAlreadyComplete) {
-                            // If already done, just scroll to next if available
                             if (page < items.size - 1) {
                                 scope.launch {
                                     performVibration(350L)
@@ -220,23 +213,14 @@ fun ReadingScreen(
                             return@AzkarReadingItem
                         }
 
-                        // 1. Immediate Short Vibration (Feedback for tap)
                         performVibration(50L)
-                        
-                        // 2. Update Progress in DB
                         viewModel.incrementRepeat(item.id)
-                        
-                        // 3. Auto-Next Check
+
                         val willBeComplete = (item.currentRepeats + 1) >= item.requiredRepeats
-                        if (willBeComplete && page < items.size - 1) {
+                        if (willBeComplete) {
                             scope.launch {
-                                // Delay so user sees the final count (e.g. 33/33)
                                 delay(0)
-                                
-                                // 4. Long Vibration (Feedback for Zikr completion/change)
                                 performVibration(350L)
-                                
-                                // 5. Smooth Scroll to next Zikr
                                 pagerState.animateScrollToPage(page + 1)
                             }
                         }

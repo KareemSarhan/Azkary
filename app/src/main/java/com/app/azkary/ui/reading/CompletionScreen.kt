@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +22,6 @@ import com.app.azkary.R
 @Composable
 fun CompletionScreen(
     onBackToSummary: () -> Unit,
-    onReviewLastZikr: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = MaterialTheme.colorScheme
@@ -39,7 +37,6 @@ fun CompletionScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Completion icon/emoji
             Text(
                 text = "🎉",
                 style = MaterialTheme.typography.displayLarge
@@ -47,7 +44,6 @@ fun CompletionScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Title
             Text(
                 text = stringResource(R.string.completion_title),
                 style = MaterialTheme.typography.headlineLarge.copy(
@@ -58,7 +54,6 @@ fun CompletionScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Message
             Text(
                 text = stringResource(R.string.completion_message),
                 style = MaterialTheme.typography.bodyLarge,
@@ -66,20 +61,6 @@ fun CompletionScreen(
             )
 
             Spacer(modifier = Modifier.height(48.dp))
-
-            OutlinedButton(
-                onClick = onReviewLastZikr,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.completion_review_last),
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = onBackToSummary,
