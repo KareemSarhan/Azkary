@@ -63,6 +63,7 @@
     <string name="completion_title">ماشاء الله!</string>
     <string name="completion_message">لقد أكملت هذا القسم</string>
     <string name="completion_back_to_summary">العودة للملخص</string>
+    <string name="completion_review_last">مراجعة آخر ذكر</string>
 
     <!-- Support / Feedback -->
     <string name="settings_support_feedback">الدعم / الملاحظات</string>

@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -71,6 +72,16 @@ fun ReadingScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val firstIncompleteIndex = remember(items) {
+        items.indexOfFirst { !it.isInfinite && it.currentRepeats < it.requiredRepeats }.takeIf { it >= 0 } ?: 0
+    }
+
+    LaunchedEffect(items, firstIncompleteIndex) {
+        if (pagerState.currentPage != firstIncompleteIndex && items.isNotEmpty()) {
+            pagerState.scrollToPage(firstIncompleteIndex)
+        }
+    }
 
     // Initialize Vibrator
     val vibrator = remember {
@@ -167,9 +178,13 @@ fun ReadingScreen(
         }
     ) { padding ->
         if (weightedProgress >= 1f) {
-            // Show completion screen when progress reaches 100%
             CompletionScreen(
                 onBackToSummary = onBack,
+                onReviewLastZikr = {
+                    scope.launch {
+                        pagerState.scrollToPage(items.size - 1)
+                    }
+                },
                 modifier = Modifier.padding(padding)
             )
         } else if (items.isNotEmpty()) {

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import com.app.azkary.R
 @Composable
 fun CompletionScreen(
     onBackToSummary: () -> Unit,
+    onReviewLastZikr: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = MaterialTheme.colorScheme
@@ -65,7 +67,20 @@ fun CompletionScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Back to Summary button
+            OutlinedButton(
+                onClick = onReviewLastZikr,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.completion_review_last),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Button(
                 onClick = onBackToSummary,
                 modifier = Modifier
