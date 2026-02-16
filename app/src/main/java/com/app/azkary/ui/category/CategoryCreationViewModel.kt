@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.azkary.R
 import com.app.azkary.data.model.AvailableZikr
 import com.app.azkary.data.model.CategoryItemConfig
 import com.app.azkary.data.repository.AzkarRepository
@@ -84,7 +85,7 @@ class CategoryCreationViewModel @Inject constructor(
                 }
                 _uiState.value = _uiState.value.copy(selectedItems = newSelectedItems)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = "Failed to load category: ${e.message}")
+                _uiState.value = _uiState.value.copy(error = "${context.getString(R.string.error_failed_load_category)}: ${e.message}")
             }
         }
     }
@@ -165,12 +166,14 @@ class CategoryCreationViewModel @Inject constructor(
         
         when {
             state.categoryName.isBlank() -> {
-                _uiState.value = state.copy(error = "Please enter a category name")
-                onError("Please enter a category name")
+                val error = context.getString(R.string.error_category_name_required)
+                _uiState.value = state.copy(error = error)
+                onError(error)
             }
             state.selectedItems.isEmpty() -> {
-                _uiState.value = state.copy(error = "Please select at least one zikr")
-                onError("Please select at least one zikr")
+                val error = context.getString(R.string.error_select_zikr)
+                _uiState.value = state.copy(error = error)
+                onError(error)
             }
             else -> {
                 viewModelScope.launch {
@@ -236,7 +239,8 @@ class CategoryCreationViewModel @Inject constructor(
                 )
                 _uiState.value = _uiState.value.copy(selectedItems = selectedItems)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = "Failed to create zikr: ${e.message}")
+                val errorMsg = "${context.getString(R.string.error_failed_create_zikr)}: ${e.message}"
+                _uiState.value = _uiState.value.copy(error = errorMsg)
             }
         }
     }

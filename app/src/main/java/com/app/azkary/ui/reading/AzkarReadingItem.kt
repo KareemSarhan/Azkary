@@ -27,8 +27,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app.azkary.R
 import com.app.azkary.data.model.AzkarItemUi
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -76,7 +78,7 @@ fun AzkarReadingItem(
             // Transliteration
             if (!item.transliteration.isNullOrBlank()) {
                 ReadingSectionLtr(
-                    title = "Transliteration",
+                    title = stringResource(R.string.reading_transliteration),
                     content = item.transliteration,
                     titleColor = colors.primary
                 )
@@ -85,7 +87,7 @@ fun AzkarReadingItem(
             // Translation
             if (!item.translation.isNullOrBlank()) {
                 ReadingSectionLtr(
-                    title = "Translation",
+                    title = stringResource(R.string.reading_translation),
                     content = item.translation,
                     titleColor = colors.primary
                 )
@@ -160,7 +162,7 @@ private fun HadithInformationCardLtr(referenceText: String) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Reference",
+                text = stringResource(R.string.reading_reference),
                 style = MaterialTheme.typography.labelSmall.copy(
                     color = colors.primary,
                     fontWeight = FontWeight.Bold

@@ -244,12 +244,13 @@ fun SettingsScreen(
             Spacer(Modifier.height(32.dp))
 
             val context = LocalContext.current
+            val unknownText = stringResource(R.string.unknown_location)
             val versionName = remember {
                 try {
                     context.packageManager.getPackageInfo(context.packageName, 0).versionName
-                        ?: "Unknown"
+                        ?: unknownText
                 } catch (e: Exception) {
-                    "Unknown"
+                    unknownText
                 }
             }
             Text(
@@ -560,7 +561,7 @@ fun CustomIosToggle(
                 .offset(x = thumbOffset)
                 .size(thumbSize)
                 .shadow(elevation = 6.dp, shape = CircleShape)
-                .background(Color.White, CircleShape)
+                .background(MaterialTheme.colorScheme.surface, CircleShape)
         )
     }
 }

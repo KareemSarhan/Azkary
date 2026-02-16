@@ -120,6 +120,20 @@
     <string name="custom_zikr_button_cancel">Cancel</string>
     <string name="custom_zikr_button_save">Save Zikr</string>
 
+    <!-- Reading Screen Labels -->
+    <string name="reading_transliteration">Transliteration</string>
+    <string name="reading_translation">Translation</string>
+    <string name="reading_reference">Reference</string>
+    <string name="unknown_location">Unknown</string>
+    <string name="error_category_name_required">Please enter a category name</string>
+    <string name="error_select_zikr">Please select at least one zikr</string>
+    <string name="error_failed_load_category">Failed to load category</string>
+    <string name="error_failed_create_zikr">Failed to create zikr</string>
+    <string name="error_location_permission">Unable to get location. Check permissions.</string>
+    <string name="error_location_generic">Location error</string>
+    <string name="error_location_disabled">Please enable location for prayer times</string>
+    <string name="error_prayer_times">Failed to load prayer times</string>
+
     <!-- Schedule / Prayer Times (0-8) -->
     <string name="section_schedule">Schedule</string>
     <string name="schedule_from_label">From</string>

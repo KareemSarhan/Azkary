@@ -12,6 +12,7 @@ import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.domain.model.DayPrayerTimes
 import android.util.Log
+import com.app.azkary.R
 import com.app.azkary.domain.model.WindowCalculationResult
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -117,10 +118,10 @@ class SettingsViewModel @Inject constructor(
                     )
                     userPreferencesRepository.setLocationName(cityName)
                 } else {
-                    _locationError.value = "Unable to get location. Check permissions."
+                    _locationError.value = context.getString(R.string.error_location_permission)
                 }
             } catch (e: Exception) {
-                _locationError.value = "Location error: ${e.message}"
+                _locationError.value = "${context.getString(R.string.error_location_generic)}: ${e.message}"
             } finally {
                 _isRefreshingLocation.value = false
             }
@@ -149,7 +150,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val locationPrefs = locationPreferences.value
             if (!locationPrefs.useLocation || locationPrefs.lastResolvedLocation == null) {
-                _prayerTimesError.value = "Please enable location for prayer times"
+                _prayerTimesError.value = context.getString(R.string.error_location_disabled)
                 return@launch
             }
 
@@ -194,7 +195,7 @@ class SettingsViewModel @Inject constructor(
 
 
             } catch (e: Exception) {
-                _prayerTimesError.value = "Failed to load prayer times: ${e.message}"
+                _prayerTimesError.value = "${context.getString(R.string.error_prayer_times)}: ${e.message}"
             } finally {
                 _isRefreshingPrayerTimes.value = false
             }
