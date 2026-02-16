@@ -67,7 +67,9 @@ class CategoryCreationViewModel @Inject constructor(
                 if (category != null) {
                     _uiState.value = _uiState.value.copy(
                         categoryName = category.name,
-                        isStockCategory = category.type == com.app.azkary.data.model.CategoryType.DEFAULT
+                        isStockCategory = category.type == com.app.azkary.data.model.CategoryType.DEFAULT,
+                        from = category.from,
+                        to = category.to
                     )
                 }
                 
@@ -145,6 +147,14 @@ class CategoryCreationViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(selectedItems = selectedItems)
         }
     }
+
+    fun onFromChange(from: Int) {
+        _uiState.value = _uiState.value.copy(from = from)
+    }
+
+    fun onToChange(to: Int) {
+        _uiState.value = _uiState.value.copy(to = to)
+    }
     
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
@@ -170,14 +180,18 @@ class CategoryCreationViewModel @Inject constructor(
                             repository.updateCustomCategory(
                                 categoryId = categoryId,
                                 name = state.categoryName.trim(),
-                                itemConfigs = state.selectedItems
+                                itemConfigs = state.selectedItems,
+                                from = state.from,
+                                to = state.to
                             )
                         } else {
                             // Create new category
                             repository.createCustomCategory(
                                 name = state.categoryName.trim(),
                                 langTag = localeManager.getCurrentLanguageTag(context),
-                                itemConfigs = state.selectedItems
+                                itemConfigs = state.selectedItems,
+                                from = state.from,
+                                to = state.to
                             )
                         }
                         _uiState.value = CategoryCreationUiState()
@@ -234,5 +248,7 @@ data class CategoryCreationUiState(
     val selectedItems: List<CategoryItemConfig> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val isStockCategory: Boolean = false
+    val isStockCategory: Boolean = false,
+    val from: Int = 0,
+    val to: Int = 6
 )

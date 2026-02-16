@@ -88,6 +88,10 @@ import com.app.azkary.data.model.AvailableZikr
 import com.app.azkary.data.model.CategoryItemConfig
 import kotlinx.coroutines.launch
 import androidx.compose.ui.res.stringResource
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -184,6 +188,17 @@ fun CategoryCreationScreen(
                     onValueChange = viewModel::onCategoryNameChange,
                     modifier = Modifier.fillMaxWidth()
                 )
+            }
+
+            if (!uiState.isStockCategory) {
+                item {
+                    ScheduleSection(
+                        from = uiState.from,
+                        to = uiState.to,
+                        onFromChange = viewModel::onFromChange,
+                        onToChange = viewModel::onToChange
+                    )
+                }
             }
             
             item {
@@ -690,6 +705,118 @@ private fun SelectedItemCard(
                             uncheckedTrackColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.3f)
                         )
                     )
+                }
+            }
+        }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ScheduleSection(
+    from: Int,
+    to: Int,
+    onFromChange: (Int) -> Unit,
+    onToChange: (Int) -> Unit
+) {
+    val scheduleOptions = listOf(
+        0 to stringResource(R.string.schedule_fajr),
+        1 to stringResource(R.string.schedule_shrouq),
+        2 to stringResource(R.string.schedule_dhuhr),
+        3 to stringResource(R.string.schedule_asr),
+        4 to stringResource(R.string.schedule_maghrib),
+        5 to stringResource(R.string.schedule_isha),
+        6 to stringResource(R.string.schedule_all_day)
+    )
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.section_schedule),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Box(modifier = Modifier.weight(1f)) {
+                var expanded by remember { mutableStateOf(false) }
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded }
+                ) {
+                    OutlinedTextField(
+                        value = scheduleOptions.find { it.first == from }?.second ?: "",
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.schedule_from_label)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                        )
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        scheduleOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option.second) },
+                                onClick = {
+                                    onFromChange(option.first)
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            
+            Text(
+                text = stringResource(R.string.schedule_to),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
+            
+            Box(modifier = Modifier.weight(1f)) {
+                var expanded by remember { mutableStateOf(false) }
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded }
+                ) {
+                    OutlinedTextField(
+                        value = scheduleOptions.find { it.first == to }?.second ?: "",
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.schedule_to_label)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                        )
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        scheduleOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option.second) },
+                                onClick = {
+                                    onToChange(option.first)
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
