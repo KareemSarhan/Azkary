@@ -124,7 +124,8 @@
     <string name="section_schedule">الجدول</string>
     <string name="schedule_from_label">من</string>
     <string name="schedule_to_label">إلى</string>
-    <string name="schedule_to">→</string>
+    <string name="schedule_to">إلى</string>
+    <string name="schedule_from">من</string>
     <string name="schedule_fajr">الفجر</string>
     <string name="schedule_sunrise">الشروق</string>
     <string name="schedule_dhuhr">الظهر</string>

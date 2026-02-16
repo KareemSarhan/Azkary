@@ -124,7 +124,8 @@
     <string name="section_schedule">Schedule</string>
     <string name="schedule_from_label">From</string>
     <string name="schedule_to_label">To</string>
-    <string name="schedule_to">→</string>
+    <string name="schedule_to">to</string>
+    <string name="schedule_from">From</string>
     <string name="schedule_fajr">Fajr</string>
     <string name="schedule_sunrise">Sunrise</string>
     <string name="schedule_dhuhr">Dhuhr</string>

@@ -177,7 +177,7 @@ fun CurrentSessionCard(
                 .fillMaxWidth()                 // ✅ important (fixes cut-off look)
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(Color(0xFF6A11CB), Color(0xFF2575FC))
+                        colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiary)
                     )
                 )
                 .padding(24.dp)
@@ -220,7 +220,7 @@ fun CurrentSessionCard(
                         progress = progress,
                         modifier = Modifier.size(64.dp),
                         strokeWidth = 8.dp,
-                        color = Color(0xFF00E5FF),                 // bright ring like screenshot
+                        color = MaterialTheme.colorScheme.onPrimary,
                         trackColor = Color.White.copy(alpha = 0.25f) // faint ring behind
                     )
 
@@ -347,13 +347,15 @@ private fun formatScheduleText(from: Int, to: Int): String {
         else -> to.toString()
     }
     
-    // Check if range wraps to next day
     val isNextDay = to < from
-
+    val fromLabel = stringResource(R.string.schedule_from)
+    val toLabel = stringResource(R.string.schedule_to)
+    val nextDaySuffix = stringResource(R.string.schedule_next_day_suffix)
+    
     return if (isNextDay) {
-        "$fromName ${stringResource(R.string.schedule_to)} $toName ${stringResource(R.string.schedule_next_day_suffix)}"
+        "$fromLabel $fromName $toLabel $toName $nextDaySuffix"
     } else {
-        "$fromName ${stringResource(R.string.schedule_to)} $toName"
+        "$fromLabel $fromName $toLabel $toName"
     }
 }
 

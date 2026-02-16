@@ -780,10 +780,7 @@ private fun ScheduleSection(
                 }
             }
             
-            Text(
-                text = stringResource(R.string.schedule_to),
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
+            Spacer(modifier = Modifier.width(8.dp))
             
             Box(modifier = Modifier.weight(1f)) {
                 var expanded by remember { mutableStateOf(false) }

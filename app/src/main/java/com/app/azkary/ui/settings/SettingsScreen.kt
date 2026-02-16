@@ -63,11 +63,6 @@ import com.app.azkary.R
 import com.app.azkary.data.prefs.ThemeMode
 import kotlinx.coroutines.launch
 
-private val ToggleRed = Color(0xFFE53935)
-private val ToggleOff = Color(0xFF252D3F)
-private val AccentBlue = Color(0xFF42A5F5)
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -185,7 +180,7 @@ fun SettingsScreen(
                         surfaceColor = surfaceColor,
                         onSurfaceColor = onSurfaceColor,
                         onSurfaceVariantColor = onSurfaceVariantColor,
-                        accentColor = AccentBlue
+                        accentColor = primaryColor
                     )
                     Spacer(Modifier.height(8.dp))
                 }
@@ -535,7 +530,8 @@ fun CustomIosToggle(
     isOn: Boolean, onToggle: () -> Unit
 ) {
     val trackColor by animateColorAsState(
-        targetValue = if (isOn) ToggleRed else ToggleOff, label = "trackColor"
+        targetValue = if (isOn) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.surfaceVariant,
+        label = "trackColor"
     )
 
     // sizes
