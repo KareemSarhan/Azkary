@@ -1,13 +1,26 @@
 package com.app.azkary.data.local
 
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.app.azkary.data.local.dao.*
-import com.app.azkary.data.local.entities.*
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.app.azkary.data.local.dao.AzkarItemDao
+import com.app.azkary.data.local.dao.AzkarTextDao
+import com.app.azkary.data.local.dao.CategoryDao
+import com.app.azkary.data.local.dao.CategoryItemDao
+import com.app.azkary.data.local.dao.CategoryTextDao
+import com.app.azkary.data.local.dao.PrayerDayDao
+import com.app.azkary.data.local.dao.PrayerMonthDao
+import com.app.azkary.data.local.dao.ProgressDao
+import com.app.azkary.data.local.entities.AzkarItemEntity
+import com.app.azkary.data.local.entities.AzkarTextEntity
+import com.app.azkary.data.local.entities.CategoryEntity
+import com.app.azkary.data.local.entities.CategoryItemCrossRefEntity
+import com.app.azkary.data.local.entities.CategoryTextEntity
+import com.app.azkary.data.local.entities.PrayerDayEntity
+import com.app.azkary.data.local.entities.PrayerMonthEntity
+import com.app.azkary.data.local.entities.UserProgressEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -22,6 +35,14 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
     }
 }
 
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE prayer_days ADD COLUMN firstthird TEXT NOT NULL DEFAULT '00:00'")
+        db.execSQL("ALTER TABLE prayer_days ADD COLUMN midnight TEXT NOT NULL DEFAULT '00:00'")
+        db.execSQL("ALTER TABLE prayer_days ADD COLUMN lastthird TEXT NOT NULL DEFAULT '00:00'")
+    }
+}
+
 @Database(
     entities = [
         CategoryEntity::class,
@@ -33,7 +54,7 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
         PrayerMonthEntity::class,
         PrayerDayEntity::class
     ],
-    version = 5,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

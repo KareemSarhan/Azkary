@@ -120,16 +120,19 @@
     <string name="custom_zikr_button_cancel">Cancel</string>
     <string name="custom_zikr_button_save">Save Zikr</string>
 
-    <!-- Schedule / Prayer Times -->
+    <!-- Schedule / Prayer Times (0-8) -->
     <string name="section_schedule">Schedule</string>
     <string name="schedule_from_label">From</string>
     <string name="schedule_to_label">To</string>
     <string name="schedule_to">→</string>
-    <string name="schedule_all_day">All Day</string>
     <string name="schedule_fajr">Fajr</string>
-    <string name="schedule_shrouq">Shrouq</string>
+    <string name="schedule_sunrise">Sunrise</string>
     <string name="schedule_dhuhr">Dhuhr</string>
     <string name="schedule_asr">Asr</string>
     <string name="schedule_maghrib">Maghrib</string>
     <string name="schedule_isha">Isha</string>
+    <string name="schedule_firstthird">First Third</string>
+    <string name="schedule_midnight">Midnight</string>
+    <string name="schedule_lastthird">Last Third</string>
+    <string name="schedule_next_day_suffix">(+1)</string>
 </resources>

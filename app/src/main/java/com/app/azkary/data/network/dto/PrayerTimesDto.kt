@@ -24,7 +24,10 @@ data class PrayerTimingsDto(
     val Asr: String,
     val Sunset: String,
     val Maghrib: String,
-    val Isha: String
+    val Isha: String,
+    val Firstthird: String,
+    val Midnight: String,
+    val Lastthird: String
 )
 
 @Serializable

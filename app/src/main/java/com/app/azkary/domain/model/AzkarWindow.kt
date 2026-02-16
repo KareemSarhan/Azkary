@@ -31,11 +31,16 @@ data class AzkarSchedule(
 data class DayPrayerTimes(
     val date: LocalDate,
     val fajr: LocalTime,
+    val sunrise: LocalTime,
+    val sunset: LocalTime,
     val dhuhr: LocalTime,
     val asr: LocalTime,
     val maghrib: LocalTime,
     val isha: LocalTime,
-    val timezone: ZoneId
+    val timezone: ZoneId,
+    val firstthird: LocalTime,
+    val midnight: LocalTime,
+    val lastthird: LocalTime
 ) {
     
     /**

@@ -250,5 +250,5 @@ data class CategoryCreationUiState(
     val error: String? = null,
     val isStockCategory: Boolean = false,
     val from: Int = 0,
-    val to: Int = 6
+    val to: Int = 8
 )

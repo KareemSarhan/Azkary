@@ -295,7 +295,10 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                 maghrib = PrayerTimeParser.parseTimeString(dto.timings.Maghrib),
                 isha = PrayerTimeParser.parseTimeString(dto.timings.Isha),
                 sunrise = PrayerTimeParser.parseTimeString(dto.timings.Sunrise),
-                sunset = PrayerTimeParser.parseTimeString(dto.timings.Sunset)
+                sunset = PrayerTimeParser.parseTimeString(dto.timings.Sunset),
+                firstthird = PrayerTimeParser.parseTimeString(dto.timings.Firstthird),
+                midnight = PrayerTimeParser.parseTimeString(dto.timings.Midnight),
+                lastthird = PrayerTimeParser.parseTimeString(dto.timings.Lastthird)
             )
         } catch (e: Exception) {
             println("DEBUG: PrayerTimesRepositoryImpl - Error parsing day entity for date ${dto.date.gregorian.date}: ${e.message}")
@@ -354,11 +357,16 @@ class PrayerTimesRepositoryImpl @Inject constructor(
         return DayPrayerTimes(
             date = entity.date,
             fajr = entity.fajr,
+            sunrise = entity.sunrise,
             dhuhr = entity.dhuhr,
             asr = entity.asr,
             maghrib = entity.maghrib,
+            sunset = entity.sunset,
             isha = entity.isha,
-            timezone = ZoneId.of(timezone)
+            timezone = ZoneId.of(timezone),
+            firstthird = entity.firstthird,
+            midnight = entity.midnight,
+            lastthird = entity.lastthird
         )
     }
 
@@ -374,7 +382,10 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                     Asr = entity.asr.toString(),
                     Sunset = entity.sunset.toString(),
                     Maghrib = entity.maghrib.toString(),
-                    Isha = entity.isha.toString()
+                    Isha = entity.isha.toString(),
+                    Firstthird = entity.firstthird.toString(),
+                    Midnight = entity.midnight.toString(),
+                    Lastthird = entity.lastthird.toString()
                 ), date = com.app.azkary.data.network.dto.DateDto(
                     gregorian = com.app.azkary.data.network.dto.GregorianDateDto(
                         date = entity.date.toString(),

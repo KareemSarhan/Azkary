@@ -720,12 +720,14 @@ private fun ScheduleSection(
 ) {
     val scheduleOptions = listOf(
         0 to stringResource(R.string.schedule_fajr),
-        1 to stringResource(R.string.schedule_shrouq),
+        1 to stringResource(R.string.schedule_sunrise),
         2 to stringResource(R.string.schedule_dhuhr),
         3 to stringResource(R.string.schedule_asr),
         4 to stringResource(R.string.schedule_maghrib),
         5 to stringResource(R.string.schedule_isha),
-        6 to stringResource(R.string.schedule_all_day)
+        6 to stringResource(R.string.schedule_firstthird),
+        7 to stringResource(R.string.schedule_midnight),
+        8 to stringResource(R.string.schedule_lastthird)
     )
 
     Column(
@@ -789,8 +791,9 @@ private fun ScheduleSection(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded }
                 ) {
-                    OutlinedTextField(
-                        value = scheduleOptions.find { it.first == to }?.second ?: "",
+                     OutlinedTextField(
+                        value = scheduleOptions.find { it.first == to }?.second ?: "" + 
+                            if (to < from) " ${stringResource(R.string.schedule_next_day_suffix)}" else "",
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.schedule_to_label)) },

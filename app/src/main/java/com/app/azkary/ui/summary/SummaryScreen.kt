@@ -323,30 +323,66 @@ fun CategoryItem(
 private fun formatScheduleText(from: Int, to: Int): String {
     val fromName = when (from) {
         0 -> stringResource(R.string.schedule_fajr)
-        1 -> stringResource(R.string.schedule_shrouq)
+        1 -> stringResource(R.string.schedule_sunrise)
         2 -> stringResource(R.string.schedule_dhuhr)
         3 -> stringResource(R.string.schedule_asr)
         4 -> stringResource(R.string.schedule_maghrib)
         5 -> stringResource(R.string.schedule_isha)
-        6 -> stringResource(R.string.schedule_all_day)
+        6 -> stringResource(R.string.schedule_firstthird)
+        7 -> stringResource(R.string.schedule_midnight)
+        8 -> stringResource(R.string.schedule_lastthird)
         else -> from.toString()
     }
     
     val toName = when (to) {
         0 -> stringResource(R.string.schedule_fajr)
-        1 -> stringResource(R.string.schedule_shrouq)
+        1 -> stringResource(R.string.schedule_sunrise)
         2 -> stringResource(R.string.schedule_dhuhr)
         3 -> stringResource(R.string.schedule_asr)
         4 -> stringResource(R.string.schedule_maghrib)
         5 -> stringResource(R.string.schedule_isha)
-        6 -> stringResource(R.string.schedule_all_day)
+        6 -> stringResource(R.string.schedule_firstthird)
+        7 -> stringResource(R.string.schedule_midnight)
+        8 -> stringResource(R.string.schedule_lastthird)
         else -> to.toString()
     }
     
-    return if (from == 0 && to == 6) {
-        stringResource(R.string.schedule_all_day)
+    // Check if range wraps to next day
+    val isNextDay = to < from
+
+    return if (isNextDay) {
+        "$fromName ${stringResource(R.string.schedule_to)} $toName ${stringResource(R.string.schedule_next_day_suffix)}"
     } else {
         "$fromName ${stringResource(R.string.schedule_to)} $toName"
+    }
+}
+
+@Composable
+fun RingProgress(
+    progress: Float,
+    modifier: Modifier = Modifier,
+    strokeWidth: Dp,
+    color: Color,
+    trackColor: Color
+) {
+    val clampedProgress = progress.coerceIn(0f, 1f)
+
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        // Track ring (full circle)
+        CircularProgressIndicator(
+            progress = { 1f },
+            color = trackColor,
+            strokeWidth = strokeWidth,
+            modifier = Modifier.matchParentSize()
+        )
+
+        // Progress arc
+        CircularProgressIndicator(
+            progress = { clampedProgress },
+            color = color,
+            strokeWidth = strokeWidth,
+            modifier = Modifier.matchParentSize()
+        )
     }
 }
 
@@ -391,34 +427,5 @@ fun AddCategoryItem(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun RingProgress(
-    progress: Float,
-    modifier: Modifier = Modifier,
-    strokeWidth: Dp,
-    color: Color,
-    trackColor: Color
-) {
-    val clampedProgress = progress.coerceIn(0f, 1f)
-
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        // Track ring (full circle)
-        CircularProgressIndicator(
-            progress = { 1f },
-            color = trackColor,
-            strokeWidth = strokeWidth,
-            modifier = Modifier.matchParentSize()
-        )
-
-        // Progress arc
-        CircularProgressIndicator(
-            progress = { clampedProgress },
-            color = color,
-            strokeWidth = strokeWidth,
-            modifier = Modifier.matchParentSize()
-        )
     }
 }

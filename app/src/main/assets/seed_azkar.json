@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 4,
-  "generatedAt": "2026-01-13T00:00:00Z",
+  "schemaVersion": 6,
+  "generatedAt": "2026-02-16T00:00:00Z",
   "categories": [
     {
       "categoryId": "cat-morning",
@@ -148,7 +148,7 @@
     },
     {
       "categoryId": "cat-night",
-      "from":3,"to":6,
+      "from":3,"to":5,
       "type": "DEFAULT",
       "systemKey": "NIGHT",
       "sortOrder": 1,
@@ -276,7 +276,8 @@
     },
     {
       "categoryId": "cat-sleep",
-      "from":6,"to":0,
+      "from": 5,
+      "to": 0,
       "type": "DEFAULT",
       "systemKey": "SLEEP",
       "sortOrder": 2,
