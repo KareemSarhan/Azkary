@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import com.app.azkary.data.local.dao.PrayerDayDao
 import com.app.azkary.data.local.dao.PrayerMonthDao
@@ -19,6 +20,8 @@ import com.app.azkary.util.PrayerTimeParser
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -122,6 +125,10 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                 if (dayEntity != null) {
                     val result = mapEntityToDayPrayerTimes(dayEntity, monthEntity.timezone)
                     println("DEBUG: PrayerTimesRepositoryImpl - Returning cached prayer times: $result")
+                    Log.d("PrayerTimes", "=== Prayer Times (from cache) ===")
+                    Log.d("PrayerTimes", "Date: ${result.date}")
+                    Log.d("PrayerTimes", "Fajr: ${result.fajr}, Dhuhr: ${result.dhuhr}, Asr: ${result.asr}")
+                    Log.d("PrayerTimes", "Maghrib: ${result.maghrib}, Isha: ${result.isha}, Timezone: ${result.timezone}")
                     return@withContext result
                 }
             }
@@ -157,6 +164,10 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                     return@withContext dayEntity?.let {
                         val result = mapEntityToDayPrayerTimes(it, month.timezone)
                         println("DEBUG: PrayerTimesRepositoryImpl - Returning fresh prayer times: $result")
+                        Log.d("PrayerTimes", "=== Prayer Times (from API) ===")
+                        Log.d("PrayerTimes", "Date: ${result.date}")
+                        Log.d("PrayerTimes", "Fajr: ${result.fajr}, Dhuhr: ${result.dhuhr}, Asr: ${result.asr}")
+                        Log.d("PrayerTimes", "Maghrib: ${result.maghrib}, Isha: ${result.isha}, Timezone: ${result.timezone}")
                         result
                     }
                 }
@@ -235,8 +246,29 @@ class PrayerTimesRepositoryImpl @Inject constructor(
             year, month, latitude, longitude, methodId, school
         )
 
+        // Log raw JSON for today's date
+        val today = LocalDate.now()
+        val todayRaw = response.data.find { day ->
+            val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")
+            try {
+                val apiDate = LocalDate.parse(day.date.gregorian.date, dateFormatter)
+                apiDate == today
+            } catch (e: Exception) {
+                false
+            }
+        }
+
+        todayRaw?.let { rawDay ->
+            val json = Json { prettyPrint = true }
+            val jsonString = json.encodeToString(rawDay)
+            Log.i("RawPrayerJSON", "=== Raw JSON Response for Today ===")
+            Log.i("RawPrayerJSON", jsonString)
+            Log.i("RawPrayerJSON", "===================================\n")
+        } ?: Log.w("RawPrayerJSON", "No data found for today's date: $today")
+
         // Force cache update
         cacheResponse(response, year, month, latitude, longitude, methodId)
+
 
         response
     }
