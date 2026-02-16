@@ -48,6 +48,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.R
 import com.app.azkary.data.model.CategoryUi
+import com.app.azkary.ui.theme.SessionGradientEnd
+import com.app.azkary.ui.theme.SessionGradientStart
+import com.app.azkary.ui.theme.SessionRingColor
 import com.app.azkary.util.BidiHelper
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -177,7 +180,7 @@ fun CurrentSessionCard(
                 .fillMaxWidth()                 // ✅ important (fixes cut-off look)
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiary)
+                        colors = listOf(SessionGradientStart, SessionGradientEnd)
                     )
                 )
                 .padding(24.dp)
@@ -220,7 +223,7 @@ fun CurrentSessionCard(
                         progress = progress,
                         modifier = Modifier.size(64.dp),
                         strokeWidth = 8.dp,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = SessionRingColor,
                         trackColor = Color.White.copy(alpha = 0.25f) // faint ring behind
                     )
 
