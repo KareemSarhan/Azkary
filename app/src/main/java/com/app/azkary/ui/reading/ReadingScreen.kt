@@ -74,13 +74,17 @@ fun ReadingScreen(
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val firstIncompleteIndex = remember(items) {
-        items.indexOfFirst { !it.isInfinite && it.currentRepeats < it.requiredRepeats }.takeIf { it >= 0 } ?: 0
+    val initialPageIndex = remember(items, isComplete) {
+        if (isComplete) {
+            items.size  // Completion page
+        } else {
+            items.indexOfFirst { !it.isInfinite && it.currentRepeats < it.requiredRepeats }.takeIf { it >= 0 } ?: 0
+        }
     }
 
-    LaunchedEffect(items, firstIncompleteIndex) {
-        if (pagerState.currentPage != firstIncompleteIndex && items.isNotEmpty()) {
-            pagerState.scrollToPage(firstIncompleteIndex)
+    LaunchedEffect(initialPageIndex) {
+        if (pagerState.currentPage != initialPageIndex && items.isNotEmpty()) {
+            pagerState.scrollToPage(initialPageIndex)
         }
     }
 
