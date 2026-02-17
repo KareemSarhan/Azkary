@@ -54,7 +54,7 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
         PrayerMonthEntity::class,
         PrayerDayEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
