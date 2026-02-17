@@ -11,10 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -42,14 +43,14 @@ fun AzkarReadingItem(
 ) {
     val colors = MaterialTheme.colorScheme
 
-    Surface(
+    Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(colors.background)
             .combinedClickable(
                 onClick = onIncrement,
                 onLongClick = onHoldComplete
-            ),
-        color = colors.background
+            )
     ) {
         Column(
             modifier = Modifier

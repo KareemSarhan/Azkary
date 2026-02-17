@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.VibrationEffect
 import android.os.VibratorManager
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,11 +31,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -62,6 +66,18 @@ fun ReadingScreen(
     val items by viewModel.items.collectAsState(initial = emptyList())
     val weightedProgress by viewModel.weightedProgress.collectAsState(initial = 0f)
     val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
+
+    var isActive by remember { mutableStateOf(true) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            isActive = false
+        }
+    }
+
+    BackHandler(enabled = isActive) {
+        if (isActive) onBack()
+    }
 
     val animatedProgress by animateFloatAsState(
         targetValue = weightedProgress.coerceIn(0f, 1f),
@@ -138,7 +154,7 @@ fun ReadingScreen(
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = onBack) {
+                        IconButton(onClick = { if (isActive) onBack() }) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = stringResource(R.string.reading_back_content_description)
@@ -186,7 +202,8 @@ fun ReadingScreen(
             state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(padding),
+            key = { page -> page }
         ) { page ->
             if (isComplete && page == items.size) {
                 CompletionScreen(
@@ -199,6 +216,8 @@ fun ReadingScreen(
                 AzkarReadingItem(
                     item = item,
                     onIncrement = {
+                        if (!isActive) return@AzkarReadingItem
+
                         if (item.isInfinite) {
                             performVibration(50L)
                             viewModel.incrementRepeat(item.id)
@@ -230,6 +249,8 @@ fun ReadingScreen(
                         }
                     },
                     onHoldComplete = {
+                        if (!isActive) return@AzkarReadingItem
+
                         if (holdToComplete) {
                             performVibration(50L)
                             viewModel.markItemComplete(item.id)
