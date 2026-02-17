@@ -8,6 +8,7 @@ import com.app.azkary.data.local.entities.AzkarTextEntity
 import com.app.azkary.data.local.entities.CategoryEntity
 import com.app.azkary.data.local.entities.CategoryItemCrossRefEntity
 import com.app.azkary.data.local.entities.CategoryTextEntity
+import com.app.azkary.data.model.CategoryType
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -94,7 +95,7 @@ class SeedManager @Inject constructor(
                 categoryDao.insertCategory(
                     CategoryEntity(
                         categoryId = seedCat.categoryId,
-                        type = seedCat.type,
+                        type = if (seedCat.systemKey != null) CategoryType.DEFAULT else CategoryType.USER,
                         systemKey = seedCat.systemKey,
                         sortOrder = seedCat.sortOrder,
                         isArchived = seedCat.isArchived,
@@ -110,17 +111,17 @@ class SeedManager @Inject constructor(
 
                 // 3. Link items to categories via crossrefs
                 // ONLY if the item was defined in the 'items' array to avoid FK constraint failure
-                seedCat.items.forEach { ref ->
+                seedCat.items.forEachIndexed { index, ref ->
                     if (availableItemIds.contains(ref.itemId)) {
                         val seedItem = itemMap[ref.itemId]!!
                         crossRefDao.insertCrossRef(
                             CategoryItemCrossRefEntity(
                                 categoryId = seedCat.categoryId,
                                 itemId = ref.itemId,
-                                sortOrder = ref.sortOrder,
-                                isEnabled = ref.isEnabled,
-                                requiredRepeats = seedItem.requiredRepeats,  // From seed item
-                                isInfinite = false  // Default, seed data doesn't specify
+                                sortOrder = index,
+                                isEnabled = true,
+                                requiredRepeats = seedItem.requiredRepeats,
+                                isInfinite = false
                             )
                         )
                     }

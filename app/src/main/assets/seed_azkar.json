@@ -6,10 +6,8 @@
       "categoryId": "cat-morning",
       "from": 0,
       "to": 3,
-      "type": "DEFAULT",
       "systemKey": "MORNING",
       "sortOrder": 0,
-      "isArchived": false,
       "texts": {
         "ar": {
           "name": "أذكار الصباح"
@@ -20,139 +18,88 @@
       },
       "items": [
         {
-          "itemId": "itm-hamd-salah-001",
-          "sortOrder": 0,
-          "isEnabled": true
+          "itemId": "itm-hamd-salah-001"
         },
         {
-          "itemId": "itm-ayat-al-kursi-1",
-          "sortOrder": 1,
-          "isEnabled": true
+          "itemId": "itm-ayat-al-kursi-1"
         },
         {
-          "itemId": "itm-asbahna-mulk-1",
-          "sortOrder": 2,
-          "isEnabled": true
+          "itemId": "itm-asbahna-mulk-1"
         },
         {
-          "itemId": "itm-allahumma-bika-001",
-          "sortOrder": 3,
-          "isEnabled": true
+          "itemId": "itm-allahumma-bika-001"
         },
         {
-          "itemId": "itm-sayyidul-istighfar-1",
-          "sortOrder": 4,
-          "isEnabled": true
+          "itemId": "itm-sayyidul-istighfar-1"
         },
         {
-          "itemId": "itm-ushhiduka-004",
-          "sortOrder": 5,
-          "isEnabled": true
+          "itemId": "itm-ushhiduka-004"
         },
         {
-          "itemId": "itm-niamah-shukr-001",
-          "sortOrder": 6,
-          "isEnabled": true
+          "itemId": "itm-niamah-shukr-001"
         },
         {
-          "itemId": "itm-afini-body-hearing-sight-3",
-          "sortOrder": 7,
-          "isEnabled": true
+          "itemId": "itm-afini-body-hearing-sight-3"
         },
         {
-          "itemId": "itm-hasbiyallahu-7",
-          "sortOrder": 8,
-          "isEnabled": true
+          "itemId": "itm-hasbiyallahu-7"
         },
         {
-          "itemId": "itm-afiyah-1",
-          "sortOrder": 9,
-          "isEnabled": true
+          "itemId": "itm-afiyah-1"
         },
         {
-          "itemId": "itm-alimal-ghayb-001",
-          "sortOrder": 10,
-          "isEnabled": true
+          "itemId": "itm-alimal-ghayb-001"
         },
         {
-          "itemId": "itm-bismillah-3",
-          "sortOrder": 11,
-          "isEnabled": true
+          "itemId": "itm-bismillah-3"
         },
         {
-          "itemId": "itm-raditu-billahi-3",
-          "sortOrder": 12,
-          "isEnabled": true
+          "itemId": "itm-raditu-billahi-3"
         },
         {
-          "itemId": "itm-ya-hayyu-ya-qayyum-1",
-          "sortOrder": 13,
-          "isEnabled": true
+          "itemId": "itm-ya-hayyu-ya-qayyum-1"
         },
         {
-          "itemId": "itm-asbahnal-mulk-001",
-          "sortOrder": 14,
-          "isEnabled": true
+          "itemId": "itm-asbahnal-mulk-001"
         },
         {
-          "itemId": "itm-fitrah-islam-001",
-          "sortOrder": 15,
-          "isEnabled": true
+          "itemId": "itm-fitrah-islam-001"
         },
         {
-          "itemId": "itm-subhanallah-wabihamdihi-100",
-          "sortOrder": 16,
-          "isEnabled": true
+          "itemId": "itm-subhanallah-wabihamdihi-100"
         },
         {
-          "itemId": "itm-tahlil-100",
-          "sortOrder": 17,
-          "isEnabled": true
+          "itemId": "itm-tahlil-100"
         },
         {
-          "itemId": "itm-subhan-bihamdih-003",
-          "sortOrder": 18,
-          "isEnabled": true
+          "itemId": "itm-subhan-bihamdih-003"
         },
         {
-          "itemId": "itm-ilman-rizqan-001",
-          "sortOrder": 19,
-          "isEnabled": true
+          "itemId": "itm-ilman-rizqan-001"
         },
         {
-          "itemId": "itm-istighfar-tawbah-100",
-          "sortOrder": 20,
-          "isEnabled": true
+          "itemId": "itm-istighfar-tawbah-100"
         },
         {
-          "itemId": "itm-salah-nabi-010",
-          "sortOrder": 21,
-          "isEnabled": true
+          "itemId": "itm-salah-nabi-010"
         },
         {
-          "itemId": "itm-ikhlas-003",
-          "sortOrder": 22,
-          "isEnabled": true
+          "itemId": "itm-ikhlas-003"
         },
         {
-          "itemId": "itm-falaq-003",
-          "sortOrder": 23,
-          "isEnabled": true
+          "itemId": "itm-falaq-003"
         },
         {
-          "itemId": "itm-nas-003",
-          "sortOrder": 24,
-          "isEnabled": true
+          "itemId": "itm-nas-003"
         }
       ]
     },
     {
       "categoryId": "cat-night",
-      "from":3,"to":5,
-      "type": "DEFAULT",
+      "from": 3,
+      "to": 5,
       "systemKey": "NIGHT",
       "sortOrder": 1,
-      "isArchived": false,
       "texts": {
         "ar": {
           "name": "أذكار المساء"
@@ -163,114 +110,73 @@
       },
       "items": [
         {
-          "itemId": "itm-ayat-al-kursi-1",
-          "sortOrder": 0,
-          "isEnabled": true
+          "itemId": "itm-ayat-al-kursi-1"
         },
         {
-          "itemId": "itm-amsayna-mulk-1",
-          "sortOrder": 1,
-          "isEnabled": true
+          "itemId": "itm-amsayna-mulk-1"
         },
         {
-          "itemId": "itm-evening-allahumma-bika-amsayna-1",
-          "sortOrder": 2,
-          "isEnabled": true
+          "itemId": "itm-evening-allahumma-bika-amsayna-1"
         },
         {
-          "itemId": "itm-sayyidul-istighfar-1",
-          "sortOrder": 3,
-          "isEnabled": true
+          "itemId": "itm-sayyidul-istighfar-1"
         },
         {
-          "itemId": "itm-evening-ushhiduka-4",
-          "sortOrder": 4,
-          "isEnabled": true
+          "itemId": "itm-evening-ushhiduka-4"
         },
         {
-          "itemId": "itm-niamah-shukr-001",
-          "sortOrder": 5,
-          "isEnabled": true
+          "itemId": "itm-niamah-shukr-001"
         },
         {
-          "itemId": "itm-afini-body-hearing-sight-3",
-          "sortOrder": 6,
-          "isEnabled": true
+          "itemId": "itm-afini-body-hearing-sight-3"
         },
         {
-          "itemId": "itm-hasbiyallahu-7",
-          "sortOrder": 7,
-          "isEnabled": true
+          "itemId": "itm-hasbiyallahu-7"
         },
         {
-          "itemId": "itm-afiyah-1",
-          "sortOrder": 8,
-          "isEnabled": true
+          "itemId": "itm-afiyah-1"
         },
         {
-          "itemId": "itm-alimal-ghayb-001",
-          "sortOrder": 9,
-          "isEnabled": true
+          "itemId": "itm-alimal-ghayb-001"
         },
         {
-          "itemId": "itm-bismillah-3",
-          "sortOrder": 10,
-          "isEnabled": true
+          "itemId": "itm-bismillah-3"
         },
         {
-          "itemId": "itm-raditu-billahi-3",
-          "sortOrder": 11,
-          "isEnabled": true
+          "itemId": "itm-raditu-billahi-3"
         },
         {
-          "itemId": "itm-ya-hayyu-ya-qayyum-1",
-          "sortOrder": 12,
-          "isEnabled": true
+          "itemId": "itm-ya-hayyu-ya-qayyum-1"
         },
         {
-          "itemId": "itm-evening-khayr-hadhihi-allaylah-1",
-          "sortOrder": 13,
-          "isEnabled": true
+          "itemId": "itm-evening-khayr-hadhihi-allaylah-1"
         },
         {
-          "itemId": "itm-evening-ala-fitrati-alislam-1",
-          "sortOrder": 14,
-          "isEnabled": true
+          "itemId": "itm-evening-ala-fitrati-alislam-1"
         },
         {
-          "itemId": "itm-subhanallah-wabihamdihi-100",
-          "sortOrder": 15,
-          "isEnabled": true
+          "itemId": "itm-subhanallah-wabihamdihi-100"
         },
         {
-          "itemId": "itm-istighfar-tawbah-100",
-          "sortOrder": 16,
-          "isEnabled": true
+          "itemId": "itm-istighfar-tawbah-100"
         },
         {
-          "itemId": "itm-evening-audhu-bikalimatillah-3",
-          "sortOrder": 17,
-          "isEnabled": true
+          "itemId": "itm-evening-audhu-bikalimatillah-3"
         },
         {
-          "itemId": "itm-salah-nabi-010",
-          "sortOrder": 18,
-          "isEnabled": true
+          "itemId": "itm-tahlil-100"
         },
         {
-          "itemId": "itm-ikhlas-003",
-          "sortOrder": 19,
-          "isEnabled": true
+          "itemId": "itm-salah-nabi-010"
         },
         {
-          "itemId": "itm-falaq-003",
-          "sortOrder": 20,
-          "isEnabled": true
+          "itemId": "itm-ikhlas-003"
         },
         {
-          "itemId": "itm-nas-003",
-          "sortOrder": 21,
-          "isEnabled": true
+          "itemId": "itm-falaq-003"
+        },
+        {
+          "itemId": "itm-nas-003"
         }
       ]
     },
@@ -278,10 +184,8 @@
       "categoryId": "cat-sleep",
       "from": 5,
       "to": 0,
-      "type": "DEFAULT",
       "systemKey": "SLEEP",
       "sortOrder": 2,
-      "isArchived": false,
       "texts": {
         "ar": {
           "name": "أذكار النوم"
@@ -292,84 +196,52 @@
       },
       "items": [
         {
-          "itemId": "itm-ayat-al-kursi-1",
-          "sortOrder": 0,
-          "isEnabled": true
+          "itemId": "itm-ayat-al-kursi-1"
         },
         {
-          "itemId": "itm-ayatain-albaqarah-sleep-001",
-          "sortOrder": 1,
-          "isEnabled": true
+          "itemId": "itm-ayatain-albaqarah-sleep-001"
         },
         {
-          "itemId": "itm-bismika-rabbi-wadaatu-janbi-sleep-001",
-          "sortOrder": 2,
-          "isEnabled": true
+          "itemId": "itm-bismika-rabbi-wadaatu-janbi-sleep-001"
         },
         {
-          "itemId": "itm-allahumma-innaka-khalaqta-nafsi-sleep-001",
-          "sortOrder": 3,
-          "isEnabled": true
+          "itemId": "itm-allahumma-innaka-khalaqta-nafsi-sleep-001"
         },
         {
-          "itemId": "itm-allahumma-qini-adhabaka-sleep-003",
-          "sortOrder": 4,
-          "isEnabled": true
+          "itemId": "itm-allahumma-qini-adhabaka-sleep-003"
         },
         {
-          "itemId": "itm-bismika-amootu-ahya-sleep-001",
-          "sortOrder": 5,
-          "isEnabled": true
+          "itemId": "itm-bismika-amootu-ahya-sleep-001"
         },
         {
-          "itemId": "itm-allahumma-rabbas-samawat-sleep-001",
-          "sortOrder": 6,
-          "isEnabled": true
+          "itemId": "itm-allahumma-rabbas-samawat-sleep-001"
         },
         {
-          "itemId": "itm-alhamdulillah-atamana-sleep-001",
-          "sortOrder": 7,
-          "isEnabled": true
+          "itemId": "itm-alhamdulillah-atamana-sleep-001"
         },
         {
-          "itemId": "itm-recitation-sajdah-mulk-sleep-001",
-          "sortOrder": 8,
-          "isEnabled": true
+          "itemId": "itm-recitation-sajdah-mulk-sleep-001"
         },
         {
-          "itemId": "itm-allahumma-aslamtu-nafsi-sleep-001",
-          "sortOrder": 9,
-          "isEnabled": true
+          "itemId": "itm-allahumma-aslamtu-nafsi-sleep-001"
         },
         {
-          "itemId": "itm-subhanallah-sleep-033",
-          "sortOrder": 10,
-          "isEnabled": true
+          "itemId": "itm-subhanallah-sleep-033"
         },
         {
-          "itemId": "itm-alhamdulillah-sleep-033",
-          "sortOrder": 11,
-          "isEnabled": true
+          "itemId": "itm-alhamdulillah-sleep-033"
         },
         {
-          "itemId": "itm-allahu-akbar-sleep-034",
-          "sortOrder": 12,
-          "isEnabled": true
+          "itemId": "itm-allahu-akbar-sleep-034"
         },
         {
-          "itemId": "itm-ikhlas-003",
-          "sortOrder": 13,
-          "isEnabled": true
+          "itemId": "itm-ikhlas-003"
         },
         {
-          "itemId": "itm-falaq-003",
-          "sortOrder": 14,
-          "isEnabled": true
+          "itemId": "itm-falaq-003"
         },
         {
-          "itemId": "itm-nas-003",
-          "sortOrder": 15,
-          "isEnabled": true
+          "itemId": "itm-nas-003"
         }
       ]
     }
@@ -378,7 +250,6 @@
     {
       "itemId": "itm-afini-body-hearing-sight-3",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "دعاء العافية في البدن والسمع والبصر (3 مرات)",
@@ -396,7 +267,6 @@
     {
       "itemId": "itm-afiyah-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "دعاء العافية",
@@ -414,7 +284,6 @@
     {
       "itemId": "itm-amsayna-mulk-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "أمسينا وأمسى الملك لله",
@@ -432,7 +301,6 @@
     {
       "itemId": "itm-ayat-al-kursi-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "آية الكرسي",
@@ -450,7 +318,6 @@
     {
       "itemId": "itm-bika-amsayna-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللهم بك أمسينا وبك أصبحنا",
@@ -468,7 +335,6 @@
     {
       "itemId": "itm-bismillah-3",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "الحفظ باسم الله (3 مرات)",
@@ -486,7 +352,6 @@
     {
       "itemId": "itm-fatar-samawat-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "دعاء الاستعاذة من شر النفس والشيطان",
@@ -504,7 +369,6 @@
     {
       "itemId": "itm-fatimah-tasbih-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "تسبيح فاطمة قبل النوم",
@@ -522,7 +386,6 @@
     {
       "itemId": "itm-hasbiyallahu-7",
       "requiredRepeats": 7,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "حسبي الله لا إله إلا هو (7 مرات)",
@@ -540,7 +403,6 @@
     {
       "itemId": "itm-ikhlas-falaq-nas-3",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "الإخلاص والمعوذتين (3 مرات)",
@@ -558,7 +420,6 @@
     {
       "itemId": "itm-keep-safe-words-3-evening",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "الاستعاذة بكلمات الله (المساء)",
@@ -576,7 +437,6 @@
     {
       "itemId": "itm-last-two-baqara-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "آخر آيتين من البقرة",
@@ -594,7 +454,6 @@
     {
       "itemId": "itm-raditu-billahi-3",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "الرضا بالله (3 مرات)",
@@ -612,7 +471,6 @@
     {
       "itemId": "itm-sayyidul-istighfar-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "سيد الاستغفار",
@@ -630,7 +488,6 @@
     {
       "itemId": "itm-sleep-bismika-amutu-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "دعاء النوم",
@@ -648,7 +505,6 @@
     {
       "itemId": "itm-subhanallah-wabihamdihi-100",
       "requiredRepeats": 100,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "التسبيح (100 مرة)",
@@ -666,7 +522,6 @@
     {
       "itemId": "itm-tahlil-100",
       "requiredRepeats": 100,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "التهليل (100 مرة)",
@@ -684,7 +539,6 @@
     {
       "itemId": "itm-ya-hayyu-ya-qayyum-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "يا حي يا قيوم (دعاء الاستغاثة)",
@@ -702,7 +556,6 @@
     {
       "itemId": "itm-hamd-salah-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "الحمد لله وحده والصلاة والسلام على من لا نبي بعده (مرة واحدة)",
@@ -720,7 +573,6 @@
     {
       "itemId": "itm-allahumma-bika-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللهم بك أصبحنا وبك أمسينا (مرة واحدة)",
@@ -738,7 +590,6 @@
     {
       "itemId": "itm-ushhiduka-004",
       "requiredRepeats": 4,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللهم إني أصبحت أُشهدك (أربع مرات)",
@@ -756,7 +607,6 @@
     {
       "itemId": "itm-niamah-shukr-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللهم ما أصبح بي من نعمة (مرة واحدة)",
@@ -774,7 +624,6 @@
     {
       "itemId": "itm-alimal-ghayb-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللهم عالم الغيب والشهادة (مرة واحدة)",
@@ -792,7 +641,6 @@
     {
       "itemId": "itm-asbahnal-mulk-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "أصبحنا وأصبح الملك لله (مرة واحدة)",
@@ -810,7 +658,6 @@
     {
       "itemId": "itm-fitrah-islam-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "أصبحنا على فطرة الإسلام (مرة واحدة)",
@@ -828,7 +675,6 @@
     {
       "itemId": "itm-subhan-bihamdih-003",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "سبحان الله وبحمده عدد خلقه (ثلاث مرات)",
@@ -846,7 +692,6 @@
     {
       "itemId": "itm-ilman-rizqan-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللهم إني أسألك علمًا نافعًا (مرة واحدة)",
@@ -864,7 +709,6 @@
     {
       "itemId": "itm-istighfar-tawbah-100",
       "requiredRepeats": 100,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "أستغفر الله وأتوب إليه (100 مرة)",
@@ -882,7 +726,6 @@
     {
       "itemId": "itm-salah-nabi-010",
       "requiredRepeats": 10,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللهم صل وسلم على نبينا محمد (10 مرات)",
@@ -900,7 +743,6 @@
     {
       "itemId": "itm-ikhlas-003",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "سورة الإخلاص (ثلاث مرات)",
@@ -918,7 +760,6 @@
     {
       "itemId": "itm-falaq-003",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "سورة الفلق (ثلاث مرات)",
@@ -936,7 +777,6 @@
     {
       "itemId": "itm-nas-003",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "سورة الناس (ثلاث مرات)",
@@ -954,7 +794,6 @@
     {
       "itemId": "itm-evening-allahumma-bika-amsayna-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "ذكر المساء",
@@ -972,7 +811,6 @@
     {
       "itemId": "itm-evening-ushhiduka-4",
       "requiredRepeats": 4,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "ذكر الشهادة مساءً",
@@ -990,7 +828,6 @@
     {
       "itemId": "itm-evening-khayr-hadhihi-allaylah-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "ذكر المساء",
@@ -1008,7 +845,6 @@
     {
       "itemId": "itm-evening-ala-fitrati-alislam-1",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "ذكر المساء",
@@ -1026,7 +862,6 @@
     {
       "itemId": "itm-evening-audhu-bikalimatillah-3",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "الاستعاذة من الشر مساءً",
@@ -1044,7 +879,6 @@
     {
       "itemId": "itm-allahu-akbar-sleep-034",
       "requiredRepeats": 34,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللَّهُ أَكْبَرُ (34 مرة)",
@@ -1062,7 +896,6 @@
     {
       "itemId": "itm-alhamdulillah-sleep-033",
       "requiredRepeats": 33,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "الْحَمْدُ لِلَّهِ (33 مرة)",
@@ -1080,7 +913,6 @@
     {
       "itemId": "itm-allahumma-aslamtu-nafsi-sleep-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللَّهُمَّ أَسْلَمْتُ نَفْسِي إِلَيْكَ (مرة واحدة)",
@@ -1098,7 +930,6 @@
     {
       "itemId": "itm-recitation-sajdah-mulk-sleep-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "قراءة سورة السجدة وسورة الملك (مرة واحدة)",
@@ -1116,7 +947,6 @@
     {
       "itemId": "itm-allahumma-rabbas-samawat-sleep-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ (مرة واحدة)",
@@ -1134,7 +964,6 @@
     {
       "itemId": "itm-alhamdulillah-atamana-sleep-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا (مرة واحدة)",
@@ -1152,7 +981,6 @@
     {
       "itemId": "itm-allahumma-rabbas-samawat-sleep-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ (مرة واحدة)",
@@ -1170,7 +998,6 @@
     {
       "itemId": "itm-subhanallah-sleep-033",
       "requiredRepeats": 33,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "سُبْحَانَ اللَّهِ (33 مرة)",
@@ -1188,7 +1015,6 @@
     {
       "itemId": "itm-bismika-amootu-ahya-sleep-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا (مرة واحدة)",
@@ -1206,7 +1032,6 @@
     {
       "itemId": "itm-allahumma-qini-adhabaka-sleep-003",
       "requiredRepeats": 3,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللَّهُمَّ قِنِي عَذَابَكَ (3 مرات)",
@@ -1224,7 +1049,6 @@
     {
       "itemId": "itm-allahumma-innaka-khalaqta-nafsi-sleep-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "اللَّهُمَّ إِنَّكَ خَلَقْتَ نَفْسِي (مرة واحدة)",
@@ -1242,7 +1066,6 @@
     {
       "itemId": "itm-bismika-rabbi-wadaatu-janbi-sleep-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي (مرة واحدة)",
@@ -1260,7 +1083,6 @@
     {
       "itemId": "itm-ayatain-albaqarah-sleep-001",
       "requiredRepeats": 1,
-      "source": "SEEDED",
       "texts": {
         "ar": {
           "title": "قراءة آخر آيتين من سورة البقرة (مرة واحدة)",
