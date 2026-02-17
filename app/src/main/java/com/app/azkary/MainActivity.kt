@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -60,56 +59,54 @@ class MainActivity : ComponentActivity() {
                         repository.seedDatabase()
                     }
 
+                    val navController = rememberNavController()
+
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         containerColor = MaterialTheme.colorScheme.background
                     ) { paddingValues ->
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(paddingValues),
-                            color = MaterialTheme.colorScheme.background
+                        NavHost(
+                            navController = navController,
+                            startDestination = "summary",
+                            modifier = Modifier.padding(paddingValues)
                         ) {
-                            val navController = rememberNavController()
-                            NavHost(navController = navController, startDestination = "summary") {
-                                composable("summary") {
-                                    SummaryScreen(
-                                        onNavigateToCategory = { id ->
-                                            navController.navigate("reading/$id")
-                                        },
-                                        onNavigateToSettings = {
-                                            navController.navigate("settings")
-                                        },
-                                        onNavigateToCreateCategory = {
-                                            navController.navigate("category/create")
-                                        },
-                                        onNavigateToEditCategory = { categoryId ->
-                                            navController.navigate("category/edit/$categoryId")
-                                        }
-                                    )
-                                }
-                                composable("reading/{categoryId}") { backStackEntry ->
-                                    ReadingScreen(
-                                        onBack = { navController.popBackStack() }
-                                    )
-                                }
-                                composable("settings") {
-                                    SettingsScreen(
-                                        onBack = { navController.popBackStack() }
-                                    )
-                                }
-                                composable("category/create") {
-                                    CategoryCreationScreen(
-                                        onBack = { navController.popBackStack() }
-                                    )
-                                }
-                                composable("category/edit/{categoryId}") { backStackEntry ->
-                                    val categoryId = backStackEntry.arguments?.getString("categoryId")
-                                    CategoryCreationScreen(
-                                        onBack = { navController.popBackStack() },
-                                        categoryId = categoryId
-                                    )
-                                }
+                            composable("summary") {
+                                SummaryScreen(
+                                    onNavigateToCategory = { id ->
+                                        navController.navigate("reading/$id")
+                                    },
+                                    onNavigateToSettings = {
+                                        navController.navigate("settings")
+                                    },
+                                    onNavigateToCreateCategory = {
+                                        navController.navigate("category/create")
+                                    },
+                                    onNavigateToEditCategory = { categoryId ->
+                                        navController.navigate("category/edit/$categoryId")
+                                    }
+                                )
+                            }
+                            composable("reading/{categoryId}") { backStackEntry ->
+                                ReadingScreen(
+                                    onBack = { navController.popBackStack() }
+                                )
+                            }
+                            composable("settings") {
+                                SettingsScreen(
+                                    onBack = { navController.popBackStack() }
+                                )
+                            }
+                            composable("category/create") {
+                                CategoryCreationScreen(
+                                    onBack = { navController.popBackStack() }
+                                )
+                            }
+                            composable("category/edit/{categoryId}") { backStackEntry ->
+                                val categoryId = backStackEntry.arguments?.getString("categoryId")
+                                CategoryCreationScreen(
+                                    onBack = { navController.popBackStack() },
+                                    categoryId = categoryId
+                                )
                             }
                         }
                     }
