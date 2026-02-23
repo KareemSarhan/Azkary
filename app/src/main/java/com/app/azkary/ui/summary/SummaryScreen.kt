@@ -84,7 +84,6 @@ fun SummaryScreen(
         topBar = {
             TopAppBar(title = {
                 Column {
-                    Text(stringResource(R.string.summary_title), style = MaterialTheme.typography.headlineMedium)
                     Text(today, style = MaterialTheme.typography.bodyMedium)
                 }
             }, actions = {

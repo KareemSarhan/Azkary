@@ -28,7 +28,7 @@ class SupportHelper @Inject constructor(
 ) {
 
     companion object {
-        private const val SUPPORT_EMAIL = "kareemsarhan@gmail.com"
+        private const val SUPPORT_EMAIL = "azkary@hearo.support"
     }
 
     /**
