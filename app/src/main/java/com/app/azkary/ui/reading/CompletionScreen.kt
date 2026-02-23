@@ -22,6 +22,7 @@ import com.app.azkary.R
 @Composable
 fun CompletionScreen(
     onBackToSummary: () -> Unit,
+    isEnabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val colors = MaterialTheme.colorScheme
@@ -63,7 +64,7 @@ fun CompletionScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             Button(
-                onClick = onBackToSummary,
+                onClick = { if (isEnabled) onBackToSummary() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)

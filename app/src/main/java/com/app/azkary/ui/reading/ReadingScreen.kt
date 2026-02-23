@@ -3,8 +3,8 @@ package com.app.azkary.ui.reading
 import android.content.Context
 import android.os.VibrationEffect
 import android.os.VibratorManager
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -67,7 +67,22 @@ fun ReadingScreen(
     val weightedProgress by viewModel.weightedProgress.collectAsState(initial = 0f)
     val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
 
+    // If categoryId is null, navigate back immediately
+    LaunchedEffect(Unit) {
+        if (viewModel.categoryId == null) {
+            onBack()
+        }
+    }
+
     var isActive by remember { mutableStateOf(true) }
+
+    // Safe navigation wrapper that prevents double-navigation by immediately disabling
+    val safeOnBack: () -> Unit = {
+        if (isActive) {
+            isActive = false
+            onBack()
+        }
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -76,7 +91,7 @@ fun ReadingScreen(
     }
 
     BackHandler(enabled = isActive) {
-        if (isActive) onBack()
+        safeOnBack()
     }
 
     val animatedProgress by animateFloatAsState(
@@ -154,7 +169,7 @@ fun ReadingScreen(
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = { if (isActive) onBack() }) {
+                        IconButton(onClick = safeOnBack) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = stringResource(R.string.reading_back_content_description)
@@ -207,7 +222,8 @@ fun ReadingScreen(
         ) { page ->
             if (isComplete && page == items.size) {
                 CompletionScreen(
-                    onBackToSummary = onBack,
+                    onBackToSummary = safeOnBack,
+                    isEnabled = isActive,
                     modifier = Modifier.fillMaxSize()
                 )
             } else if (items.isNotEmpty()) {

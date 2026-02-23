@@ -20,11 +20,11 @@ import com.app.azkary.util.PrayerTimeParser
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -230,6 +230,31 @@ class PrayerTimesRepositoryImpl @Inject constructor(
         }
 
         windowEngine.calculateWindows(now, todayTimes, tomorrowTimes)
+    }
+
+    override suspend fun getIslamicCurrentDate(
+        latitude: Double, longitude: Double, methodId: Int, school: Int
+    ): LocalDate = withContext(Dispatchers.IO) {
+        val now = Instant.now()
+        val today = LocalDate.now()
+        val yesterday = today.minusDays(1)
+
+        val todayTimes = getDayPrayerTimes(today, latitude, longitude, methodId, school)
+
+        if (todayTimes == null) {
+            return@withContext today
+        }
+
+        val fajrInstant = ZonedDateTime.of(today, todayTimes.fajr, todayTimes.timezone).toInstant()
+
+        if (now.isBefore(fajrInstant)) {
+            val yesterdayTimes = getDayPrayerTimes(yesterday, latitude, longitude, methodId, school)
+            if (yesterdayTimes != null) {
+                return@withContext yesterday
+            }
+        }
+
+        today
     }
 
     override suspend fun refreshMonth(

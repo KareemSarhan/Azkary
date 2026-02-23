@@ -8,6 +8,7 @@ import com.app.azkary.data.model.SystemCategoryKey
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
+import com.app.azkary.domain.IslamicDateProvider
 import com.app.azkary.domain.model.WindowCalculationResult
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,13 +16,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.ZoneId
@@ -36,6 +37,7 @@ class SummaryViewModel @Inject constructor(
     private val repository: AzkarRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val prayerTimesRepository: PrayerTimesRepository,
+    private val islamicDateProvider: IslamicDateProvider,
     private val localeManager: LocaleManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -58,9 +60,12 @@ class SummaryViewModel @Inject constructor(
     }
 
     val categories: Flow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
-        repository.observeCategoriesWithDisplayName(
-            langTag = lang,
-        )
+        flow { emit(islamicDateProvider.getCurrentDate().toString()) }.flatMapLatest { date ->
+            repository.observeCategoriesWithDisplayName(
+                langTag = lang,
+                date = date
+            )
+        }
     }
 
     // Prayer times state - must be declared before currentSession uses it
@@ -158,13 +163,11 @@ class SummaryViewModel @Inject constructor(
     fun toggleCategoryCompletion(categoryId: String) {
         viewModelScope.launch {
             val category = categories.first().find { it.id == categoryId } ?: return@launch
-            val today = java.time.LocalDate.now().toString()
+            val today = islamicDateProvider.getCurrentDate().toString()
 
             if (category.progress >= 1f) {
-                // Category is complete, mark as incomplete
                 repository.markCategoryIncomplete(categoryId, today)
             } else {
-                // Category is incomplete, mark as complete
                 repository.markCategoryComplete(categoryId, today)
             }
         }

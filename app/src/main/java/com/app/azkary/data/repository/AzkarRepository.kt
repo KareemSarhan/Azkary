@@ -7,16 +7,16 @@ import com.app.azkary.data.local.dao.CategoryDao
 import com.app.azkary.data.local.dao.CategoryItemDao
 import com.app.azkary.data.local.dao.CategoryTextDao
 import com.app.azkary.data.local.dao.ProgressDao
-import com.app.azkary.data.local.entities.UserProgressEntity
 import com.app.azkary.data.local.entities.AzkarItemEntity
 import com.app.azkary.data.local.entities.AzkarTextEntity
 import com.app.azkary.data.local.entities.CategoryEntity
 import com.app.azkary.data.local.entities.CategoryItemCrossRefEntity
 import com.app.azkary.data.local.entities.CategoryTextEntity
-import com.app.azkary.data.model.AzkarItemUi
+import com.app.azkary.data.local.entities.UserProgressEntity
 import com.app.azkary.data.model.AvailableZikr
-import com.app.azkary.data.model.CategoryUi
+import com.app.azkary.data.model.AzkarItemUi
 import com.app.azkary.data.model.CategoryItemConfig
+import com.app.azkary.data.model.CategoryUi
 import com.app.azkary.data.seed.SeedManager
 import com.app.azkary.util.ArabicNormalizer
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import java.time.LocalDate
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -62,14 +61,15 @@ class AzkarRepository @Inject constructor(
 
     fun observeCategoriesWithDisplayName(
         langTag: String,
+        date: String
     ): Flow<List<CategoryUi>> {
         return categoryDao.getActiveCategoriesOrdered().flatMapLatest { categories ->
             if (categories.isEmpty()) return@flatMapLatest flowOf(emptyList())
             
             val flows = categories.map { category ->
                 val weightedProgressFlow = getWeightedProgress(
-                    category.categoryId, 
-                    LocalDate.now().toString(), 
+                    category.categoryId,
+                    date, 
                     langTag
                 )
                 
@@ -95,7 +95,7 @@ class AzkarRepository @Inject constructor(
     fun observeItemsForCategory(
         categoryId: String,
         langTag: String,
-        date: String = LocalDate.now().toString()
+        date: String
     ): Flow<List<AzkarItemUi>> {
         return combine(
             categoryItemDao.getAllCrossRefsForCategory(categoryId),
@@ -201,7 +201,7 @@ class AzkarRepository @Inject constructor(
      */
     suspend fun markCategoryComplete(
         categoryId: String,
-        date: String = LocalDate.now().toString()
+        date: String
     ) {
         val crossRefs = categoryItemDao.getAllCrossRefsForCategory(categoryId).first()
         crossRefs.filter { it.isEnabled }.forEach { crossRef ->
@@ -223,7 +223,7 @@ class AzkarRepository @Inject constructor(
      */
     suspend fun markCategoryIncomplete(
         categoryId: String,
-        date: String = LocalDate.now().toString()
+        date: String
     ) {
         val crossRefs = categoryItemDao.getAllCrossRefsForCategory(categoryId).first()
         crossRefs.filter { it.isEnabled }.forEach { crossRef ->
@@ -245,7 +245,7 @@ class AzkarRepository @Inject constructor(
     suspend fun markItemComplete(
         categoryId: String,
         itemId: String,
-        date: String = LocalDate.now().toString()
+        date: String
     ) {
         val crossRef = categoryItemDao.getAllCrossRefsForCategory(categoryId).first().find { it.itemId == itemId } ?: return
         progressDao.upsertProgress(
@@ -266,7 +266,7 @@ class AzkarRepository @Inject constructor(
         from: Int = 0,
         to: Int = 6
     ): String {
-        val categoryId = "user_${UUID.randomUUID().toString()}"
+        val categoryId = "user_${UUID.randomUUID()}"
         
         val maxSortOrder = categoryDao.getMaxSortOrder() ?: -1
         
@@ -389,7 +389,7 @@ class AzkarRepository @Inject constructor(
         isInfinite: Boolean,
         langTag: String
     ): String {
-        val itemId = "user_${UUID.randomUUID().toString()}"
+        val itemId = "user_${UUID.randomUUID()}"
         
         itemDao.upsertItem(AzkarItemEntity(
             itemId = itemId,

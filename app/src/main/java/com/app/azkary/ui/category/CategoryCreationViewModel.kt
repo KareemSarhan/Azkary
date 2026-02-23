@@ -8,8 +8,6 @@ import com.app.azkary.R
 import com.app.azkary.data.model.AvailableZikr
 import com.app.azkary.data.model.CategoryItemConfig
 import com.app.azkary.data.repository.AzkarRepository
-import com.app.azkary.data.model.AzkarItemUi
-import com.app.azkary.data.model.CategoryUi
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -21,12 +19,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
-import java.util.UUID
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -63,7 +59,7 @@ class CategoryCreationViewModel @Inject constructor(
                 val today = LocalDate.now().toString()
                 
                 // Get category name
-                val categories = repository.observeCategoriesWithDisplayName(langTag).first()
+                val categories = repository.observeCategoriesWithDisplayName(langTag, today).first()
                 val category = categories.find { it.id == catId }
                 if (category != null) {
                     _uiState.value = _uiState.value.copy(

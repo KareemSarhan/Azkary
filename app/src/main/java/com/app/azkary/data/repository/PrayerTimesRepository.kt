@@ -3,10 +3,7 @@ package com.app.azkary.data.repository
 import com.app.azkary.data.network.dto.PrayerCalendarResponse
 import com.app.azkary.domain.model.DayPrayerTimes
 import com.app.azkary.domain.model.WindowCalculationResult
-import com.app.azkary.util.ParsingException
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 
 /**
  * Main repository for prayer times with offline-first approach
@@ -82,4 +79,17 @@ interface PrayerTimesRepository {
      * Clears old cached data
      */
     suspend fun clearOldCache(keepLastMonths: Int = 2)
+
+    /**
+     * Gets the current "Islamic date" based on Fajr time.
+     * If current time is before today's Fajr, returns yesterday's date.
+     * Otherwise returns today's date.
+     * Falls back to LocalDate.now() if prayer times are unavailable.
+     */
+    suspend fun getIslamicCurrentDate(
+        latitude: Double,
+        longitude: Double,
+        methodId: Int = 4,
+        school: Int = 0
+    ): LocalDate
 }
