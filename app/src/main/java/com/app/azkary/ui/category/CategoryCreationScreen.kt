@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -94,6 +95,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -631,11 +634,6 @@ private fun SelectedItemCard(
                         }
                     } else {
                         var countText by remember(config.requiredRepeats) { mutableStateOf(config.requiredRepeats.toString()) }
-                        val minWidth = 40.dp
-                        val maxWidth = 100.dp
-                        val charWidthDp = 12.dp
-                        val calculatedWidth = (minWidth.value + (countText.length - 1).coerceAtLeast(0) * charWidthDp.value).coerceAtMost(maxWidth.value).dp
-
                         OutlinedTextField(
                             value = countText,
                             onValueChange = { newValue ->
@@ -647,17 +645,16 @@ private fun SelectedItemCard(
                                     }
                                 }
                             },
-                            modifier = Modifier
-                                .width(calculatedWidth)
-                                .height(32.dp),
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(
-                                fontWeight = FontWeight.Bold,
+                            modifier = Modifier.defaultMinSize(minWidth = 2.dp),
+                            textStyle = MaterialTheme.typography.bodySmall.copy(
+                                fontSize = 16.sp,  // Adjusted font size
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.primary
+                                color = MaterialTheme.colorScheme.primary,
+                                lineHeight = 24.sp  // Adjusted line height
                             ),
-                            keyboardOptions = KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(16.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                                 unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
