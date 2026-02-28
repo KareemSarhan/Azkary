@@ -147,7 +147,7 @@ fun CustomZikrDialog(
                         modifier = Modifier
                             .width(calculatedWidth)
                             .height(40.dp),
-                        textStyle = MaterialTheme.typography.titleLarge.copy(
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
                             fontWeight = FontWeight.Bold,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                             color = MaterialTheme.colorScheme.primary

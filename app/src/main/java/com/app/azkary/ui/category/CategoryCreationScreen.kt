@@ -650,7 +650,7 @@ private fun SelectedItemCard(
                             modifier = Modifier
                                 .width(calculatedWidth)
                                 .height(32.dp),
-                            textStyle = MaterialTheme.typography.titleMedium.copy(
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.primary
