@@ -631,10 +631,10 @@ private fun SelectedItemCard(
                         }
                     } else {
                         var countText by remember(config.requiredRepeats) { mutableStateOf(config.requiredRepeats.toString()) }
-                        val minWidth = 48.dp
-                        val maxWidth = 120.dp
-                        val charWidth = 12.dp
-                        val calculatedWidth = (countText.length * charWidth.value).dp.coerceIn(minWidth, maxWidth)
+                        val minWidth = 40.dp
+                        val maxWidth = 100.dp
+                        val charWidthDp = 12.dp
+                        val calculatedWidth = (minWidth.value + (countText.length - 1).coerceAtLeast(0) * charWidthDp.value).coerceAtMost(maxWidth.value).dp
 
                         OutlinedTextField(
                             value = countText,
@@ -648,18 +648,16 @@ private fun SelectedItemCard(
                                 }
                             },
                             modifier = Modifier
-                                .widthIn(min = minWidth, max = maxWidth)
                                 .width(calculatedWidth)
-                                .wrapContentHeight(),
+                                .height(32.dp),
                             textStyle = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                lineHeight = MaterialTheme.typography.titleMedium.fontSize * 1.2
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
                             ),
                             keyboardOptions = KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
                             singleLine = true,
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(8.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                                 unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),

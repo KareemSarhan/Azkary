@@ -127,10 +127,10 @@ fun CustomZikrDialog(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     var countText by remember(requiredRepeats) { mutableStateOf(requiredRepeats.toString()) }
-                    val minWidth = 56.dp
-                    val maxWidth = 140.dp
-                    val charWidth = 16.dp
-                    val calculatedWidth = (countText.length * charWidth.value).dp.coerceIn(minWidth, maxWidth)
+                    val minWidth = 48.dp
+                    val maxWidth = 120.dp
+                    val charWidthDp = 14.dp
+                    val calculatedWidth = (minWidth.value + (countText.length - 1).coerceAtLeast(0) * charWidthDp.value).coerceAtMost(maxWidth.value).dp
 
                     OutlinedTextField(
                         value = countText,
@@ -144,16 +144,14 @@ fun CustomZikrDialog(
                             }
                         },
                         modifier = Modifier
-                            .widthIn(min = minWidth, max = maxWidth)
                             .width(calculatedWidth)
-                            .wrapContentHeight(),
-                        textStyle = MaterialTheme.typography.headlineSmall.copy(
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                            lineHeight = MaterialTheme.typography.headlineSmall.fontSize * 1.2
+                            .height(40.dp),
+                        textStyle = MaterialTheme.typography.titleLarge.copy(
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         ),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                             unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
