@@ -628,6 +628,8 @@ private fun SelectedItemCard(
                             }
                         }
                     } else {
+                        var countText by remember(config.requiredRepeats) { mutableStateOf(config.requiredRepeats.toString()) }
+
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -653,16 +655,34 @@ private fun SelectedItemCard(
                                     )
                                 }
                             }
-                            
-                            Text(
-                                text = config.requiredRepeats.toString(),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                modifier = Modifier.width(40.dp),
-                                textAlign = TextAlign.Center
+
+                            OutlinedTextField(
+                                value = countText,
+                                onValueChange = { newValue ->
+                                    if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                                        countText = newValue
+                                        val newCount = newValue.toIntOrNull() ?: 0
+                                        if (newCount > 0) {
+                                            onCountChange(newCount)
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.width(64.dp),
+                                textStyle = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                ),
+                                keyboardOptions = KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
+                                singleLine = true,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                                )
                             )
-                            
+
                             Surface(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),

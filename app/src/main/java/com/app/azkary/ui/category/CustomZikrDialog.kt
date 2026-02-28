@@ -126,9 +126,11 @@ fun CustomZikrDialog(
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.height(8.dp))
+                    var countText by remember(requiredRepeats) { mutableStateOf(requiredRepeats.toString()) }
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Button(
                             onClick = { if (requiredRepeats > 1) requiredRepeats-- },
@@ -138,12 +140,30 @@ fun CustomZikrDialog(
                         ) {
                             Icon(Icons.Default.Remove, contentDescription = null)
                         }
-                        
-                        Text(
-                            text = requiredRepeats.toString(),
-                            style = MaterialTheme.typography.headlineSmall
+
+                        OutlinedTextField(
+                            value = countText,
+                            onValueChange = { newValue ->
+                                if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                                    countText = newValue
+                                    val newCount = newValue.toIntOrNull() ?: 0
+                                    if (newCount > 0) {
+                                        requiredRepeats = newCount
+                                    }
+                                }
+                            },
+                            modifier = Modifier.width(80.dp),
+                            textStyle = MaterialTheme.typography.headlineSmall.copy(
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            ),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                            )
                         )
-                        
+
                         Button(
                             onClick = { requiredRepeats++ },
                             modifier = Modifier.size(48.dp),
