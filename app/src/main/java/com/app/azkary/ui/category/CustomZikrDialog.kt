@@ -127,57 +127,40 @@ fun CustomZikrDialog(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     var countText by remember(requiredRepeats) { mutableStateOf(requiredRepeats.toString()) }
+                    val minWidth = 56.dp
+                    val maxWidth = 140.dp
+                    val charWidth = 16.dp
+                    val calculatedWidth = (countText.length * charWidth.value).dp.coerceIn(minWidth, maxWidth)
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Button(
-                            onClick = { if (requiredRepeats > 1) requiredRepeats-- },
-                            modifier = Modifier.size(48.dp),
-                            shape = RoundedCornerShape(50.dp),
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Icon(Icons.Default.Remove, contentDescription = null)
-                        }
-
-                        OutlinedTextField(
-                            value = countText,
-                            onValueChange = { newValue ->
-                                if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
-                                    countText = newValue
-                                    val newCount = newValue.toIntOrNull() ?: 0
-                                    if (newCount > 0) {
-                                        requiredRepeats = newCount
-                                    }
+                    OutlinedTextField(
+                        value = countText,
+                        onValueChange = { newValue ->
+                            if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                                countText = newValue
+                                val newCount = newValue.toIntOrNull() ?: 0
+                                if (newCount > 0) {
+                                    requiredRepeats = newCount
                                 }
-                            },
-                            modifier = Modifier
-                                .width(80.dp)
-                                .height(56.dp),
-                            textStyle = MaterialTheme.typography.headlineSmall.copy(
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                            ),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            singleLine = true,
-                            shape = RoundedCornerShape(12.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                                unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
-                            )
+                            }
+                        },
+                        modifier = Modifier
+                            .widthIn(min = minWidth, max = maxWidth)
+                            .width(calculatedWidth)
+                            .wrapContentHeight(),
+                        textStyle = MaterialTheme.typography.headlineSmall.copy(
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            lineHeight = MaterialTheme.typography.headlineSmall.fontSize * 1.2
+                        ),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                            focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
                         )
-
-                        Button(
-                            onClick = { requiredRepeats++ },
-                            modifier = Modifier.size(48.dp),
-                            shape = RoundedCornerShape(50.dp),
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = null)
-                        }
-                    }
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
                 
