@@ -154,13 +154,14 @@ fun CustomZikrDialog(
                             },
                             modifier = Modifier
                                 .width(80.dp)
-                                .height(48.dp),
+                                .height(56.dp),
                             textStyle = MaterialTheme.typography.headlineSmall.copy(
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             ),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
-                            shape = RoundedCornerShape(24.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(0.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                                 unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
