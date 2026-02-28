@@ -152,15 +152,20 @@ fun CustomZikrDialog(
                                     }
                                 }
                             },
-                            modifier = Modifier.width(80.dp),
+                            modifier = Modifier
+                                .width(80.dp)
+                                .height(48.dp),
                             textStyle = MaterialTheme.typography.headlineSmall.copy(
                                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             ),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
+                            shape = RoundedCornerShape(24.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                                focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                                unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
                             )
                         )
 

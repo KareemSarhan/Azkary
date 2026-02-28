@@ -667,7 +667,9 @@ private fun SelectedItemCard(
                                         }
                                     }
                                 },
-                                modifier = Modifier.width(64.dp),
+                                modifier = Modifier
+                                    .width(64.dp)
+                                    .height(36.dp),
                                 textStyle = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center,
@@ -675,11 +677,12 @@ private fun SelectedItemCard(
                                 ),
                                 keyboardOptions = KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
                                 singleLine = true,
+                                shape = RoundedCornerShape(18.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                                    focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                    focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
                                 )
                             )
 
