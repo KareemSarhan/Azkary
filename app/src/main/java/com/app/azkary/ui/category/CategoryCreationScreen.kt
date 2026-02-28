@@ -33,7 +33,9 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -173,6 +175,36 @@ fun CategoryCreationScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            if (categoryId != null) {
+                BottomAppBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 0.dp
+                ) {
+                    Button(
+                        onClick = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                            viewModel.saveCategory(
+                                onSuccess = onBack,
+                                onError = { error ->
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar(error)
+                                    }
+                                }
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Icon(Icons.Default.Check, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(R.string.category_complete_editing))
+                    }
+                }
+            }
         }
     ) { padding ->
         LazyColumn(
