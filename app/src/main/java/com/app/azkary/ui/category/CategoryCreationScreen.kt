@@ -653,7 +653,7 @@ private fun SelectedItemCard(
                             textStyle = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                color = MaterialTheme.colorScheme.primary
                             ),
                             keyboardOptions = KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
                             singleLine = true,
