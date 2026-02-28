@@ -678,7 +678,6 @@ private fun SelectedItemCard(
                                 keyboardOptions = KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number),
                                 singleLine = true,
                                 shape = RoundedCornerShape(12.dp),
-                                contentPadding = PaddingValues(0.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                                     unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
