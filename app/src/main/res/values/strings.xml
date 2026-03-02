@@ -106,6 +106,7 @@
     <string name="category_stock_limited_editing_content_description">Stock category - limited editing</string>
     <string name="category_decrease_content_description">Decrease</string>
     <string name="category_increase_content_description">Increase</string>
+    <string name="category_complete_editing">Confirm</string>
 
     <!-- Custom Zikr Dialog -->
     <string name="custom_zikr_dialog_title">Add Custom Zikr</string>
