@@ -89,6 +89,13 @@ class SummaryViewModel @Inject constructor(
             initialValue = true
         )
 
+    val showWeeklyProgress: StateFlow<Boolean> = userPreferencesRepository.showWeeklyProgress
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
+
     /**
      * Maps AzkarWindow to SystemCategoryKey for category selection
      */
