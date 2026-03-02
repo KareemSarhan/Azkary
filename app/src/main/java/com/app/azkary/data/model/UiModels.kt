@@ -44,6 +44,7 @@ data class CategoryItemConfig(
 data class DayProgress(
     val date: String, // ISO date string YYYY-MM-DD
     val dayOfWeek: Int, // 1 = Sunday, 7 = Saturday
+    val dayOfMonth: Int, // 1-31
     val progress: Float, // 0.0 - 1.0 aggregated across all categories
     val isToday: Boolean
 )

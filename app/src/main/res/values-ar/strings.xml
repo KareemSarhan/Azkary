@@ -153,11 +153,11 @@
 
     <!-- Weekly Progress Card -->
     <string name="weekly_progress_title">آخر 7 أيام</string>
-    <string name="weekly_progress_day_sunday">ح</string>
-    <string name="weekly_progress_day_monday">ن</string>
-    <string name="weekly_progress_day_tuesday">ث</string>
-    <string name="weekly_progress_day_wednesday">ر</string>
-    <string name="weekly_progress_day_thursday">خ</string>
-    <string name="weekly_progress_day_friday">ج</string>
-    <string name="weekly_progress_day_saturday">س</string>
+    <string name="weekly_progress_day_sunday">أحد</string>
+    <string name="weekly_progress_day_monday">إثن</string>
+    <string name="weekly_progress_day_tuesday">ثلث</string>
+    <string name="weekly_progress_day_wednesday">أرب</string>
+    <string name="weekly_progress_day_thursday">خمس</string>
+    <string name="weekly_progress_day_friday">جمعة</string>
+    <string name="weekly_progress_day_saturday">سبت</string>
 </resources>

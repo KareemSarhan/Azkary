@@ -127,6 +127,7 @@ class SummaryViewModel @Inject constructor(
                 DayProgress(
                     date = dateString,
                     dayOfWeek = dayOfWeek,
+                    dayOfMonth = date.dayOfMonth,
                     progress = progress,
                     isToday = date == today
                 )

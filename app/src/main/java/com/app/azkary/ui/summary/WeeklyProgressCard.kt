@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,10 +31,7 @@ fun WeeklyProgressCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        )
+        shape = MaterialTheme.shapes.large
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -116,7 +112,7 @@ private fun DayProgressItem(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Day label
+        // Day name
         Text(
             text = dayLabel,
             style = MaterialTheme.typography.labelSmall,
@@ -127,6 +123,18 @@ private fun DayProgressItem(
                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             },
             fontWeight = if (dayProgress.isToday) FontWeight.Bold else FontWeight.Normal
+        )
+
+        // Day number
+        Text(
+            text = dayProgress.dayOfMonth.toString(),
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center,
+            color = if (dayProgress.isToday) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            }
         )
     }
 }
