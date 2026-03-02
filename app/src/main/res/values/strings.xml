@@ -150,4 +150,14 @@
     <string name="schedule_midnight">Midnight</string>
     <string name="schedule_lastthird">Last Third</string>
     <string name="schedule_next_day_suffix">(+1)</string>
+
+    <!-- Weekly Progress Card -->
+    <string name="weekly_progress_title">Last 7 Days</string>
+    <string name="weekly_progress_day_sunday">S</string>
+    <string name="weekly_progress_day_monday">M</string>
+    <string name="weekly_progress_day_tuesday">T</string>
+    <string name="weekly_progress_day_wednesday">W</string>
+    <string name="weekly_progress_day_thursday">T</string>
+    <string name="weekly_progress_day_friday">F</string>
+    <string name="weekly_progress_day_saturday">S</string>
 </resources>
