@@ -1,6 +1,5 @@
 package com.app.azkary.ui.summary
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,16 +61,20 @@ private fun DayProgressItem(
     dayProgress: DayProgress,
     modifier: Modifier = Modifier
 ) {
-    val dayLabel = getDayLabel(dayProgress.dayOfWeek)
+    val dayLabel = if (dayProgress.isToday) {
+        stringResource(R.string.weekly_progress_today)
+    } else {
+        getDayLabel(dayProgress.dayOfWeek)
+    }
     val progress = dayProgress.progress.coerceIn(0f, 1f)
 
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Progress Circle
+        // Progress Circle with day number inside
         Box(
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.size(44.dp),
             contentAlignment = Alignment.Center
         ) {
             // Background track
@@ -82,7 +85,7 @@ private fun DayProgressItem(
                 modifier = Modifier.matchParentSize()
             )
 
-            // Progress arc - use theme colors for completed portion
+            // Progress arc
             if (progress > 0) {
                 CircularProgressIndicator(
                     progress = { progress },
@@ -96,23 +99,22 @@ private fun DayProgressItem(
                 )
             }
 
-            // Today indicator - small dot at top
-            if (dayProgress.isToday) {
-                Box(
-                    modifier = Modifier
-                        .size(6.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.tertiary,
-                            shape = MaterialTheme.shapes.small
-                        )
-                        .align(Alignment.TopCenter)
-                )
-            }
+            // Day number centered in circle
+            Text(
+                text = dayProgress.dayOfMonth.toString(),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = if (dayProgress.isToday) FontWeight.Bold else FontWeight.Normal,
+                color = if (dayProgress.isToday) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                }
+            )
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
-        // Day name
+        // Day name (or "Today")
         Text(
             text = dayLabel,
             style = MaterialTheme.typography.labelSmall,
@@ -123,18 +125,6 @@ private fun DayProgressItem(
                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             },
             fontWeight = if (dayProgress.isToday) FontWeight.Bold else FontWeight.Normal
-        )
-
-        // Day number
-        Text(
-            text = dayProgress.dayOfMonth.toString(),
-            style = MaterialTheme.typography.labelSmall,
-            textAlign = TextAlign.Center,
-            color = if (dayProgress.isToday) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-            }
         )
     }
 }

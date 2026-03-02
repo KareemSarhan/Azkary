@@ -153,6 +153,7 @@
 
     <!-- Weekly Progress Card -->
     <string name="weekly_progress_title">Last 7 Days</string>
+    <string name="weekly_progress_today">Today</string>
     <string name="weekly_progress_day_sunday">Sun</string>
     <string name="weekly_progress_day_monday">Mon</string>
     <string name="weekly_progress_day_tuesday">Tue</string>
