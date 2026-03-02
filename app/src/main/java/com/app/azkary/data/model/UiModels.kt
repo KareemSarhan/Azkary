@@ -37,3 +37,20 @@ data class CategoryItemConfig(
     val requiredRepeats: Int,
     val isInfinite: Boolean
 )
+
+/**
+ * Represents progress for a single day in the weekly view
+ */
+data class DayProgress(
+    val date: String, // ISO date string YYYY-MM-DD
+    val dayOfWeek: Int, // 1 = Sunday, 7 = Saturday
+    val progress: Float, // 0.0 - 1.0 aggregated across all categories
+    val isToday: Boolean
+)
+
+/**
+ * UI state for the weekly progress card showing last 7 days
+ */
+data class WeeklyProgressUi(
+    val days: List<DayProgress>
+)
