@@ -19,5 +19,21 @@ data class AzkarItemUi(
     val reference: String?,
     val requiredRepeats: Int,
     val currentRepeats: Int,
-    val isCompleted: Boolean
+    val isCompleted: Boolean,
+    val isInfinite: Boolean = false
+)
+
+data class AvailableZikr(
+    val id: String,
+    val title: String?,
+    val arabicText: String?,
+    val transliteration: String?,
+    val requiredRepeats: Int,
+    val source: AzkarSource
+)
+
+data class CategoryItemConfig(
+    val itemId: String,
+    val requiredRepeats: Int,
+    val isInfinite: Boolean
 )

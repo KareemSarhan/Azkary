@@ -3,9 +3,11 @@ package com.app.azkary.ui.reading
 import android.content.Context
 import android.os.VibrationEffect
 import android.os.VibratorManager
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,20 +22,28 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
@@ -55,15 +65,59 @@ fun ReadingScreen(
 ) {
     val items by viewModel.items.collectAsState(initial = emptyList())
     val weightedProgress by viewModel.weightedProgress.collectAsState(initial = 0f)
+    val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
+
+    // If categoryId is null, navigate back immediately
+    LaunchedEffect(Unit) {
+        if (viewModel.categoryId == null) {
+            onBack()
+        }
+    }
+
+    var isActive by remember { mutableStateOf(true) }
+
+    // Safe navigation wrapper that prevents double-navigation by immediately disabling
+    val safeOnBack: () -> Unit = {
+        if (isActive) {
+            isActive = false
+            onBack()
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            isActive = false
+        }
+    }
+
+    BackHandler(enabled = isActive) {
+        safeOnBack()
+    }
 
     val animatedProgress by animateFloatAsState(
         targetValue = weightedProgress.coerceIn(0f, 1f),
         label = "weightedProgressAnimation"
     )
 
-    val pagerState = rememberPagerState(pageCount = { items.size })
+    val isComplete = weightedProgress >= 1f
+    val pagerState = rememberPagerState(pageCount = { if (isComplete) items.size + 1 else items.size })
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val initialPageIndex = remember(items, isComplete) {
+        if (isComplete) {
+            items.size  // Completion page
+        } else {
+            items.indexOfFirst { !it.isInfinite && it.currentRepeats < it.requiredRepeats }.takeIf { it >= 0 } ?: 0
+        }
+    }
+
+    LaunchedEffect(initialPageIndex) {
+        if (pagerState.currentPage != initialPageIndex && items.isNotEmpty()) {
+            pagerState.scrollToPage(initialPageIndex)
+        }
+    }
 
     // Initialize Vibrator
     val vibrator = remember {
@@ -77,8 +131,10 @@ fun ReadingScreen(
     }
 
     val colors = MaterialTheme.colorScheme
+    val holdToCompleteDisabledMessage = stringResource(R.string.hold_to_complete_disabled)
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = colors.surface,
         topBar = {
             Column(modifier = Modifier.background(colors.surface)) {
@@ -97,7 +153,7 @@ fun ReadingScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
 
-                            if (items.isNotEmpty()) {
+                            if (items.isNotEmpty() && !(isComplete && pagerState.currentPage == items.size)) {
                                 val pageText = BidiHelper.formatPageCounter(
                                     pagerState.currentPage + 1,
                                     items.size,
@@ -113,7 +169,7 @@ fun ReadingScreen(
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = onBack) {
+                        IconButton(onClick = safeOnBack) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = stringResource(R.string.reading_back_content_description)
@@ -121,7 +177,7 @@ fun ReadingScreen(
                         }
                     },
                     actions = {
-                        val currentItem = items.getOrNull(pagerState.currentPage)
+                        val currentItem = if (isComplete && pagerState.currentPage == items.size) null else items.getOrNull(pagerState.currentPage)
                         if (currentItem != null) {
                             Surface(
                                 color = colors.surfaceVariant,
@@ -129,11 +185,15 @@ fun ReadingScreen(
                                 modifier = Modifier.padding(end = 8.dp)
                             ) {
                                 LtrText(
-                                    text = BidiHelper.formatRepeatCounter(
-                                        currentItem.currentRepeats,
-                                        currentItem.requiredRepeats,
-                                        context
-                                    ),
+                                    text = if (currentItem.isInfinite) {
+                                        "${currentItem.currentRepeats}/∞"
+                                    } else {
+                                        BidiHelper.formatRepeatCounter(
+                                            currentItem.currentRepeats,
+                                            currentItem.requiredRepeats,
+                                            context
+                                        )
+                                    },
                                     style = MaterialTheme.typography.labelMedium,
                                     color = colors.onSurfaceVariant,
                                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
@@ -142,9 +202,8 @@ fun ReadingScreen(
                         }
                     }
                 )
-
-                LinearProgressIndicator(
-                    progress = { animatedProgress },
+                LinearProgressBar(
+                    progress = animatedProgress,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(2.dp),
@@ -154,22 +213,36 @@ fun ReadingScreen(
             }
         }
     ) { padding ->
-        if (items.isNotEmpty()) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) { page ->
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            key = { page -> page }
+        ) { page ->
+            if (isComplete && page == items.size) {
+                CompletionScreen(
+                    onBackToSummary = safeOnBack,
+                    isEnabled = isActive,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else if (items.isNotEmpty()) {
                 val item = items[page]
 
                 AzkarReadingItem(
                     item = item,
                     onIncrement = {
+                        if (!isActive) return@AzkarReadingItem
+
+                        if (item.isInfinite) {
+                            performVibration(50L)
+                            viewModel.incrementRepeat(item.id)
+                            return@AzkarReadingItem
+                        }
+
                         val isAlreadyComplete = item.currentRepeats >= item.requiredRepeats
 
                         if (isAlreadyComplete) {
-                            // If already done, just scroll to next if available
                             if (page < items.size - 1) {
                                 scope.launch {
                                     performVibration(350L)
@@ -179,24 +252,27 @@ fun ReadingScreen(
                             return@AzkarReadingItem
                         }
 
-                        // 1. Immediate Short Vibration (Feedback for tap)
                         performVibration(50L)
-                        
-                        // 2. Update Progress in DB
                         viewModel.incrementRepeat(item.id)
-                        
-                        // 3. Auto-Next Check
+
                         val willBeComplete = (item.currentRepeats + 1) >= item.requiredRepeats
-                        if (willBeComplete && page < items.size - 1) {
+                        if (willBeComplete) {
                             scope.launch {
-                                // Delay so user sees the final count (e.g. 33/33)
                                 delay(0)
-                                
-                                // 4. Long Vibration (Feedback for Zikr completion/change)
                                 performVibration(350L)
-                                
-                                // 5. Smooth Scroll to next Zikr
                                 pagerState.animateScrollToPage(page + 1)
+                            }
+                        }
+                    },
+                    onHoldComplete = {
+                        if (!isActive) return@AzkarReadingItem
+
+                        if (holdToComplete) {
+                            performVibration(50L)
+                            viewModel.markItemComplete(item.id)
+                        } else {
+                            scope.launch {
+                                snackbarHostState.showSnackbar(holdToCompleteDisabledMessage)
                             }
                         }
                     }
@@ -222,3 +298,30 @@ private fun LtrText(
         )
     }
 }
+
+@Composable
+private fun LinearProgressBar(
+    progress: Float,
+    modifier: Modifier = Modifier,
+    color: androidx.compose.ui.graphics.Color,
+    trackColor: androidx.compose.ui.graphics.Color
+) {
+    val layoutDirection = LocalLayoutDirection.current
+    Box(
+        modifier = modifier
+            .drawBehind {
+                drawRect(trackColor)
+                if (progress > 0f) {
+                    val progressWidth = size.width * progress.coerceIn(0f, 1f)
+                    val isRtl = layoutDirection == LayoutDirection.Rtl
+                    val startX = if (isRtl) size.width - progressWidth else 0f
+                    drawRect(
+                        color = color,
+                        topLeft = Offset(startX, 0f),
+                        size = Size(progressWidth, size.height)
+                    )
+                }
+            }
+    )
+}
+

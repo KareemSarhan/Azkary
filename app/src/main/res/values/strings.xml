@@ -12,6 +12,8 @@
     <string name="summary_progress_completed">%d%% Completed</string>
     <string name="summary_continue">Continue</string>
     <string name="summary_scheduled">Scheduled</string>
+    <string name="summary_add_category">Add Category</string>
+    <string name="summary_create_category">Create Category</string>
     <string name="summary_settings_content_description">Settings</string>
 
     <!-- Reading Screen -->
@@ -49,10 +51,24 @@
     <!-- Date Format (for SummaryScreen) -->
     <string name="date_format_pattern">EEEE dd MMMM</string>
 
+    <!-- Hold-to-Complete Settings -->
+    <string name="settings_hold_to_complete_title">Hold to complete</string>
+
+    <!-- Long Press Feedback -->
+    <string name="category_marked_complete">Category marked complete</string>
+    <string name="category_marked_incomplete">Category marked incomplete</string>
+    <string name="hold_to_complete_disabled">Hold-to-complete is disabled in settings</string>
+
+    <!-- Completion Screen -->
+    <string name="completion_title">MashaAllah!</string>
+    <string name="completion_message">You have completed this category</string>
+    <string name="completion_back_to_summary">Back to Summary</string>
+
     <!-- Support / Feedback -->
     <string name="settings_support_feedback">Support / Feedback</string>
+    <string name="settings_version">Version %s</string>
     <string name="support_option_email">Email</string>
-    <string name="support_email_address" translatable="false">kareemsarhan@gmail.com</string>
+    <string name="support_email_address" translatable="false">azkary@hearo.support</string>
     <string name="support_email_subject">App Feedback / Support</string>
     <string name="support_useful_info_label">[Useful Info]</string>
     <string name="support_app_version_label">App Version:</string>
@@ -64,4 +80,74 @@
     <string name="support_install_id_label">Install ID:</string>
     <string name="support_write_message_instruction">======= Please write your message below (any language) =======</string>
     <string name="support_no_app_found">No app found to complete this action.</string>
+
+    <!-- Category Creation Screen -->
+    <string name="category_create_title">Create Category</string>
+    <string name="category_edit_title">Edit Category</string>
+    <string name="category_back_content_description">Back</string>
+    <string name="category_save_content_description">Save</string>
+    <string name="category_name_label">Category Name</string>
+    <string name="category_name_placeholder">e.g., My Morning Azkar</string>
+    <string name="category_search_placeholder">Search zikr...</string>
+    <string name="category_clear_content_description">Clear</string>
+    <string name="category_selected_items">Selected Items</string>
+    <string name="category_choose_zikr">Choose Zikr</string>
+    <string name="category_loading_zikr">Loading available zikr...</string>
+    <string name="category_no_zikr_found">No zikr found matching your search</string>
+    <string name="category_add_custom_zikr">Add Custom Zikr</string>
+    <string name="category_button_add">Add</string>
+    <string name="category_button_remove">Remove</string>
+    <string name="category_count_label">Count:</string>
+    <string name="category_infinite_label">Infinite</string>
+    <string name="category_move_up_content_description">Move up</string>
+    <string name="category_move_down_content_description">Move down</string>
+    <string name="category_remove_content_description">Remove</string>
+    <string name="category_edit_counts_content_description">Edit counts</string>
+    <string name="category_stock_limited_editing_content_description">Stock category - limited editing</string>
+    <string name="category_decrease_content_description">Decrease</string>
+    <string name="category_increase_content_description">Increase</string>
+
+    <!-- Custom Zikr Dialog -->
+    <string name="custom_zikr_dialog_title">Add Custom Zikr</string>
+    <string name="custom_zikr_arabic_label">Arabic Text</string>
+    <string name="custom_zikr_transliteration_label">Transliteration</string>
+    <string name="custom_zikr_translation_label">Translation (Optional)</string>
+    <string name="custom_zikr_reference_label">Reference (Optional)</string>
+    <string name="custom_zikr_infinite_counter_label">Infinite Counter</string>
+    <string name="custom_zikr_repeat_count_label">Repeat Count</string>
+    <string name="custom_zikr_error_fill_text">Please fill in at least Arabic text or transliteration</string>
+    <string name="custom_zikr_error_min_repeat">Repeat count must be at least 1</string>
+    <string name="custom_zikr_button_cancel">Cancel</string>
+    <string name="custom_zikr_button_save">Save Zikr</string>
+
+    <!-- Reading Screen Labels -->
+    <string name="reading_transliteration">Transliteration</string>
+    <string name="reading_translation">Translation</string>
+    <string name="reading_reference">Reference</string>
+    <string name="unknown_location">Unknown</string>
+    <string name="error_category_name_required">Please enter a category name</string>
+    <string name="error_select_zikr">Please select at least one zikr</string>
+    <string name="error_failed_load_category">Failed to load category</string>
+    <string name="error_failed_create_zikr">Failed to create zikr</string>
+    <string name="error_location_permission">Unable to get location. Check permissions.</string>
+    <string name="error_location_generic">Location error</string>
+    <string name="error_location_disabled">Please enable location for prayer times</string>
+    <string name="error_prayer_times">Failed to load prayer times</string>
+
+    <!-- Schedule / Prayer Times (0-8) -->
+    <string name="section_schedule">Schedule</string>
+    <string name="schedule_from_label">From</string>
+    <string name="schedule_to_label">To</string>
+    <string name="schedule_to">to</string>
+    <string name="schedule_from">From</string>
+    <string name="schedule_fajr">Fajr</string>
+    <string name="schedule_sunrise">Sunrise</string>
+    <string name="schedule_dhuhr">Dhuhr</string>
+    <string name="schedule_asr">Asr</string>
+    <string name="schedule_maghrib">Maghrib</string>
+    <string name="schedule_isha">Isha</string>
+    <string name="schedule_firstthird">First Third</string>
+    <string name="schedule_midnight">Midnight</string>
+    <string name="schedule_lastthird">Last Third</string>
+    <string name="schedule_next_day_suffix">(+1)</string>
 </resources>

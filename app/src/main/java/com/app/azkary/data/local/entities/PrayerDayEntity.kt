@@ -35,5 +35,8 @@ data class PrayerDayEntity(
     val maghrib: LocalTime,
     val isha: LocalTime,
     val sunrise: LocalTime,
-    val sunset: LocalTime
+    val sunset: LocalTime,
+    val firstthird: LocalTime,
+    val midnight: LocalTime,
+    val lastthird: LocalTime
 )

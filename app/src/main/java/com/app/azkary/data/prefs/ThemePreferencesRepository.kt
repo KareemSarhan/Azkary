@@ -31,7 +31,7 @@ class ThemePreferencesRepository @Inject constructor(
         }
         ThemeSettings(
             themeMode = themeMode,
-            useTrueBlack = preferences[USE_TRUE_BLACK] ?: false
+            useTrueBlack = preferences[USE_TRUE_BLACK] ?: true
         )
     }
 

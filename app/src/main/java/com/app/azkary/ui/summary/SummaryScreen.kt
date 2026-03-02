@@ -1,6 +1,8 @@
 package com.app.azkary.ui.summary
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +17,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -43,6 +50,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.R
 import com.app.azkary.data.model.CategoryUi
+import com.app.azkary.ui.theme.SessionGradientEnd
+import com.app.azkary.ui.theme.SessionGradientStart
+import com.app.azkary.ui.theme.SessionRingColor
 import com.app.azkary.util.BidiHelper
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -54,12 +64,16 @@ import java.util.Locale
 fun SummaryScreen(
     onNavigateToCategory: (String) -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToCreateCategory: () -> Unit,
+    onNavigateToEditCategory: (String) -> Unit,
     viewModel: SummaryViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
+    LocalContext.current
     val categories by viewModel.categories.collectAsState(initial = emptyList())
     val currentSession by viewModel.currentSession.collectAsState(initial = null)
     val sessionEndTime by viewModel.sessionEndTime.collectAsState(initial = null)
+    val isEditMode by viewModel.isEditMode.collectAsState()
+    val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
 
     val today = androidx.compose.runtime.remember {
         val currentLocale = Locale.getDefault()
@@ -70,10 +84,12 @@ fun SummaryScreen(
         topBar = {
             TopAppBar(title = {
                 Column {
-                    Text(stringResource(R.string.summary_title), style = MaterialTheme.typography.headlineMedium)
                     Text(today, style = MaterialTheme.typography.bodyMedium)
                 }
             }, actions = {
+                IconButton(onClick = { viewModel.toggleEditMode() }) {
+                    Icon(Icons.Default.Edit, contentDescription = null)
+                }
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.summary_settings_content_description))
                 }
@@ -86,10 +102,10 @@ fun SummaryScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item {
-                currentSession?.let { session ->
+            currentSession?.let { session ->
+                item {
                     CurrentSessionCard(
-                        category = session, 
+                        category = session,
                         sessionEndTime = sessionEndTime,
                         onContinue = { onNavigateToCategory(session.id) })
                 }
@@ -121,8 +137,28 @@ fun SummaryScreen(
             } else {
                 items(items = categories, key = { it.id } // stable key
                 ) { category ->
+                    val index = categories.indexOf(category)
                     CategoryItem(
-                        category = category, onClick = { onNavigateToCategory(category.id) })
+                        category = category,
+                        index = index,
+                        totalCount = categories.size,
+                        isEditMode = isEditMode,
+                        onClick = { onNavigateToCategory(category.id) },
+                        onEdit = { onNavigateToEditCategory(category.id) },
+                        onDelete = { viewModel.deleteCategory(category.id) },
+                        onMoveUp = { if (index > 0) viewModel.moveCategoryUp(index) },
+                        onMoveDown = { if (index < categories.size - 1) viewModel.moveCategoryDown(index) },
+                        holdToComplete = holdToComplete,
+                        onHoldComplete = { viewModel.toggleCategoryCompletion(category.id) }
+                    )
+                }
+
+                if (isEditMode) {
+                    item {
+                        AddCategoryItem(
+                            onClick = onNavigateToCreateCategory
+                        )
+                    }
                 }
             }
         }
@@ -148,7 +184,7 @@ fun CurrentSessionCard(
                 .fillMaxWidth()                 // ✅ important (fixes cut-off look)
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(Color(0xFF6A11CB), Color(0xFF2575FC))
+                        colors = listOf(SessionGradientStart, SessionGradientEnd)
                     )
                 )
                 .padding(24.dp)
@@ -191,7 +227,7 @@ fun CurrentSessionCard(
                         progress = progress,
                         modifier = Modifier.size(64.dp),
                         strokeWidth = 8.dp,
-                        color = Color(0xFF00E5FF),                 // bright ring like screenshot
+                        color = SessionRingColor,
                         trackColor = Color.White.copy(alpha = 0.25f) // faint ring behind
                     )
 
@@ -201,15 +237,40 @@ fun CurrentSessionCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CategoryItem(
-    category: CategoryUi, onClick: () -> Unit
+    category: CategoryUi,
+    index: Int,
+    totalCount: Int,
+    isEditMode: Boolean,
+    onClick: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onMoveUp: () -> Unit,
+    onMoveDown: () -> Unit,
+    holdToComplete: Boolean = true,
+    onHoldComplete: () -> Unit = {}
 ) {
     val progress = category.progress.coerceIn(0f, 1f)
 
     Card(
-        onClick = onClick, modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = {
+                    if (isEditMode && category.type == com.app.azkary.data.model.CategoryType.USER) {
+                        onEdit()
+                    } else {
+                        onClick()
+                    }
+                },
+                onLongClick = {
+                    if (holdToComplete && !isEditMode) {
+                        onHoldComplete()
+                    }
+                }
+            )
     ) {
         Row(
             modifier = Modifier
@@ -218,20 +279,100 @@ fun CategoryItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(category.name, style = MaterialTheme.typography.titleMedium)
-                Text(stringResource(R.string.summary_scheduled), style = MaterialTheme.typography.bodySmall)
+                Text(formatScheduleText(category.from, category.to), style = MaterialTheme.typography.bodySmall)
             }
 
-            RingProgress(
-                progress = progress,
-                modifier = Modifier.size(32.dp),
-                strokeWidth = 4.dp,
-                color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
-            )
+            if (isEditMode) {
+                when (category.type) {
+                    com.app.azkary.data.model.CategoryType.USER -> {
+                        Row {
+                            IconButton(
+                                onClick = onMoveUp,
+                                enabled = index > 0
+                            ) {
+                                Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
+                            }
+                            IconButton(
+                                onClick = onMoveDown,
+                                enabled = index < totalCount - 1
+                            ) {
+                                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+                            }
+                            IconButton(onClick = onDelete) {
+                                Icon(Icons.Default.Delete, contentDescription = null)
+                            }
+                        }
+                    }
+                    com.app.azkary.data.model.CategoryType.DEFAULT -> {
+                        Row {
+                            IconButton(
+                                onClick = onMoveUp,
+                                enabled = index > 0
+                            ) {
+                                Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
+                            }
+                            IconButton(
+                                onClick = onMoveDown,
+                                enabled = index < totalCount - 1
+                            ) {
+                                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
+                            }
+                        }
+                    }
+                }
+            } else {
+                RingProgress(
+                    progress = progress,
+                    modifier = Modifier.size(32.dp),
+                    strokeWidth = 4.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
+                )
+            }
 
         }
+    }
+}
+
+@Composable
+private fun formatScheduleText(from: Int, to: Int): String {
+    val fromName = when (from) {
+        0 -> stringResource(R.string.schedule_fajr)
+        1 -> stringResource(R.string.schedule_sunrise)
+        2 -> stringResource(R.string.schedule_dhuhr)
+        3 -> stringResource(R.string.schedule_asr)
+        4 -> stringResource(R.string.schedule_maghrib)
+        5 -> stringResource(R.string.schedule_isha)
+        6 -> stringResource(R.string.schedule_firstthird)
+        7 -> stringResource(R.string.schedule_midnight)
+        8 -> stringResource(R.string.schedule_lastthird)
+        else -> from.toString()
+    }
+    
+    val toName = when (to) {
+        0 -> stringResource(R.string.schedule_fajr)
+        1 -> stringResource(R.string.schedule_sunrise)
+        2 -> stringResource(R.string.schedule_dhuhr)
+        3 -> stringResource(R.string.schedule_asr)
+        4 -> stringResource(R.string.schedule_maghrib)
+        5 -> stringResource(R.string.schedule_isha)
+        6 -> stringResource(R.string.schedule_firstthird)
+        7 -> stringResource(R.string.schedule_midnight)
+        8 -> stringResource(R.string.schedule_lastthird)
+        else -> to.toString()
+    }
+    
+    val isNextDay = to < from
+    val fromLabel = stringResource(R.string.schedule_from)
+    val toLabel = stringResource(R.string.schedule_to)
+    val nextDaySuffix = stringResource(R.string.schedule_next_day_suffix)
+    
+    return if (isNextDay) {
+        "$fromLabel $fromName $toLabel $toName $nextDaySuffix"
+    } else {
+        "$fromLabel $fromName $toLabel $toName"
     }
 }
 
@@ -261,5 +402,49 @@ fun RingProgress(
             strokeWidth = strokeWidth,
             modifier = Modifier.matchParentSize()
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddCategoryItem(
+    onClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.summary_add_category),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
 }

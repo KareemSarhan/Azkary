@@ -63,11 +63,6 @@ import com.app.azkary.R
 import com.app.azkary.data.prefs.ThemeMode
 import kotlinx.coroutines.launch
 
-private val ToggleRed = Color(0xFFE53935)
-private val ToggleOff = Color(0xFF252D3F)
-private val AccentBlue = Color(0xFF42A5F5)
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -79,6 +74,7 @@ fun SettingsScreen(
     val locationError by viewModel.locationError.collectAsState()
     val currentLanguageName = viewModel.getCurrentLanguageDisplayName()
     val themeSettings by viewModel.themeSettings.collectAsState()
+    val holdToComplete by viewModel.holdToComplete.collectAsState()
 
     // Support/Feedback sheet state
     var showSupportSheet by remember { mutableStateOf(false) }
@@ -184,7 +180,7 @@ fun SettingsScreen(
                         surfaceColor = surfaceColor,
                         onSurfaceColor = onSurfaceColor,
                         onSurfaceVariantColor = onSurfaceVariantColor,
-                        accentColor = AccentBlue
+                        accentColor = primaryColor
                     )
                     Spacer(Modifier.height(8.dp))
                 }
@@ -218,6 +214,16 @@ fun SettingsScreen(
                 onSurfaceVariantColor = onSurfaceVariantColor
             )
 
+            Spacer(Modifier.height(8.dp))
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_hold_to_complete_title),
+                isEnabled = holdToComplete,
+                onToggle = { viewModel.setHoldToComplete(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor
+            )
+
             Spacer(Modifier.height(16.dp))
 
             // Theme Section
@@ -228,13 +234,30 @@ fun SettingsScreen(
 
             ThemeSettingItem(
                 themeMode = themeSettings.themeMode,
-                useTrueBlack = themeSettings.useTrueBlack,
                 onThemeModeChange = { viewModel.setThemeMode(it) },
-                onTrueBlackChange = { viewModel.setUseTrueBlack(it) },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor,
                 onSurfaceVariantColor = onSurfaceVariantColor,
                 primaryColor = primaryColor
+            )
+
+            Spacer(Modifier.height(32.dp))
+
+            val context = LocalContext.current
+            val unknownText = stringResource(R.string.unknown_location)
+            val versionName = remember {
+                try {
+                    context.packageManager.getPackageInfo(context.packageName, 0).versionName
+                        ?: unknownText
+                } catch (e: Exception) {
+                    unknownText
+                }
+            }
+            Text(
+                text = stringResource(R.string.settings_version, versionName),
+                color = onSurfaceVariantColor,
+                fontSize = 12.sp,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
     }
@@ -418,9 +441,7 @@ private fun SettingsClickableItem(
 @Composable
 private fun ThemeSettingItem(
     themeMode: ThemeMode,
-    useTrueBlack: Boolean,
     onThemeModeChange: (ThemeMode) -> Unit,
-    onTrueBlackChange: (Boolean) -> Unit,
     surfaceColor: Color,
     onSurfaceColor: Color,
     onSurfaceVariantColor: Color,
@@ -471,33 +492,6 @@ private fun ThemeSettingItem(
                 onSurfaceVariantColor = onSurfaceVariantColor,
                 primaryColor = primaryColor
             )
-
-            // True Black toggle (only visible when Dark is selected)
-            AnimatedVisibility(visible = themeMode == ThemeMode.DARK) {
-                Column {
-                    Spacer(Modifier.height(16.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                stringResource(R.string.settings_true_black_oled),
-                                color = onSurfaceColor,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Text(
-                                stringResource(R.string.settings_true_black_description),
-                                color = onSurfaceVariantColor,
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(top = 2.dp)
-                            )
-                        }
-                        CustomIosToggle(
-                            isOn = useTrueBlack, onToggle = { onTrueBlackChange(!useTrueBlack) })
-                    }
-                }
-            }
         }
     }
 }
@@ -537,7 +531,8 @@ fun CustomIosToggle(
     isOn: Boolean, onToggle: () -> Unit
 ) {
     val trackColor by animateColorAsState(
-        targetValue = if (isOn) ToggleRed else ToggleOff, label = "trackColor"
+        targetValue = if (isOn) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.surfaceVariant,
+        label = "trackColor"
     )
 
     // sizes
@@ -566,7 +561,7 @@ fun CustomIosToggle(
                 .offset(x = thumbOffset)
                 .size(thumbSize)
                 .shadow(elevation = 6.dp, shape = CircleShape)
-                .background(Color.White, CircleShape)
+                .background(MaterialTheme.colorScheme.surface, CircleShape)
         )
     }
 }

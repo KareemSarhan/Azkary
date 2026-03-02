@@ -8,6 +8,7 @@ import com.app.azkary.data.model.SystemCategoryKey
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
+import com.app.azkary.domain.IslamicDateProvider
 import com.app.azkary.domain.model.WindowCalculationResult
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,12 +16,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -34,6 +37,7 @@ class SummaryViewModel @Inject constructor(
     private val repository: AzkarRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val prayerTimesRepository: PrayerTimesRepository,
+    private val islamicDateProvider: IslamicDateProvider,
     private val localeManager: LocaleManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -55,16 +59,13 @@ class SummaryViewModel @Inject constructor(
         }
     }
 
-    private val fallbackTags = listOf("ar", "en")
-
-    // Get current language tag directly from LocaleManager
-    private val currentLangTag: String
-        get() = localeManager.getCurrentLanguageTag(context)
-
-    val categories: Flow<List<CategoryUi>> = flowOf(currentLangTag).flatMapLatest { lang ->
-        repository.observeCategoriesWithDisplayName(
-            langTag = lang,
-        )
+    val categories: Flow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
+        flow { emit(islamicDateProvider.getCurrentDate().toString()) }.flatMapLatest { date ->
+            repository.observeCategoriesWithDisplayName(
+                langTag = lang,
+                date = date
+            )
+        }
     }
 
     // Prayer times state - must be declared before currentSession uses it
@@ -73,6 +74,17 @@ class SummaryViewModel @Inject constructor(
 
     private val _currentWindows = MutableStateFlow<WindowCalculationResult?>(null)
     val currentWindows: StateFlow<WindowCalculationResult?> = _currentWindows.asStateFlow()
+
+    // Edit mode state
+    private val _isEditMode = MutableStateFlow(false)
+    val isEditMode: StateFlow<Boolean> = _isEditMode.asStateFlow()
+
+    val holdToComplete: StateFlow<Boolean> = userPreferencesRepository.holdToComplete
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
 
     /**
      * Maps AzkarWindow to SystemCategoryKey for category selection
@@ -140,6 +152,72 @@ class SummaryViewModel @Inject constructor(
         } ?: run {
             println("DEBUG: SummaryViewModel - No current window found, setting sessionEndTime to null")
             _sessionEndTime.value = null
+        }
+    }
+
+    /**
+     * Toggle category completion status on long-press
+     * If category is incomplete (progress < 100%): Mark all items as complete
+     * If category is complete (progress >= 100%): Mark all items as incomplete
+     */
+    fun toggleCategoryCompletion(categoryId: String) {
+        viewModelScope.launch {
+            val category = categories.first().find { it.id == categoryId } ?: return@launch
+            val today = islamicDateProvider.getCurrentDate().toString()
+
+            if (category.progress >= 1f) {
+                repository.markCategoryIncomplete(categoryId, today)
+            } else {
+                repository.markCategoryComplete(categoryId, today)
+            }
+        }
+    }
+
+    fun toggleEditMode() {
+        _isEditMode.value = !_isEditMode.value
+    }
+
+    fun deleteCategory(categoryId: String) {
+        viewModelScope.launch {
+            repository.deleteCategory(categoryId)
+        }
+    }
+
+    fun reorderCategories(categoryIds: List<String>) {
+        viewModelScope.launch {
+            repository.reorderCategories(categoryIds)
+        }
+    }
+
+    fun moveCategoryUp(index: Int) {
+        viewModelScope.launch {
+            val currentCategories = categories.first().toMutableList()
+            if (index > 0 && index < currentCategories.size) {
+                val currentCategory = currentCategories[index]
+                val previousCategory = currentCategories[index - 1]
+                
+                currentCategories[index] = previousCategory
+                currentCategories[index - 1] = currentCategory
+                
+                val categoryIds = currentCategories.map { it.id }
+                repository.reorderCategories(categoryIds)
+            }
+        }
+    }
+
+    fun moveCategoryDown(index: Int) {
+        viewModelScope.launch {
+            val currentCategories = categories.first().toMutableList()
+            if (index >= 0 && index < currentCategories.size - 1) {
+                val currentCategory = currentCategories[index]
+                val nextCategory = currentCategories[index + 1]
+                
+                currentCategories[index] = nextCategory
+                currentCategories[index + 1] = currentCategory
+                
+                val categoryIds = currentCategories.map { it.id }
+                repository.reorderCategories(categoryIds)
+            }
         }
     }
 }

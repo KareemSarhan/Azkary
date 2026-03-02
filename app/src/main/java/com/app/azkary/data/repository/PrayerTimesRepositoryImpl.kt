@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import com.app.azkary.data.local.dao.PrayerDayDao
 import com.app.azkary.data.local.dao.PrayerMonthDao
@@ -19,9 +20,11 @@ import com.app.azkary.util.PrayerTimeParser
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -122,6 +125,10 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                 if (dayEntity != null) {
                     val result = mapEntityToDayPrayerTimes(dayEntity, monthEntity.timezone)
                     println("DEBUG: PrayerTimesRepositoryImpl - Returning cached prayer times: $result")
+                    Log.d("PrayerTimes", "=== Prayer Times (from cache) ===")
+                    Log.d("PrayerTimes", "Date: ${result.date}")
+                    Log.d("PrayerTimes", "Fajr: ${result.fajr}, Dhuhr: ${result.dhuhr}, Asr: ${result.asr}")
+                    Log.d("PrayerTimes", "Maghrib: ${result.maghrib}, Isha: ${result.isha}, Timezone: ${result.timezone}")
                     return@withContext result
                 }
             }
@@ -157,6 +164,10 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                     return@withContext dayEntity?.let {
                         val result = mapEntityToDayPrayerTimes(it, month.timezone)
                         println("DEBUG: PrayerTimesRepositoryImpl - Returning fresh prayer times: $result")
+                        Log.d("PrayerTimes", "=== Prayer Times (from API) ===")
+                        Log.d("PrayerTimes", "Date: ${result.date}")
+                        Log.d("PrayerTimes", "Fajr: ${result.fajr}, Dhuhr: ${result.dhuhr}, Asr: ${result.asr}")
+                        Log.d("PrayerTimes", "Maghrib: ${result.maghrib}, Isha: ${result.isha}, Timezone: ${result.timezone}")
                         result
                     }
                 }
@@ -221,6 +232,31 @@ class PrayerTimesRepositoryImpl @Inject constructor(
         windowEngine.calculateWindows(now, todayTimes, tomorrowTimes)
     }
 
+    override suspend fun getIslamicCurrentDate(
+        latitude: Double, longitude: Double, methodId: Int, school: Int
+    ): LocalDate = withContext(Dispatchers.IO) {
+        val now = Instant.now()
+        val today = LocalDate.now()
+        val yesterday = today.minusDays(1)
+
+        val todayTimes = getDayPrayerTimes(today, latitude, longitude, methodId, school)
+
+        if (todayTimes == null) {
+            return@withContext today
+        }
+
+        val fajrInstant = ZonedDateTime.of(today, todayTimes.fajr, todayTimes.timezone).toInstant()
+
+        if (now.isBefore(fajrInstant)) {
+            val yesterdayTimes = getDayPrayerTimes(yesterday, latitude, longitude, methodId, school)
+            if (yesterdayTimes != null) {
+                return@withContext yesterday
+            }
+        }
+
+        today
+    }
+
     override suspend fun refreshMonth(
         year: Int, month: Int, latitude: Double, longitude: Double, methodId: Int, school: Int
     ): PrayerCalendarResponse = withContext(Dispatchers.IO) @RequiresPermission(
@@ -235,8 +271,29 @@ class PrayerTimesRepositoryImpl @Inject constructor(
             year, month, latitude, longitude, methodId, school
         )
 
+        // Log raw JSON for today's date
+        val today = LocalDate.now()
+        val todayRaw = response.data.find { day ->
+            val dateFormatter = java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy")
+            try {
+                val apiDate = LocalDate.parse(day.date.gregorian.date, dateFormatter)
+                apiDate == today
+            } catch (e: Exception) {
+                false
+            }
+        }
+
+        todayRaw?.let { rawDay ->
+            val json = Json { prettyPrint = true }
+            val jsonString = json.encodeToString(rawDay)
+            Log.i("RawPrayerJSON", "=== Raw JSON Response for Today ===")
+            Log.i("RawPrayerJSON", jsonString)
+            Log.i("RawPrayerJSON", "===================================\n")
+        } ?: Log.w("RawPrayerJSON", "No data found for today's date: $today")
+
         // Force cache update
         cacheResponse(response, year, month, latitude, longitude, methodId)
+
 
         response
     }
@@ -263,7 +320,10 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                 maghrib = PrayerTimeParser.parseTimeString(dto.timings.Maghrib),
                 isha = PrayerTimeParser.parseTimeString(dto.timings.Isha),
                 sunrise = PrayerTimeParser.parseTimeString(dto.timings.Sunrise),
-                sunset = PrayerTimeParser.parseTimeString(dto.timings.Sunset)
+                sunset = PrayerTimeParser.parseTimeString(dto.timings.Sunset),
+                firstthird = PrayerTimeParser.parseTimeString(dto.timings.Firstthird),
+                midnight = PrayerTimeParser.parseTimeString(dto.timings.Midnight),
+                lastthird = PrayerTimeParser.parseTimeString(dto.timings.Lastthird)
             )
         } catch (e: Exception) {
             println("DEBUG: PrayerTimesRepositoryImpl - Error parsing day entity for date ${dto.date.gregorian.date}: ${e.message}")
@@ -322,11 +382,16 @@ class PrayerTimesRepositoryImpl @Inject constructor(
         return DayPrayerTimes(
             date = entity.date,
             fajr = entity.fajr,
+            sunrise = entity.sunrise,
             dhuhr = entity.dhuhr,
             asr = entity.asr,
             maghrib = entity.maghrib,
+            sunset = entity.sunset,
             isha = entity.isha,
-            timezone = ZoneId.of(timezone)
+            timezone = ZoneId.of(timezone),
+            firstthird = entity.firstthird,
+            midnight = entity.midnight,
+            lastthird = entity.lastthird
         )
     }
 
@@ -342,7 +407,10 @@ class PrayerTimesRepositoryImpl @Inject constructor(
                     Asr = entity.asr.toString(),
                     Sunset = entity.sunset.toString(),
                     Maghrib = entity.maghrib.toString(),
-                    Isha = entity.isha.toString()
+                    Isha = entity.isha.toString(),
+                    Firstthird = entity.firstthird.toString(),
+                    Midnight = entity.midnight.toString(),
+                    Lastthird = entity.lastthird.toString()
                 ), date = com.app.azkary.data.network.dto.DateDto(
                     gregorian = com.app.azkary.data.network.dto.GregorianDateDto(
                         date = entity.date.toString(),

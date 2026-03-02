@@ -44,7 +44,8 @@ data class AzkarItemEntity(
     val requiredRepeats: Int,
     val source: AzkarSource,
     val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+    val isInfinite: Boolean = false
 )
 
 @Entity(
@@ -95,7 +96,9 @@ data class CategoryItemCrossRefEntity(
     val categoryId: String,
     val itemId: String,
     val sortOrder: Int,
-    val isEnabled: Boolean = true
+    val isEnabled: Boolean = true,
+    val requiredRepeats: Int = 1,
+    val isInfinite: Boolean = false
 )
 
 @Entity(

@@ -8,6 +8,8 @@ import com.app.azkary.data.local.entities.AzkarTextEntity
 import com.app.azkary.data.local.entities.CategoryEntity
 import com.app.azkary.data.local.entities.CategoryItemCrossRefEntity
 import com.app.azkary.data.local.entities.CategoryTextEntity
+import com.app.azkary.data.model.CategoryType
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,14 +31,20 @@ class SeedManager @Inject constructor(
 
             val seedPack = jsonConfig.decodeFromString<SeedPack>(jsonString)
             val currentDbVersion = database.getDbVersion()
-            println("DEBUG: SeedManager - Current DB version: $currentDbVersion, Seed schema version: ${seedPack.schemaVersion}")
             
-            if (currentDbVersion < seedPack.schemaVersion) {
+            // Check if database is empty
+            val categoryCount = database.categoryDao().getActiveCategoriesOrdered().first().size
+            val isDbEmpty = categoryCount == 0
+            
+            println("DEBUG: SeedManager - Current DB version: $currentDbVersion, Seed schema version: ${seedPack.schemaVersion}")
+            println("DEBUG: SeedManager - Category count: $categoryCount, Database empty: $isDbEmpty")
+             
+            if (currentDbVersion < seedPack.schemaVersion || isDbEmpty) {
                 println("DEBUG: SeedManager - Starting seed import")
                 importSeedPack(seedPack)
                 println("DEBUG: SeedManager - Seed import completed")
             } else {
-                println("DEBUG: SeedManager - Skipping seed import - DB version is up to date")
+                println("DEBUG: SeedManager - Skipping seed import - DB version is up to date and has data")
             }
         } catch (e: Exception) {
             println("DEBUG: SeedManager - Error during seeding: ${e.message}")
@@ -55,6 +63,7 @@ class SeedManager @Inject constructor(
 
             // 1. Insert all items first
             val availableItemIds = mutableSetOf<String>()
+            val itemMap = mutableMapOf<String, SeedItem>()  // Map itemId -> SeedItem
             seedPack.items.forEach { seedItem ->
                 itemDao.upsertItems(
                     listOf(
@@ -77,6 +86,7 @@ class SeedManager @Inject constructor(
                     )
                 }
                 textDao.upsertTexts(itemTexts)
+                itemMap[seedItem.itemId] = seedItem
                 availableItemIds.add(seedItem.itemId)
             }
 
@@ -85,7 +95,7 @@ class SeedManager @Inject constructor(
                 categoryDao.insertCategory(
                     CategoryEntity(
                         categoryId = seedCat.categoryId,
-                        type = seedCat.type,
+                        type = if (seedCat.systemKey != null) CategoryType.DEFAULT else CategoryType.USER,
                         systemKey = seedCat.systemKey,
                         sortOrder = seedCat.sortOrder,
                         isArchived = seedCat.isArchived,
@@ -101,14 +111,17 @@ class SeedManager @Inject constructor(
 
                 // 3. Link items to categories via crossrefs
                 // ONLY if the item was defined in the 'items' array to avoid FK constraint failure
-                seedCat.items.forEach { ref ->
+                seedCat.items.forEachIndexed { index, ref ->
                     if (availableItemIds.contains(ref.itemId)) {
+                        val seedItem = itemMap[ref.itemId]!!
                         crossRefDao.insertCrossRef(
                             CategoryItemCrossRefEntity(
                                 categoryId = seedCat.categoryId,
                                 itemId = ref.itemId,
-                                sortOrder = ref.sortOrder,
-                                isEnabled = ref.isEnabled
+                                sortOrder = index,
+                                isEnabled = true,
+                                requiredRepeats = seedItem.requiredRepeats,
+                                isInfinite = false
                             )
                         )
                     }

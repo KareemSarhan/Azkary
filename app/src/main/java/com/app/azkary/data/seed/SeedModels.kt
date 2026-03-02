@@ -1,7 +1,6 @@
 package com.app.azkary.data.seed
 
 import com.app.azkary.data.model.AzkarSource
-import com.app.azkary.data.model.CategoryType
 import com.app.azkary.data.model.SystemCategoryKey
 import kotlinx.serialization.Serializable
 
@@ -16,10 +15,9 @@ data class SeedPack(
 @Serializable
 data class SeedCategory(
     val categoryId: String,
-    val type: CategoryType,
     val systemKey: SystemCategoryKey? = null,
     val sortOrder: Int,
-    val isArchived: Boolean,
+    val isArchived: Boolean = false,
     val texts: Map<String, SeedCategoryText>,
     val items: List<SeedCategoryItemRef>,
     val from: Int,
@@ -33,16 +31,14 @@ data class SeedCategoryText(
 
 @Serializable
 data class SeedCategoryItemRef(
-    val itemId: String,
-    val sortOrder: Int,
-    val isEnabled: Boolean
+    val itemId: String
 )
 
 @Serializable
 data class SeedItem(
     val itemId: String,
     val requiredRepeats: Int,
-    val source: AzkarSource,
+    val source: AzkarSource = AzkarSource.SEEDED,
     val texts: Map<String, SeedItemText>
 )
 

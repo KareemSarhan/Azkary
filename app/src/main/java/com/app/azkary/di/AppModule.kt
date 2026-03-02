@@ -3,6 +3,7 @@ package com.app.azkary.di
 import android.content.Context
 import androidx.room.Room
 import com.app.azkary.data.local.AzkarDatabase
+import com.app.azkary.data.local.MIGRATION_4_5
 import com.app.azkary.data.local.dao.AzkarItemDao
 import com.app.azkary.data.local.dao.AzkarTextDao
 import com.app.azkary.data.local.dao.CategoryDao
@@ -54,7 +55,8 @@ object AppModule {
             AzkarDatabase::class.java,
             "azkar_db"
         )
-            .fallbackToDestructiveMigration(false) // Resetting for the final schema version
+            .fallbackToDestructiveMigration(true) // Reset database on schema change (v4 → v5: per-category counts)
+            .addMigrations(MIGRATION_4_5)
             .build()
     }
 

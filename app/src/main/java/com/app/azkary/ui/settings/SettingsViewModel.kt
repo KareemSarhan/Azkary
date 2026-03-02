@@ -11,6 +11,8 @@ import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.domain.model.DayPrayerTimes
+import android.util.Log
+import com.app.azkary.R
 import com.app.azkary.domain.model.WindowCalculationResult
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,6 +49,13 @@ class SettingsViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = com.app.azkary.data.prefs.LocationPreferences()
+        )
+
+    val holdToComplete: StateFlow<Boolean> = userPreferencesRepository.holdToComplete
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
         )
 
     private val _isRefreshingLocation = MutableStateFlow(false)
@@ -109,10 +118,10 @@ class SettingsViewModel @Inject constructor(
                     )
                     userPreferencesRepository.setLocationName(cityName)
                 } else {
-                    _locationError.value = "Unable to get location. Check permissions."
+                    _locationError.value = context.getString(R.string.error_location_permission)
                 }
             } catch (e: Exception) {
-                _locationError.value = "Location error: ${e.message}"
+                _locationError.value = "${context.getString(R.string.error_location_generic)}: ${e.message}"
             } finally {
                 _isRefreshingLocation.value = false
             }
@@ -130,9 +139,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setUseTrueBlack(useTrueBlack: Boolean) {
+    fun setHoldToComplete(enabled: Boolean) {
         viewModelScope.launch {
-            themePreferencesRepository.setUseTrueBlack(useTrueBlack)
+            userPreferencesRepository.setHoldToComplete(enabled)
         }
     }
 
@@ -141,7 +150,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val locationPrefs = locationPreferences.value
             if (!locationPrefs.useLocation || locationPrefs.lastResolvedLocation == null) {
-                _prayerTimesError.value = "Please enable location for prayer times"
+                _prayerTimesError.value = context.getString(R.string.error_location_disabled)
                 return@launch
             }
 
@@ -156,19 +165,37 @@ class SettingsViewModel @Inject constructor(
                     longitude = location.longitude
                 )
                 
-                _todayPrayerTimes.value = todayTimes
+                 _todayPrayerTimes.value = todayTimes
 
-                // Calculate current windows
-                if (todayTimes != null) {
-                    val windows = prayerTimesRepository.getCurrentWindows(
-                        latitude = location.latitude,
-                        longitude = location.longitude
-                    )
-                    _currentWindows.value = windows
-                }
+                 // Log prayer times in Settings screen
+                 todayTimes?.let { times ->
+                     Log.d("PrayerTimes", "=== Prayer Times (Settings) - All 9 Timings ===")
+                     Log.d("PrayerTimes", "Date: ${times.date}, Timezone: ${times.timezone}")
+                     Log.d("PrayerTimes", "Daytime Prayers:")
+                     Log.d("PrayerTimes", "  Fajr: ${times.fajr}, Sunrise: ${times.sunrise}")
+                     Log.d("PrayerTimes", "  Dhuhr: ${times.dhuhr}, Asr: ${times.asr}")
+                     Log.d("PrayerTimes", "  Maghrib: ${times.maghrib}, Isha: ${times.isha}")
+                     Log.d("PrayerTimes", "Night/Late Prayers:")
+                     Log.d("PrayerTimes", "  Firstthird: ${times.firstthird} (Tahajjud start)")
+                     Log.d("PrayerTimes", "  Midnight: ${times.midnight} (Islamic)")
+                     Log.d("PrayerTimes", "  Lastthird: ${times.lastthird} (Before Fajr)")
+                 }
+                 
+                 // Calculate current windows
+                 if (todayTimes != null) {
+                     val windows = prayerTimesRepository.getCurrentWindows(
+                         latitude = location.latitude,
+                         longitude = location.longitude
+                     )
+                     _currentWindows.value = windows
+                     // Log windows
+                     Log.d("PrayerTimes", "Current window: ${windows.currentWindow?.window}, Next: ${windows.nextWindow?.window}")
+                 }
+
+
 
             } catch (e: Exception) {
-                _prayerTimesError.value = "Failed to load prayer times: ${e.message}"
+                _prayerTimesError.value = "${context.getString(R.string.error_prayer_times)}: ${e.message}"
             } finally {
                 _isRefreshingPrayerTimes.value = false
             }
