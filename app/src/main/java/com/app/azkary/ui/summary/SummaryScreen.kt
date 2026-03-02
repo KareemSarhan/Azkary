@@ -74,6 +74,7 @@ fun SummaryScreen(
     val sessionEndTime by viewModel.sessionEndTime.collectAsState(initial = null)
     val isEditMode by viewModel.isEditMode.collectAsState()
     val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
+    val weeklyProgress by viewModel.weeklyProgress.collectAsState(initial = emptyList())
 
     val today = androidx.compose.runtime.remember {
         val currentLocale = Locale.getDefault()
@@ -158,6 +159,15 @@ fun SummaryScreen(
                         AddCategoryItem(
                             onClick = onNavigateToCreateCategory
                         )
+                    }
+                }
+
+                // Weekly Progress Card at bottom
+                if (weeklyProgress.isNotEmpty()) {
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        WeeklyProgressCard(days = weeklyProgress)
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
