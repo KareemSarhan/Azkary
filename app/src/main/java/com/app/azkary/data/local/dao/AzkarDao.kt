@@ -167,4 +167,11 @@ interface ProgressDao {
 
     @Query("DELETE FROM user_progress WHERE categoryId = :categoryId")
     suspend fun deleteProgressForCategory(categoryId: String)
+
+    /**
+     * Get all progress entries for a date range (inclusive)
+     * Used for weekly progress calculation
+     */
+    @Query("SELECT * FROM user_progress WHERE date >= :startDate AND date <= :endDate")
+    fun observeProgressForDateRange(startDate: String, endDate: String): Flow<List<UserProgressEntity>>
 }
