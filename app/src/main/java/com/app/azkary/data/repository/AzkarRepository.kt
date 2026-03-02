@@ -440,12 +440,12 @@ class AzkarRepository @Inject constructor(
     fun observeAvailableItems(langTag: String): Flow<List<AvailableZikr>> {
         return itemDao.getSeededItems().flatMapLatest { items ->
             if (items.isEmpty()) return@flatMapLatest flowOf(emptyList())
-            
+
             val flows = items.map { item ->
                 textDao.getTextsForItem(item.itemId).map { texts ->
                     val arabicText = texts.find { it.langTag == "ar" }?.text
                     val bestText = selectBestText(texts, { it.langTag }, langTag)
-                    
+
                     AvailableZikr(
                         id = item.itemId,
                         title = bestText?.title,
@@ -457,6 +457,41 @@ class AzkarRepository @Inject constructor(
                 }
             }
             combine(flows) { it.toList() }
+        }
+    }
+
+    /**
+     * Get aggregated progress for the last 7 days across all categories.
+     * Returns a map of date string to progress percentage (0.0 - 1.0).
+     */
+    fun getWeeklyProgress(langTag: String): Flow<Map<String, Float>> {
+        return categoryDao.getActiveCategoriesOrdered().flatMapLatest { categories ->
+            if (categories.isEmpty()) return@flatMapLatest flowOf(emptyMap())
+
+            // Calculate date range for last 7 days
+            val today = java.time.LocalDate.now()
+            val dates = (0..6).map { daysAgo ->
+                today.minusDays(daysAgo.toLong()).toString()
+            }.reversed() // Oldest to newest
+
+            // Create flows for each date's aggregated progress
+            val dateProgressFlows = dates.map { date ->
+                val categoryFlows = categories.map { category ->
+                    getWeightedProgress(category.categoryId, date, langTag)
+                }
+
+                combine(categoryFlows) { progresses ->
+                    // Average progress across all categories for this date
+                    val avgProgress = if (progresses.isNotEmpty()) {
+                        progresses.average().toFloat()
+                    } else 0f
+                    date to avgProgress
+                }
+            }
+
+            combine(dateProgressFlows) { dateProgressPairs ->
+                dateProgressPairs.toMap()
+            }
         }
     }
 }
