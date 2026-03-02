@@ -60,8 +60,8 @@ interface AzkarItemDao {
     @Upsert
     suspend fun upsertItem(item: AzkarItemEntity)
 
-    @Query("SELECT * FROM azkar_items WHERE source = 'SEEDED' ORDER BY itemId")
-    fun getSeededItems(): Flow<List<AzkarItemEntity>>
+    @Query("SELECT * FROM azkar_items WHERE source IN ('SEEDED', 'USER') ORDER BY itemId")
+    fun getAvailableItems(): Flow<List<AzkarItemEntity>>
 
     @Query("DELETE FROM azkar_items WHERE itemId = :itemId AND source = 'USER'")
     suspend fun deleteCustomItem(itemId: String)

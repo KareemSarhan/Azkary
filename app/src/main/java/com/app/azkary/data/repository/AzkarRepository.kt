@@ -398,10 +398,16 @@ class AzkarRepository @Inject constructor(
             isInfinite = isInfinite
         ))
         
+        // Generate title from available text
+        val title = arabicText.takeIf { it.isNotBlank() } 
+            ?: transliteration.takeIf { it.isNotBlank() } 
+            ?: "Custom Zikr"
+        
         // Save Arabic text
         textDao.upsertText(AzkarTextEntity(
             itemId = itemId,
             langTag = "ar",
+            title = title,
             text = arabicText.ifBlank { null },
             translation = translation.ifBlank { null },
             referenceText = reference.ifBlank { null }
@@ -411,6 +417,7 @@ class AzkarRepository @Inject constructor(
         textDao.upsertText(AzkarTextEntity(
             itemId = itemId,
             langTag = langTag,
+            title = title,
             text = transliteration.ifBlank { null },
             translation = translation.ifBlank { null },
             referenceText = reference.ifBlank { null }
@@ -421,6 +428,7 @@ class AzkarRepository @Inject constructor(
             textDao.upsertText(AzkarTextEntity(
                 itemId = itemId,
                 langTag = "en",
+                title = title,
                 text = transliteration.ifBlank { null },
                 translation = translation.ifBlank { null },
                 referenceText = reference.ifBlank { null }
@@ -438,7 +446,7 @@ class AzkarRepository @Inject constructor(
     }
 
     fun observeAvailableItems(langTag: String): Flow<List<AvailableZikr>> {
-        return itemDao.getSeededItems().flatMapLatest { items ->
+        return itemDao.getAvailableItems().flatMapLatest { items ->
             if (items.isEmpty()) return@flatMapLatest flowOf(emptyList())
             
             val flows = items.map { item ->

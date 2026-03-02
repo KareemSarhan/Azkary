@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -94,6 +97,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -660,61 +665,35 @@ private fun SelectedItemCard(
                             }
                         }
                     } else {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Surface(
-                                shape = CircleShape,
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier.clickable {
-                                        if (config.requiredRepeats > 1) {
-                                            onCountChange(config.requiredRepeats - 1)
-                                        }
+                        var countText by remember(config.requiredRepeats) { mutableStateOf(config.requiredRepeats.toString()) }
+                        OutlinedTextField(
+                            value = countText,
+                            onValueChange = { newValue ->
+                                if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                                    countText = newValue
+                                    val newCount = newValue.toIntOrNull() ?: 0
+                                    if (newCount > 0) {
+                                        onCountChange(newCount)
                                     }
-                                ) {
-                                    Icon(
-                                        Icons.Default.Remove,
-                                        contentDescription = stringResource(R.string.category_decrease_content_description),
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(20.dp)
-                                    )
                                 }
-                            }
-                            
-                            Text(
-                                text = config.requiredRepeats.toString(),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                modifier = Modifier.width(40.dp),
-                                textAlign = TextAlign.Center
+                            },
+                            modifier = Modifier.defaultMinSize(minWidth = 2.dp),
+                            textStyle = MaterialTheme.typography.bodySmall.copy(
+                                fontSize = 16.sp,  // Adjusted font size
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.primary,
+                                lineHeight = 24.sp  // Adjusted line height
+                            ),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            singleLine = true,
+                            shape = RoundedCornerShape(16.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                                unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
                             )
-                            
-                            Surface(
-                                shape = CircleShape,
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier.clickable {
-                                        onCountChange(config.requiredRepeats + 1)
-                                    }
-                                ) {
-                                    Icon(
-                                        Icons.Default.Add,
-                                        contentDescription = stringResource(R.string.category_increase_content_description),
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
-                        }
+                        )
                     }
                 }
                 
