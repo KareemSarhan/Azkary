@@ -1,0 +1,27 @@
+<p><b>Azkary</b> is a beautiful, privacy-focused Islamic remembrance (Azkar) app that helps Muslims maintain their daily dhikr routine with prayer times and intelligent progress tracking.</p>
+
+<h2>Key Features</h2>
+
+<ul>
+<li><b>Three Azkar Categories:</b> Morning (Fajr-Asr), Evening (Asr-Isha), and Sleep (Isha-Fajr)</li>
+<li><b>Authentic Content:</b> Each dhikr includes Arabic text, transliteration, translation, and hadith references</li>
+<li><b>Prayer Times:</b> Automatic calculation based on your location with offline support</li>
+<li><b>Progress Tracking:</b> Visual indicators and daily completion statistics</li>
+<li><b>Custom Categories:</b> Create and organize your own dhikr collections</li>
+<li><b>Beautiful UI:</b> Material Design 3 with dark mode and OLED support</li>
+<li><b>Multi-Language:</b> Full English and Arabic interface support</li>
+</ul>
+
+<h2>Privacy First</h2>
+
+<p>Azkary is completely offline-first and privacy-focused:</p>
+<ul>
+<li>No data collection or tracking</li>
+<li>No advertisements</li>
+<li>No internet required after initial setup</li>
+<li>All data stored locally on your device</li>
+</ul>
+
+<h2>Open Source</h2>
+
+<p>Azkary is free and open source software licensed under GPL-3.0. The source code is available on GitHub.</p>
