@@ -32,8 +32,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
+
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -60,7 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.R
-import com.app.azkary.data.prefs.ThemeMode
+
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -222,23 +221,6 @@ fun SettingsScreen(
                 onToggle = { viewModel.setHoldToComplete(it) },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            // Theme Section
-            SectionHeader(
-                title = stringResource(R.string.settings_section_theme),
-                color = onBackgroundColor.copy(alpha = 0.6f)
-            )
-
-            ThemeSettingItem(
-                themeMode = themeSettings.themeMode,
-                onThemeModeChange = { viewModel.setThemeMode(it) },
-                surfaceColor = surfaceColor,
-                onSurfaceColor = onSurfaceColor,
-                onSurfaceVariantColor = onSurfaceVariantColor,
-                primaryColor = primaryColor
             )
 
             Spacer(Modifier.height(32.dp))
@@ -435,94 +417,6 @@ private fun SettingsClickableItem(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun ThemeSettingItem(
-    themeMode: ThemeMode,
-    onThemeModeChange: (ThemeMode) -> Unit,
-    surfaceColor: Color,
-    onSurfaceColor: Color,
-    onSurfaceVariantColor: Color,
-    primaryColor: Color
-) {
-    Surface(
-        color = surfaceColor,
-        shape = RoundedCornerShape(16.dp),
-        tonalElevation = 2.dp,
-        shadowElevation = 2.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
-        ) {
-            // System option
-            ThemeRadioOption(
-                title = stringResource(R.string.theme_system),
-                isSelected = themeMode == ThemeMode.SYSTEM,
-                onClick = { onThemeModeChange(ThemeMode.SYSTEM) },
-                onSurfaceColor = onSurfaceColor,
-                onSurfaceVariantColor = onSurfaceVariantColor,
-                primaryColor = primaryColor
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            // Light option
-            ThemeRadioOption(
-                title = stringResource(R.string.theme_light),
-                isSelected = themeMode == ThemeMode.LIGHT,
-                onClick = { onThemeModeChange(ThemeMode.LIGHT) },
-                onSurfaceColor = onSurfaceColor,
-                onSurfaceVariantColor = onSurfaceVariantColor,
-                primaryColor = primaryColor
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            // Dark option
-            ThemeRadioOption(
-                title = stringResource(R.string.theme_dark),
-                isSelected = themeMode == ThemeMode.DARK,
-                onClick = { onThemeModeChange(ThemeMode.DARK) },
-                onSurfaceColor = onSurfaceColor,
-                onSurfaceVariantColor = onSurfaceVariantColor,
-                primaryColor = primaryColor
-            )
-        }
-    }
-}
-
-@Composable
-private fun ThemeRadioOption(
-    title: String,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    onSurfaceColor: Color,
-    onSurfaceVariantColor: Color,
-    primaryColor: Color
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = isSelected, onClick = onClick, colors = RadioButtonDefaults.colors(
-                selectedColor = primaryColor, unselectedColor = onSurfaceVariantColor
-            )
-        )
-        Text(
-            text = title,
-            color = onSurfaceColor,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(start = 8.dp)
-        )
     }
 }
 
