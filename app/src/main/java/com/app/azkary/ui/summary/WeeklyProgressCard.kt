@@ -18,19 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.app.azkary.R
 import com.app.azkary.data.model.DayProgress
-import com.app.azkary.ui.theme.SessionGradientEnd
-import com.app.azkary.ui.theme.SessionGradientStart
-import java.time.DayOfWeek
-import java.time.format.DateTimeFormatter
-import java.time.LocalDate
 
 @Composable
 fun WeeklyProgressCard(
@@ -93,14 +86,14 @@ private fun DayProgressItem(
                 modifier = Modifier.matchParentSize()
             )
 
-            // Progress arc - use gradient colors for completed portion
+            // Progress arc - use theme colors for completed portion
             if (progress > 0) {
                 CircularProgressIndicator(
                     progress = { progress },
                     color = if (progress >= 1f) {
-                        SessionGradientStart
-                    } else {
                         MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
                     },
                     strokeWidth = 3.dp,
                     modifier = Modifier.matchParentSize()
@@ -113,7 +106,7 @@ private fun DayProgressItem(
                     modifier = Modifier
                         .size(6.dp)
                         .background(
-                            color = SessionGradientEnd,
+                            color = MaterialTheme.colorScheme.tertiary,
                             shape = MaterialTheme.shapes.small
                         )
                         .align(Alignment.TopCenter)

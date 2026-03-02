@@ -150,4 +150,14 @@
     <string name="schedule_midnight">منتصف الليل</string>
     <string name="schedule_lastthird">الثلث الأخير</string>
     <string name="schedule_next_day_suffix">(+1)</string>
+
+    <!-- Weekly Progress Card -->
+    <string name="weekly_progress_title">آخر 7 أيام</string>
+    <string name="weekly_progress_day_sunday">ح</string>
+    <string name="weekly_progress_day_monday">ن</string>
+    <string name="weekly_progress_day_tuesday">ث</string>
+    <string name="weekly_progress_day_wednesday">ر</string>
+    <string name="weekly_progress_day_thursday">خ</string>
+    <string name="weekly_progress_day_friday">ج</string>
+    <string name="weekly_progress_day_saturday">س</string>
 </resources>
