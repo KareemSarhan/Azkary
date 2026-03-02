@@ -74,6 +74,7 @@ fun SummaryScreen(
     val sessionEndTime by viewModel.sessionEndTime.collectAsState(initial = null)
     val isEditMode by viewModel.isEditMode.collectAsState()
     val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
+    val showWeeklyProgress by viewModel.showWeeklyProgress.collectAsState()
     val weeklyProgress by viewModel.weeklyProgress.collectAsState(initial = emptyList())
 
     val today = androidx.compose.runtime.remember {
@@ -163,7 +164,7 @@ fun SummaryScreen(
                 }
 
                 // Weekly Progress Card at bottom
-                if (weeklyProgress.isNotEmpty()) {
+                if (showWeeklyProgress && weeklyProgress.isNotEmpty()) {
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
                         WeeklyProgressCard(days = weeklyProgress)
