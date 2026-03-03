@@ -1,5 +1,6 @@
 package com.app.azkary.domain
 
+import com.app.azkary.data.model.LatLng
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import io.mockk.coEvery
@@ -40,7 +41,7 @@ class IslamicDateProviderTest {
     @Test
     fun `getCurrentDate returns Islamic date from API when location is enabled`() = runTest {
         // Arrange
-        val mockLocation = mockk<com.app.azkary.data.prefs.LocationPreferences.Location> {
+        val mockLocation = mockk<LatLng> {
             every { latitude } returns 30.0444
             every { longitude } returns 31.2357
         }
@@ -103,7 +104,7 @@ class IslamicDateProviderTest {
     @Test
     fun `getCurrentDate returns Gregorian date on API exception`() = runTest {
         // Arrange
-        val mockLocation = mockk<com.app.azkary.data.prefs.LocationPreferences.Location> {
+        val mockLocation = mockk<LatLng> {
             every { latitude } returns 30.0444
             every { longitude } returns 31.2357
         }
@@ -130,7 +131,7 @@ class IslamicDateProviderTest {
         val testLat = 21.3891
         val testLng = 39.8579
 
-        val mockLocation = mockk<com.app.azkary.data.prefs.LocationPreferences.Location> {
+        val mockLocation = mockk<LatLng> {
             every { latitude } returns testLat
             every { longitude } returns testLng
         }
@@ -202,7 +203,7 @@ class IslamicDateProviderTest {
     @Test
     fun `getCurrentDate handles IO exception`() = runTest {
         // Arrange
-        val mockLocation = mockk<com.app.azkary.data.prefs.LocationPreferences.Location> {
+        val mockLocation = mockk<LatLng> {
             every { latitude } returns 30.0444
             every { longitude } returns 31.2357
         }
@@ -226,7 +227,7 @@ class IslamicDateProviderTest {
     @Test
     fun `getCurrentDate handles illegal state exception`() = runTest {
         // Arrange
-        val mockLocation = mockk<com.app.azkary.data.prefs.LocationPreferences.Location> {
+        val mockLocation = mockk<LatLng> {
             every { latitude } returns 30.0444
             every { longitude } returns 31.2357
         }
