@@ -16,8 +16,6 @@ import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.LocationRepositoryImpl
 import com.app.azkary.util.LocaleManager
 import com.app.azkary.util.SupportHelper
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -55,7 +53,7 @@ object AppModule {
             AzkarDatabase::class.java,
             "azkar_db"
         )
-            .fallbackToDestructiveMigration(true) // Reset database on schema change (v4 → v5: per-category counts)
+            .fallbackDestructiveMigration(true) // Reset database on schema change (v4 → v5: per-category counts)
             .addMigrations(MIGRATION_4_5)
             .build()
     }
@@ -90,12 +88,6 @@ object AppModule {
         ignoreUnknownKeys = true
         coerceInputValues = true
         isLenient = true
-    }
-
-    @Provides
-    @Singleton
-    fun provideFusedLocationProviderClient(@ApplicationContext context: Context): FusedLocationProviderClient {
-        return LocationServices.getFusedLocationProviderClient(context)
     }
 
     @Provides

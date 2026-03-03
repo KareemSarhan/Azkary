@@ -1,30 +1,25 @@
 package com.app.azkary.data.repository
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.Priority
+import com.app.azkary.data.location.LocationProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.resume
 
-interface LocationRepository {
-    suspend fun getCurrentLocation(): Location?
-}
-
+/**
+ * Repository that wraps the LocationProvider to handle permission checks.
+ * The actual location implementation is provided by flavor-specific modules.
+ */
 @Singleton
 class LocationRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val fusedLocationClient: FusedLocationProviderClient
+    private val locationProvider: LocationProvider
 ) : LocationRepository {
 
-    @SuppressLint("MissingPermission")
     override suspend fun getCurrentLocation(): Location? {
         val hasCoarseLocation = ContextCompat.checkSelfPermission(
             context,
@@ -41,29 +36,13 @@ class LocationRepositoryImpl @Inject constructor(
         }
 
         return try {
-            // Try to get last known location first as a quick fallback
-            val lastLocation = suspendCancellableCoroutine<Location?> { continuation ->
-                fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location ->
-                        continuation.resume(location)
-                    }
-                    .addOnFailureListener {
-                        continuation.resume(null)
-                    }
-            }
-
-            lastLocation ?: suspendCancellableCoroutine<Location?> { continuation ->
-                fusedLocationClient.getCurrentLocation(
-                    Priority.PRIORITY_BALANCED_POWER_ACCURACY,
-                    null
-                ).addOnSuccessListener { location ->
-                    continuation.resume(location)
-                }.addOnFailureListener {
-                    continuation.resume(null)
-                }
-            }
+            locationProvider.getCurrentLocation()
         } catch (e: Exception) {
             null
         }
     }
+}
+
+interface LocationRepository {
+    suspend fun getCurrentLocation(): Location?
 }
