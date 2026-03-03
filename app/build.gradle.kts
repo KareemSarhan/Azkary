@@ -18,7 +18,7 @@ android {
         versionCode = 13
         versionName = "3.0.3"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.app.azkary.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
