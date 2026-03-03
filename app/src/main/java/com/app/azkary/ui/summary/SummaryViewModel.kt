@@ -59,12 +59,24 @@ class SummaryViewModel @Inject constructor(
         }
     }
 
-    val categories: Flow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
-        flow { emit(islamicDateProvider.getCurrentDate().toString()) }.flatMapLatest { date ->
-            repository.observeCategoriesWithDisplayName(
-                langTag = lang,
-                date = date
-            )
+    val categories: Flow<List<CategoryUi>> = combine(
+        localeManager.currentLangTagFlow.flatMapLatest { lang ->
+            flow { emit(islamicDateProvider.getCurrentDate().toString()) }.flatMapLatest { date ->
+                repository.observeCategoriesWithDisplayName(
+                    langTag = lang,
+                    date = date
+                )
+            }
+        },
+        currentWindows,
+        isEditMode
+    ) { categoryList, windows, editMode ->
+        if (editMode) {
+            // In edit mode, use default order for manual reordering
+            categoryList
+        } else {
+            // Sort by time relevance: on-time categories first
+            sortCategoriesByTimeRelevance(categoryList, windows)
         }
     }
 
@@ -95,6 +107,51 @@ class SummaryViewModel @Inject constructor(
             com.app.azkary.domain.model.AzkarWindow.NIGHT -> SystemCategoryKey.NIGHT
             com.app.azkary.domain.model.AzkarWindow.SLEEP -> SystemCategoryKey.SLEEP
         }
+    }
+
+    /**
+     * Gets the list of SystemCategoryKey values that match the current time window.
+     * Note: NIGHT window includes both NIGHT and EVENING categories since they share the same time period (Asr to Isha).
+     */
+    private fun getCurrentWindowKeys(windows: WindowCalculationResult?): Set<SystemCategoryKey> {
+        val currentWindow = windows?.currentWindow?.window ?: return emptySet()
+        return when (currentWindow) {
+            com.app.azkary.domain.model.AzkarWindow.MORNING -> setOf(SystemCategoryKey.MORNING)
+            com.app.azkary.domain.model.AzkarWindow.NIGHT -> setOf(SystemCategoryKey.NIGHT, SystemCategoryKey.EVENING)
+            com.app.azkary.domain.model.AzkarWindow.SLEEP -> setOf(SystemCategoryKey.SLEEP)
+        }
+    }
+
+    /**
+     * Sorts categories by time relevance:
+     * 1. On-time categories (matching current window) come first
+     * 2. Then other categories in natural order: MORNING, EVENING, NIGHT, SLEEP
+     * 3. Custom (USER) categories are sorted by their system key or placed at the end
+     */
+    private fun sortCategoriesByTimeRelevance(
+        categories: List<CategoryUi>,
+        windows: WindowCalculationResult?
+    ): List<CategoryUi> {
+        val currentWindowKeys = getCurrentWindowKeys(windows)
+
+        // Define the natural order for system categories
+        val naturalOrder = listOf(
+            SystemCategoryKey.MORNING,
+            SystemCategoryKey.EVENING,
+            SystemCategoryKey.NIGHT,
+            SystemCategoryKey.SLEEP
+        )
+
+        return categories.sortedWith(compareBy(
+            // First: on-time categories (0) come before others (1)
+            { category ->
+                if (category.systemKey in currentWindowKeys) 0 else 1
+            },
+            // Second: sort by natural order within each group
+            { category ->
+                category.systemKey?.let { naturalOrder.indexOf(it) } ?: Int.MAX_VALUE
+            }
+        ))
     }
 
     val currentSession: Flow<CategoryUi?> = categories.combine(currentWindows) { categoryList, windows ->
