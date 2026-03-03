@@ -11,6 +11,7 @@ import com.app.azkary.data.local.entities.PrayerDayEntity
 import com.app.azkary.data.local.entities.PrayerMonthEntity
 import com.app.azkary.data.network.AladhanApiService
 import com.app.azkary.data.repository.PrayerTimesNetworkRepository
+import com.app.azkary.data.repository.PrayerTimesNetworkRepositoryImpl
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.data.repository.PrayerTimesRepositoryImpl
 import com.app.azkary.domain.AzkarWindowEngine
@@ -233,7 +234,7 @@ class PrayerTimesE2ETest {
         // Test at 10 AM - should be Morning window
         val testTime = todayTimes.fajr.plusHours(5) // 10:00 AM
         val windows = windowEngine.calculateWindows(
-            now = testTime.atZone(ZoneId.of("Asia/Riyadh")).toInstant(),
+            currentTime = java.time.LocalDateTime.of(LocalDate.now(), testTime).atZone(ZoneId.of("Asia/Riyadh")).toInstant(),
             todayTimes = todayTimes,
             tomorrowTimes = null
         )
@@ -252,7 +253,7 @@ class PrayerTimesE2ETest {
         // Test at 5 PM - should be Night window (Asr to Isha)
         val testTime = todayTimes.asr.plusHours(2) // 5:30 PM
         val windows = windowEngine.calculateWindows(
-            now = testTime.atZone(ZoneId.of("Asia/Riyadh")).toInstant(),
+            currentTime = java.time.LocalDateTime.of(LocalDate.now(), testTime).atZone(ZoneId.of("Asia/Riyadh")).toInstant(),
             todayTimes = todayTimes,
             tomorrowTimes = null
         )
@@ -271,7 +272,7 @@ class PrayerTimesE2ETest {
         // Test at 10 PM - should be Sleep window (Isha to next Fajr)
         val testTime = todayTimes.isha.plusHours(3) // 10:30 PM
         val windows = windowEngine.calculateWindows(
-            now = testTime.atZone(ZoneId.of("Asia/Riyadh")).toInstant(),
+            currentTime = java.time.LocalDateTime.of(LocalDate.now(), testTime).atZone(ZoneId.of("Asia/Riyadh")).toInstant(),
             todayTimes = todayTimes,
             tomorrowTimes = null
         )

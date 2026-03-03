@@ -416,12 +416,22 @@ class PrayerTimesRepositoryOfflineTest {
         val shadowConnectivityManager = Shadows.shadowOf(connectivityManager)
         
         if (available) {
+            // Create a network info that's connected
+            val networkInfo = android.net.NetworkInfo(
+                android.net.ConnectivityManager.TYPE_WIFI,
+                0, "WIFI", ""
+            )
+            val shadowNetworkInfo = Shadows.shadowOf(networkInfo)
+            shadowNetworkInfo.setConnectionStatus(android.net.NetworkInfo.State.CONNECTED)
+            shadowConnectivityManager.setActiveNetworkInfo(networkInfo)
+            
+            // Also set up network capabilities
             val networkCapabilities = ShadowNetworkCapabilities.newInstance()
             Shadows.shadowOf(networkCapabilities).addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            shadowConnectivityManager.setNetworkCapabilities(
-                shadowConnectivityManager.activeNetwork,
-                networkCapabilities
-            )
+            val activeNetwork = shadowConnectivityManager.activeNetwork
+            if (activeNetwork != null) {
+                shadowConnectivityManager.setNetworkCapabilities(activeNetwork, networkCapabilities)
+            }
         } else {
             shadowConnectivityManager.setActiveNetworkInfo(null)
         }
