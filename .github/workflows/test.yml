@@ -56,6 +56,9 @@ jobs:
     timeout-minutes: 30
     needs: unit-tests
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
     - name: Checkout
@@ -84,6 +87,7 @@ jobs:
 
     - name: Add Coverage PR Comment
       uses: mi-kas/kover-report@v1
+      continue-on-error: true
       with:
         path: app/build/reports/kover/report.xml
         token: ${{ secrets.GITHUB_TOKEN }}
