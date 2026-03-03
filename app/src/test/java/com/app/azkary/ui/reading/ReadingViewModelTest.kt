@@ -15,6 +15,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -94,9 +95,9 @@ class ReadingViewModelTest {
             set("categoryId", testCategoryId)
         }
 
-        // Default mock behaviors
-        every { localeManager.currentLangTagFlow } returns flowOf("en")
-        every { userPreferencesRepository.holdToComplete } returns flowOf(true)
+        // Default mock behaviors - use MutableStateFlow for stateIn compatibility
+        every { localeManager.currentLangTagFlow } returns MutableStateFlow("en")
+        every { userPreferencesRepository.holdToComplete } returns MutableStateFlow(true)
         coEvery { islamicDateProvider.getCurrentDate() } returns testDate
         every { 
             repository.observeItemsForCategory(any(), any(), any()) 
@@ -377,7 +378,7 @@ class ReadingViewModelTest {
                 isInfinite = false
             )
         )
-        every { localeManager.currentLangTagFlow } returns flowOf("ar")
+        every { localeManager.currentLangTagFlow } returns MutableStateFlow("ar")
         every { 
             repository.observeItemsForCategory(any(), any(), any()) 
         } returns flowOf(arabicItems)
