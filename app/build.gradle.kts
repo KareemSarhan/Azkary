@@ -23,35 +23,19 @@ android {
         }
     }
 
-    signingConfigs {
-        create("release") {
-            val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
-            val keyAlias = System.getenv("KEY_ALIAS")
-            val keyPassword = System.getenv("KEY_PASSWORD")
-
-            if (keystorePassword != null && keyAlias != null && keyPassword != null) {
-                storeFile = file("keystore.jks")
-                storePassword = keystorePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
-            }
-        }
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
 
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
 
             ndk {
                 debugSymbolLevel = "FULL"
             }
-
-            signingConfig = signingConfigs.getByName("release")
         }
     }
 
