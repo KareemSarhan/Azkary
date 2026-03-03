@@ -33,11 +33,7 @@ fun AzkaryTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val darkTheme = when (themeSettings.themeMode) {
-        ThemeMode.SYSTEM -> isSystemInDarkTheme()
-        ThemeMode.LIGHT -> false
-        ThemeMode.DARK -> true
-    }
+    val darkTheme = true // Force dark theme always
 
     val colorScheme = when {
         darkTheme && themeSettings.useTrueBlack -> TrueBlackColorScheme
