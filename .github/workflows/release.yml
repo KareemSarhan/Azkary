@@ -34,6 +34,9 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Cache Gradle dependencies
         uses: actions/cache@v4
         with:
@@ -55,19 +58,27 @@ jobs:
 
       - name: Build Release APK
         env:
-          KEYSTORE_PATH: app/keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleRelease
+        run: |
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=${{ github.workspace }}/app/keystore.jks \
+            -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD
 
       - name: Build Release AAB
         env:
-          KEYSTORE_PATH: app/keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew bundleRelease
+        run: |
+          ./gradlew bundleRelease \
+            -Pandroid.injected.signing.store.file=${{ github.workspace }}/app/keystore.jks \
+            -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD
 
       - name: Get version from tag
         id: get_version
@@ -79,10 +90,28 @@ jobs:
             echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           fi
 
+      - name: Extract version code
+        id: get_version_code
+        run: |
+          VERSION_CODE=$(grep "versionCode" app/build.gradle.kts | grep -o '[0-9]\+' | head -1)
+          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_OUTPUT
+
+      - name: Rename artifacts
+        run: |
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          VERSION_CODE="${{ steps.get_version_code.outputs.VERSION_CODE }}"
+          
+          mv app/build/outputs/apk/release/app-release.apk \
+             "app/build/outputs/apk/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk"
+          
+          mv app/build/outputs/bundle/release/app-release.aab \
+             "app/build/outputs/bundle/release/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
+
       - name: Generate Release Notes
         id: release_notes
         run: |
           VERSION="${{ steps.get_version.outputs.VERSION }}"
+          VERSION_CODE="${{ steps.get_version_code.outputs.VERSION_CODE }}"
           
           # Get changes since last tag
           LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
@@ -94,7 +123,7 @@ jobs:
           fi
           
           # Create release notes
-          echo "## What's New in v$VERSION" > release_notes.md
+          echo "## What's New in v$VERSION ($VERSION_CODE)" > release_notes.md
           echo "" >> release_notes.md
           echo "### Changes" >> release_notes.md
           echo "$CHANGES" >> release_notes.md
@@ -110,8 +139,8 @@ jobs:
           echo "" >> release_notes.md
           echo "### Checksums" >> release_notes.md
           echo "\`\`\`" >> release_notes.md
-          echo "APK: $(sha256sum app/build/outputs/apk/release/app-release.apk | cut -d' ' -f1)" >> release_notes.md
-          echo "AAB: $(sha256sum app/build/outputs/bundle/release/app-release.aab | cut -d' ' -f1)" >> release_notes.md
+          echo "APK: $(sha256sum "app/build/outputs/apk/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk" | cut -d' ' -f1)" >> release_notes.md
+          echo "AAB: $(sha256sum "app/build/outputs/bundle/release/Azkary-v${VERSION}-${VERSION_CODE}-release.aab" | cut -d' ' -f1)" >> release_notes.md
           echo "\`\`\`" >> release_notes.md
 
       - name: Create GitHub Release
@@ -120,8 +149,8 @@ jobs:
           name: Azkary v${{ steps.get_version.outputs.VERSION }}
           body_path: release_notes.md
           files: |
-            app/build/outputs/apk/release/app-release.apk
-            app/build/outputs/bundle/release/app-release.aab
+            app/build/outputs/apk/release/Azkary-v*.apk
+            app/build/outputs/bundle/release/Azkary-v*.aab
           draft: false
           prerelease: false
         env:
@@ -130,14 +159,14 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: azkary-apk-v${{ steps.get_version.outputs.VERSION }}
-          path: app/build/outputs/apk/release/app-release.apk
+          name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-release-apk
+          path: app/build/outputs/apk/release/Azkary-v*.apk
 
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: azkary-aab-v${{ steps.get_version.outputs.VERSION }}
-          path: app/build/outputs/bundle/release/app-release.aab
+          name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-release-aab
+          path: app/build/outputs/bundle/release/Azkary-v*.aab
 
       - name: Clean up keystore
         if: always()
