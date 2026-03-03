@@ -4,6 +4,30 @@ import com.app.azkary.data.model.AzkarSource
 import com.app.azkary.data.model.SystemCategoryKey
 import kotlinx.serialization.Serializable
 
+/**
+ * Manifest file that lists all seed files to load.
+ * This enables splitting large seed data into multiple organized files.
+ */
+@Serializable
+data class SeedManifest(
+    val schemaVersion: Int,
+    val generatedAt: String,
+    val files: List<String>
+)
+
+/**
+ * Individual seed file containing categories and items for a specific category type.
+ */
+@Serializable
+data class SeedFile(
+    val categoryType: String,
+    val categories: List<SeedCategory>,
+    val items: List<SeedItem>
+)
+
+/**
+ * Legacy SeedPack for backward compatibility with single-file seeds.
+ */
 @Serializable
 data class SeedPack(
     val schemaVersion: Int,
