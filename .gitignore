@@ -16,3 +16,4 @@ local.properties
 
 # Kotlin
 /.kotlin/
+telemetry-id
