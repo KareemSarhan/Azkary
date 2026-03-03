@@ -53,7 +53,7 @@ object AppModule {
             AzkarDatabase::class.java,
             "azkar_db"
         )
-            .fallbackDestructiveMigration(true) // Reset database on schema change (v4 → v5: per-category counts)
+            .fallbackToDestructiveMigration() // Reset database on schema change (v4 → v5: per-category counts)
             .addMigrations(MIGRATION_4_5)
             .build()
     }
