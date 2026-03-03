@@ -25,16 +25,15 @@ android {
 
     signingConfigs {
         create("release") {
-            val keystorePath = System.getenv("KEYSTORE_PATH") ?: "keystore.jks"
             val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
-            val keyAliasEnv = System.getenv("KEY_ALIAS")
-            val keyPasswordEnv = System.getenv("KEY_PASSWORD")
+            val keyAlias = System.getenv("KEY_ALIAS")
+            val keyPassword = System.getenv("KEY_PASSWORD")
 
-            if (keystorePassword != null && keyAliasEnv != null && keyPasswordEnv != null) {
-                storeFile = file(keystorePath)
+            if (keystorePassword != null && keyAlias != null && keyPassword != null) {
+                storeFile = file("keystore.jks")
                 storePassword = keystorePassword
-                this.keyAlias = keyAliasEnv
-                this.keyPassword = keyPasswordEnv
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
             }
         }
     }
@@ -55,30 +54,12 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
-        }
-    }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            )
-
-            ndk {
-                debugSymbolLevel = "FULL"
-            }
-
-            signingConfig = signingConfigs.getByName("release")
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    //noinspection WrongGradleMethod
+
     androidComponents {
         onVariants(selector().all()) { variant ->
             afterEvaluate {
@@ -86,11 +67,9 @@ android {
                 val kspTask = tasks.findByName(kspTaskName) as? TaskProvider<*>
 
                 if (kspTask != null) {
-                    // Ensure kspOutputDir is a DirectoryProperty
                     val kspOutputDir = project.objects.directoryProperty()
                         .fileValue(file("${layout.buildDirectory.get()}/generated/ksp/${variant.name}/kotlin"))
 
-                    // Ensure that kspTask is a TaskProvider<Task>
                     variant.sources.java?.addGeneratedSourceDirectory(
                         kspTask
                     ) { kspOutputDir }
@@ -99,10 +78,10 @@ android {
         }
     }
 
-
     buildFeatures {
         compose = true
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -136,7 +115,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.play.services.location)
 
-    // Networking
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
