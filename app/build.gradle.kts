@@ -14,8 +14,8 @@ android {
         applicationId = "com.app.azkary"
         minSdk = 33
         targetSdk = 36
-        versionCode = 15
-        versionName = "3.0.5"
+        versionCode = 16
+        versionName = "3.0.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -25,16 +25,10 @@ android {
 
     signingConfigs {
         create("release") {
-            val keystorePassword = providers.environmentVariable("KEYSTORE_PASSWORD").orNull
-            val keyAlias = providers.environmentVariable("KEY_ALIAS").orNull
-            val keyPassword = providers.environmentVariable("KEY_PASSWORD").orNull
-            
-            if (keystorePassword != null && keyAlias != null && keyPassword != null) {
-                storeFile = file("keystore.jks")
-                storePassword = keystorePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
-            }
+            storeFile = file("keystore.jks")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+            keyAlias = System.getenv("KEY_ALIAS") ?: ""
+            keyPassword = System.getenv("KEY_PASSWORD") ?: ""
         }
     }
 
@@ -52,9 +46,7 @@ android {
                 debugSymbolLevel = "FULL"
             }
 
-            signingConfig = signingConfigs.findByName("release")?.takeIf {
-                it.storePassword != null && it.keyAlias != null && it.keyPassword != null
-            }
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
