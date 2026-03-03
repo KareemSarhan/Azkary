@@ -140,7 +140,7 @@ fun ReadingScreen(
             Column(modifier = Modifier.background(colors.surface)) {
 
                 CenterAlignedTopAppBar(
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = colors.surface,
                         titleContentColor = colors.onSurface,
                         navigationIconContentColor = colors.onSurface,

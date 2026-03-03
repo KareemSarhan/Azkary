@@ -66,6 +66,10 @@ android {
         compose = true
     }
 
+    kotlinOptions {
+        freeCompilerArgs += "-Xannotation-default-target=param-property"
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
