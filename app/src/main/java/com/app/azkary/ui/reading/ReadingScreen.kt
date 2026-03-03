@@ -1,7 +1,9 @@
 package com.app.azkary.ui.reading
 
 import android.content.Context
+import android.os.Build
 import android.os.VibrationEffect
+import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
@@ -70,7 +72,6 @@ fun ReadingScreen(
     val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
     val vibrationEnabled by viewModel.vibrationEnabled.collectAsState(initial = true)
 
-    // If categoryId is null, navigate back immediately
     LaunchedEffect(Unit) {
         if (viewModel.categoryId == null) {
             onBack()
@@ -79,7 +80,6 @@ fun ReadingScreen(
 
     var isActive by remember { mutableStateOf(true) }
 
-    // Safe navigation wrapper that prevents double-navigation by immediately disabling
     val safeOnBack: () -> Unit = {
         if (isActive) {
             isActive = false
@@ -110,7 +110,7 @@ fun ReadingScreen(
 
     val initialPageIndex = remember(items, isComplete) {
         if (isComplete) {
-            items.size  // Completion page
+            items.size
         } else {
             items.indexOfFirst { !it.isInfinite && it.currentRepeats < it.requiredRepeats }.takeIf { it >= 0 } ?: 0
         }
@@ -122,16 +122,24 @@ fun ReadingScreen(
         }
     }
 
-    // Initialize Vibrator
     val vibrator = remember {
-        val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-        vibratorManager.defaultVibrator
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibratorManager.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
     }
 
-    // Helper to trigger vibration (respects user preference)
     val performVibration: (Long) -> Unit = { duration ->
         if (vibrationEnabled) {
-            vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(duration)
+            }
         }
     }
 
@@ -182,7 +190,6 @@ fun ReadingScreen(
                         }
                     },
                     actions = {
-                        // Vibration toggle button
                         IconButton(onClick = { viewModel.toggleVibration() }) {
                             Icon(
                                 imageVector = if (vibrationEnabled) Icons.Filled.Notifications else Icons.Filled.NotificationsOff,
@@ -252,7 +259,7 @@ fun ReadingScreen(
                         if (!isActive) return@AzkarReadingItem
 
                         if (item.isInfinite) {
-                            if (vibrationEnabled) vibrator.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
+                            performVibration(50L)
                             viewModel.incrementRepeat(item.id)
                             return@AzkarReadingItem
                         }
@@ -262,21 +269,21 @@ fun ReadingScreen(
                         if (isAlreadyComplete) {
                             if (page < items.size - 1) {
                                 scope.launch {
-                                    vibrator.vibrate(VibrationEffect.createOneShot(350L, VibrationEffect.DEFAULT_AMPLITUDE))
+                                    performVibration(350L)
                                     pagerState.animateScrollToPage(page + 1)
                                 }
                             }
                             return@AzkarReadingItem
                         }
 
-                        if (vibrationEnabled) vibrator.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
+                        performVibration(50L)
                         viewModel.incrementRepeat(item.id)
 
                         val willBeComplete = (item.currentRepeats + 1) >= item.requiredRepeats
                         if (willBeComplete) {
                             scope.launch {
                                 delay(0)
-                                vibrator.vibrate(VibrationEffect.createOneShot(350L, VibrationEffect.DEFAULT_AMPLITUDE))
+                                performVibration(350L)
                                 pagerState.animateScrollToPage(page + 1)
                             }
                         }
@@ -285,7 +292,7 @@ fun ReadingScreen(
                         if (!isActive) return@AzkarReadingItem
 
                         if (holdToComplete) {
-                            vibrator.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
+                            performVibration(50L)
                             viewModel.markItemComplete(item.id)
                         } else {
                             scope.launch {
@@ -341,4 +348,3 @@ private fun LinearProgressBar(
             }
     )
 }
-
