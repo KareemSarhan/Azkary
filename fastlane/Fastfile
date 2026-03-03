@@ -1,0 +1,199 @@
+# Fastlane Fastfile for Azkary
+# https://docs.fastlane.tools/actions/
+
+default_platform(:android)
+
+platform :android do
+  # Path to the APK/AAB output
+  APK_PATH = "app/build/outputs/apk/release/app-release.apk"
+  AAB_PATH = "app/build/outputs/bundle/release/app-release.aab"
+
+  desc "Run all checks (lint and test)"
+  lane :check do
+    gradle(task: "lintDebug")
+    gradle(task: "testDebugUnitTest")
+  end
+
+  desc "Build debug APK"
+  lane :build_debug do
+    gradle(task: "assembleDebug")
+  end
+
+  desc "Build release APK"
+  lane :build_apk do
+    gradle(
+      task: "assembleRelease",
+      properties: {
+        "android.injected.signing.store.file" => ENV["KEYSTORE_PATH"] || "app/keystore.jks",
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["KEY_PASSWORD"]
+      }
+    )
+  end
+
+  desc "Build release AAB (Google Play)"
+  lane :build_aab do
+    gradle(
+      task: "bundleRelease",
+      properties: {
+        "android.injected.signing.store.file" => ENV["KEYSTORE_PATH"] || "app/keystore.jks",
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["KEY_PASSWORD"]
+      }
+    )
+  end
+
+  # F-Droid Specific Lanes
+
+  desc "Prepare F-Droid release metadata"
+  lane :fdroid_prepare do
+    # Get current version info from build.gradle.kts
+    version_code = get_version_code_from_gradle
+    version_name = get_version_name_from_gradle
+
+    UI.message("Preparing F-Droid release for version #{version_name} (#{version_code})")
+
+    # Ensure changelog exists for this version
+    changelog_path = "fastlane/metadata/android/en-US/changelogs/#{version_code}.txt"
+    unless File.exist?(changelog_path)
+      UI.error("Changelog not found at #{changelog_path}")
+      UI.message("Creating placeholder changelog...")
+      create_changelog(version_code)
+    end
+
+    # Validate metadata structure
+    validate_fdroid_metadata
+
+    UI.success("F-Droid release preparation complete!")
+  end
+
+  desc "Validate F-Droid metadata structure"
+  lane :validate_fdroid_metadata do
+    metadata_dir = "fastlane/metadata/android/en-US"
+
+    required_files = [
+      "#{metadata_dir}/title.txt",
+      "#{metadata_dir}/short_description.txt",
+      "#{metadata_dir}/full_description.txt"
+    ]
+
+    required_files.each do |file|
+      unless File.exist?(file)
+        UI.error("Missing required metadata file: #{file}")
+      else
+        UI.success("✓ Found: #{file}")
+      end
+    end
+
+    # Check for screenshots
+    screenshots_dir = "#{metadata_dir}/images/phoneScreenshots"
+    if Dir.exist?(screenshots_dir) && !Dir.empty?(screenshots_dir)
+      UI.success("✓ Screenshots found in #{screenshots_dir}")
+    else
+      UI.important("⚠ Screenshots not found. Add screenshots to #{screenshots_dir}")
+    end
+
+    # Check for feature graphic
+    feature_graphic = "#{metadata_dir}/images/featureGraphic.png"
+    if File.exist?(feature_graphic)
+      UI.success("✓ Feature graphic found")
+    else
+      UI.important("⚠ Feature graphic not found. Add featureGraphic.png to #{metadata_dir}/images/")
+    end
+
+    UI.success("Metadata validation complete!")
+  end
+
+  desc "Build and verify F-Droid compatible APK (unsigned)"
+  lane :fdroid_build do
+    # F-Droid builds APKs themselves, but we can verify our build works
+    gradle(task: "assembleRelease")
+    
+    # Verify APK was built
+    if File.exist?(APK_PATH)
+      UI.success("✓ APK built successfully: #{APK_PATH}")
+      
+      # Get APK info
+      sh("aapt dump badging #{APK_PATH} | head -n 1")
+    else
+      UI.error("✗ APK build failed")
+    end
+  end
+
+  desc "Generate F-Droid changelog from git history"
+  lane :generate_changelog do |options|
+    version_code = options[:version_code] || get_version_code_from_gradle
+    
+    # Get last tag
+    last_tag = sh("git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo ''").strip
+    
+    # Generate changelog
+    if last_tag.empty?
+      changes = sh("git log --pretty=format:'- %s' --no-merges").strip
+    else
+      changes = sh("git log --pretty=format:'- %s' --no-merges #{last_tag}..HEAD").strip
+    end
+
+    create_changelog(version_code, changes)
+  end
+
+  desc "Complete F-Droid release process"
+  lane :fdroid_release do
+    # Run all F-Droid preparation steps
+    fdroid_prepare
+    
+    # Build and verify
+    fdroid_build
+    
+    # Show summary
+    version_code = get_version_code_from_gradle
+    version_name = get_version_name_from_gradle
+    
+    UI.success("=" * 50)
+    UI.success("F-Droid Release Summary")
+    UI.success("=" * 50)
+    UI.success("Version: #{version_name} (#{version_code})")
+    UI.success("Changelog: fastlane/metadata/android/en-US/changelogs/#{version_code}.txt")
+    UI.success("Metadata: fastlane/metadata/android/en-US/")
+    UI.success("=" * 50)
+    UI.success("Ready for F-Droid submission!")
+    UI.success("Next steps:")
+    UI.success("1. Commit these changes")
+    UI.success("2. Tag the release: git tag v#{version_name}")
+    UI.success("3. Push to GitHub")
+    UI.success("4. F-Droid will pick up the new version automatically")
+  end
+
+  # Helper methods
+
+  def get_version_code_from_gradle
+    build_file = File.read("app/build.gradle.kts")
+    match = build_file.match(/versionCode\s*=\s*(\d+)/)
+    match ? match[1] : "1"
+  end
+
+  def get_version_name_from_gradle
+    build_file = File.read("app/build.gradle.kts")
+    match = build_file.match(/versionName\s*=\s*"([^"]+)"/)
+    match ? match[1] : "1.0.0"
+  end
+
+  def create_changelog(version_code, content = nil)
+    changelog_dir = "fastlane/metadata/android/en-US/changelogs"
+    FileUtils.mkdir_p(changelog_dir)
+    
+    changelog_path = "#{changelog_dir}/#{version_code}.txt"
+    
+    if content.nil? || content.empty?
+      content = "- Bug fixes and performance improvements"
+    end
+
+    # F-Droid changelogs should be concise (max 500 chars recommended)
+    content = content.lines.first(10).join # Limit to 10 lines
+    
+    File.write(changelog_path, content)
+    UI.success("Created changelog: #{changelog_path}")
+  end
+end

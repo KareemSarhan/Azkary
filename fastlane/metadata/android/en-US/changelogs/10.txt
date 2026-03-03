@@ -1,0 +1,9 @@
+- Initial F-Droid release
+- Three Azkar Categories: Morning, Evening, and Sleep
+- Prayer times with automatic location calculation
+- Progress tracking with visual indicators
+- Custom categories for personal dhikr collections
+- Material Design 3 with dark mode and OLED support
+- Multi-language support (English and Arabic)
+- Complete offline functionality
+- Privacy-focused: no data collection or tracking
