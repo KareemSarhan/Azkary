@@ -82,3 +82,9 @@
 -keep class com.app.azkary.data.network.dto.** { *; }
 -keep class com.app.azkary.data.local.entities.** { *; }
 -keep class com.app.azkary.data.prefs.ThemeSettings { *; }
+
+# =============================================================================
+# Play Services Location
+# =============================================================================
+-dontwarn com.google.android.gms.internal.location.zze
+-keep class com.google.android.gms.internal.location.** { *; }
