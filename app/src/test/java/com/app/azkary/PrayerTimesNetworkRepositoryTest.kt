@@ -63,8 +63,12 @@ class PrayerTimesNetworkRepositoryTest {
                             "Sunrise": "06:10",
                             "Dhuhr": "12:05",
                             "Asr": "15:25",
+                            "Sunset": "18:00",
                             "Maghrib": "18:00",
-                            "Isha": "19:15"
+                            "Isha": "19:15",
+                            "Firstthird": "22:00",
+                            "Midnight": "23:30",
+                            "Lastthird": "01:00"
                           },
                           "date": { "gregorian": { "date":"01-01-2026","day":"01","month":{"number":1,"en":"January"},"year":"2026" } },
                           "meta": { "timezone":"Asia/Riyadh" }
