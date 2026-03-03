@@ -26,6 +26,7 @@ navigationCompose = "2.9.7"
 datastore = "1.2.0"
 kotlinxSerialization = "1.10.0"
 ksp = "2.3.2"
+kover = "0.9.1"
 material = "1.13.0"
 playServicesLocation = "21.3.0"
 
@@ -74,3 +75,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }

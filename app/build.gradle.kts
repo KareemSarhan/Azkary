@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kover)
 }
 
 android {
@@ -117,4 +118,42 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+kover {
+    reports {
+        total {
+            xml {
+                onCheck = true
+            }
+            html {
+                onCheck = true
+            }
+
+            verify {
+                rule {
+                    minBound(70)
+                }
+            }
+
+            filters {
+                excludes {
+                    classes(
+                        "*BuildConfig*",
+                        "*Hilt_*",
+                        "*_Factory*",
+                        "*_MembersInjector*",
+                        "*Module_*",
+                        "*Dagger*",
+                        "*ComposableSingletons*",
+                        "*Preview*",
+                    )
+                    packages(
+                        "dagger.hilt.internal",
+                        "androidx.compose",
+                    )
+                }
+            }
+        }
+    }
 }
