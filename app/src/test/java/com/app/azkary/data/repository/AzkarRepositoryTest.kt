@@ -429,7 +429,7 @@ class AzkarRepositoryTest {
             CategoryItemConfig(itemId = "item2", requiredRepeats = 0, isInfinite = true)
         )
 
-        every { categoryDao.getMaxSortOrder() } returns 5
+        coEvery { categoryDao.getMaxSortOrder() } returns 5
         coEvery { categoryDao.insertCategory(any()) } just Runs
         coEvery { categoryTextDao.upsertCategoryText(any()) } just Runs
         coEvery { categoryItemDao.insertCrossRef(any()) } just Runs
@@ -527,7 +527,7 @@ class AzkarRepositoryTest {
             AzkarTextEntity(itemId = "item2", langTag = "ar", text = "الله أكبر")
         )
 
-        every { azkarItemDao.getSeededItems() } returns flowOf(items)
+        every { azkarItemDao.getAvailableItems() } returns flowOf(items)
         every { azkarTextDao.getTextsForItem("item1") } returns flowOf(texts1)
         every { azkarTextDao.getTextsForItem("item2") } returns flowOf(texts2)
 

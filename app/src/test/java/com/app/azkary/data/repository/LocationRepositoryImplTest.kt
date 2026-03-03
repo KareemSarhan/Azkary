@@ -183,7 +183,7 @@ class LocationRepositoryImplTest {
         // Last location is null
         every { fusedLocationClient.lastLocation } returns createMockTask<Location>(null)
         // Current location request fails
-        every { fusedLocationClient.getCurrentLocation(any(), any()) } returns createMockTaskWithFailure()
+        every { fusedLocationClient.getCurrentLocation(any(), any()) } returns createMockTaskWithFailure<Location>()
 
         // When
         val result = repository.getCurrentLocation()
@@ -202,9 +202,9 @@ class LocationRepositoryImplTest {
         val mockLocation = createMockLocation(24.7136, 46.6753)
 
         // Last location fails
-        every { fusedLocationClient.lastLocation } returns createMockTaskWithFailure()
+        every { fusedLocationClient.lastLocation } returns createMockTaskWithFailure<Location>()
         // Current location succeeds
-        every { fusedLocationClient.getCurrentLocation(any(), any()) } returns createMockTask(mockLocation)
+        every { fusedLocationClient.getCurrentLocation(any(), any()) } returns createMockTask<Location>(mockLocation)
 
         // When
         val result = repository.getCurrentLocation()
@@ -222,8 +222,8 @@ class LocationRepositoryImplTest {
         } returns PackageManager.PERMISSION_GRANTED
 
         // Both fail
-        every { fusedLocationClient.lastLocation } returns createMockTaskWithFailure()
-        every { fusedLocationClient.getCurrentLocation(any(), any()) } returns createMockTaskWithFailure()
+        every { fusedLocationClient.lastLocation } returns createMockTaskWithFailure<Location>()
+        every { fusedLocationClient.getCurrentLocation(any(), any()) } returns createMockTaskWithFailure<Location>()
 
         // When
         val result = repository.getCurrentLocation()
