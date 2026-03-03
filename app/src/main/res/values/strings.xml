@@ -73,6 +73,10 @@
     <!-- Support / Feedback -->
     <string name="settings_support_feedback">Support / Feedback</string>
     <string name="settings_version">Version %s</string>
+    <string name="settings_rate_us">Rate Us</string>
+    <string name="settings_rate_subtitle">Enjoying Azkary? Rate us on Play Store</string>
+    <string name="rate_prompt_title">Enjoying Azkary?</string>
+    <string name="rate_prompt_message">Your feedback helps us improve. Would you like to rate us on the Play Store?</string>
     <string name="support_option_email">Email</string>
     <string name="support_email_address" translatable="false">azkary@hearo.support</string>
     <string name="support_email_subject">App Feedback / Support</string>

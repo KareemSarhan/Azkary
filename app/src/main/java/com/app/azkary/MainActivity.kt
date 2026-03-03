@@ -12,6 +12,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.navigation.compose.NavHost
@@ -20,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
 import com.app.azkary.data.repository.AzkarRepository
+import com.app.azkary.domain.AppRatingManager
 import com.app.azkary.ui.reading.ReadingScreen
 import com.app.azkary.ui.settings.SettingsScreen
 import com.app.azkary.ui.summary.SummaryScreen
@@ -39,6 +43,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var themePreferencesRepository: ThemePreferencesRepository
     @Inject lateinit var localeManager: LocaleManager
+    @Inject lateinit var appRatingManager: AppRatingManager
 
     private lateinit var inAppUpdateManager: InAppUpdateManager
 
@@ -53,7 +58,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val themeSettings by themePreferencesRepository.themeSettings.collectAsState(initial = ThemeSettings())
 
-            // Get layout direction from LocaleManager based on system locale
             val layoutDirection = if (localeManager.isCurrentLocaleRtl(this)) {
                 ComposeLayoutDirection.Rtl
             } else {
@@ -62,8 +66,19 @@ class MainActivity : ComponentActivity() {
 
             CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
                 AzkaryTheme(themeSettings = themeSettings) {
+                    var showRatingPrompt by remember { mutableStateOf(false) }
+                    
                     LaunchedEffect(Unit) {
                         repository.seedDatabase()
+                        showRatingPrompt = appRatingManager.shouldShowRatingPrompt()
+                    }
+
+                    if (showRatingPrompt) {
+                        LaunchedEffect(Unit) {
+                            appRatingManager.requestReview(this@MainActivity) {
+                                showRatingPrompt = false
+                            }
+                        }
                     }
 
                     val navController = rememberNavController()
@@ -124,7 +139,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
-        // Notify LocaleManager that configuration (and potentially locale) has changed
         localeManager.notifyLocaleChanged()
     }
 

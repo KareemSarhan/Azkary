@@ -73,6 +73,10 @@
     <!-- Support / Feedback -->
     <string name="settings_support_feedback">الدعم / الملاحظات</string>
     <string name="settings_version">الإصدار %s</string>
+    <string name="settings_rate_us">قيّمنا</string>
+    <string name="settings_rate_subtitle">هل تستمتع بأذكاري؟ قيمنا على متجر بلاي</string>
+    <string name="rate_prompt_title">هل تستمتع بأذكاري؟</string>
+    <string name="rate_prompt_message">ملاحظاتك تساعدنا على التحسين. هل تريد تقييمنا على متجر بلاي؟</string>
     <string name="support_option_email">البريد الإلكتروني</string>
     <string name="support_option_discord">ديسكورد</string>
     <string name="support_discord_description">انضم إلى خادمنا</string>
