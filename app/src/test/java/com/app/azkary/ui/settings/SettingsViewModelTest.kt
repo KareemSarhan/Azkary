@@ -93,7 +93,7 @@ class SettingsViewModelTest {
     fun `initial state - themeSettings should have default values`() = runTest {
         viewModel.themeSettings.test {
             val settings = awaitItem()
-            assertEquals(ThemeMode.SYSTEM, settings.themeMode)
+            assertEquals(ThemeMode.DARK, settings.themeMode)
             assertTrue(settings.useTrueBlack)
             cancelAndIgnoreRemainingEvents()
         }
