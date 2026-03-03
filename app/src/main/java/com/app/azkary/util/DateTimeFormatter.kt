@@ -81,72 +81,22 @@ class DateTimeFormatter @Inject constructor() {
      */
     fun formatRelativeTime(dateTime: LocalDateTime, locale: Locale, now: LocalDateTime = LocalDateTime.now()): String {
         val diff = ChronoUnit.SECONDS.between(dateTime, now)
-        
+
         return when {
-            diff < 60 -> {
-                // Less than a minute
-                if (locale.language == "ar") {
-                    "الآن"
-                } else {
-                    "just now"
-                }
-            }
-            diff < 3600 -> {
-                // Less than an hour
-                val minutes = (diff / 60).toInt()
-                if (locale.language == "ar") {
-                    when (minutes) {
-                        1 -> "منذ دقيقة"
-                        2 -> "منذ دقيقتين"
-                        in 3..10 -> "منذ $minutes دقائق"
-                        else -> "منذ $minutes دقيقة"
-                    }
-                } else {
-                    when (minutes) {
-                        1 -> "1 minute ago"
-                        else -> "$minutes minutes ago"
-                    }
-                }
-            }
-            diff < 86400 -> {
-                // Less than a day
-                val hours = (diff / 3600).toInt()
-                if (locale.language == "ar") {
-                    when (hours) {
-                        1 -> "منذ ساعة"
-                        2 -> "منذ ساعتين"
-                        in 3..10 -> "منذ $hours ساعات"
-                        else -> "منذ $hours ساعة"
-                    }
-                } else {
-                    when (hours) {
-                        1 -> "1 hour ago"
-                        else -> "$hours hours ago"
-                    }
-                }
-            }
-            diff < 604800 -> {
-                // Less than a week
-                val days = (diff / 86400).toInt()
-                if (locale.language == "ar") {
-                    when (days) {
-                        1 -> "منذ يوم"
-                        2 -> "منذ يومين"
-                        in 3..10 -> "منذ $days أيام"
-                        else -> "منذ $days يومًا"
-                    }
-                } else {
-                    when (days) {
-                        1 -> "1 day ago"
-                        else -> "$days days ago"
-                    }
-                }
-            }
             diff < 0 -> {
-                // Future time
+                // Future time (must be checked first since negative diff is < all positive thresholds)
                 val futureDiff = -diff
                 when {
+                    futureDiff < 60 -> {
+                        // Less than a minute in the future
+                        if (locale.language == "ar") {
+                            "الآن"
+                        } else {
+                            "just now"
+                        }
+                    }
                     futureDiff < 3600 -> {
+                        // Less than an hour in the future
                         val minutes = (futureDiff / 60).toInt()
                         if (locale.language == "ar") {
                             when (minutes) {
@@ -163,6 +113,7 @@ class DateTimeFormatter @Inject constructor() {
                         }
                     }
                     futureDiff < 86400 -> {
+                        // Less than a day in the future
                         val hours = (futureDiff / 3600).toInt()
                         if (locale.language == "ar") {
                             when (hours) {
@@ -178,7 +129,8 @@ class DateTimeFormatter @Inject constructor() {
                             }
                         }
                     }
-                    else -> {
+                    futureDiff < 2592000 -> {
+                        // Less than 30 days in the future
                         val days = (futureDiff / 86400).toInt()
                         if (locale.language == "ar") {
                             when (days) {
@@ -194,10 +146,73 @@ class DateTimeFormatter @Inject constructor() {
                             }
                         }
                     }
+                    else -> {
+                        // More than 30 days in the future, return formatted date
+                        formatDate(dateTime.toLocalDate(), locale)
+                    }
+                }
+            }
+            diff < 60 -> {
+                // Less than a minute ago
+                if (locale.language == "ar") {
+                    "الآن"
+                } else {
+                    "just now"
+                }
+            }
+            diff < 3600 -> {
+                // Less than an hour ago
+                val minutes = (diff / 60).toInt()
+                if (locale.language == "ar") {
+                    when (minutes) {
+                        1 -> "منذ دقيقة"
+                        2 -> "منذ دقيقتين"
+                        in 3..10 -> "منذ $minutes دقائق"
+                        else -> "منذ $minutes دقيقة"
+                    }
+                } else {
+                    when (minutes) {
+                        1 -> "1 minute ago"
+                        else -> "$minutes minutes ago"
+                    }
+                }
+            }
+            diff < 86400 -> {
+                // Less than a day ago
+                val hours = (diff / 3600).toInt()
+                if (locale.language == "ar") {
+                    when (hours) {
+                        1 -> "منذ ساعة"
+                        2 -> "منذ ساعتين"
+                        in 3..10 -> "منذ $hours ساعات"
+                        else -> "منذ $hours ساعة"
+                    }
+                } else {
+                    when (hours) {
+                        1 -> "1 hour ago"
+                        else -> "$hours hours ago"
+                    }
+                }
+            }
+            diff < 2592000 -> {
+                // Less than 30 days ago
+                val days = (diff / 86400).toInt()
+                if (locale.language == "ar") {
+                    when (days) {
+                        1 -> "منذ يوم"
+                        2 -> "منذ يومين"
+                        in 3..10 -> "منذ $days أيام"
+                        else -> "منذ $days يومًا"
+                    }
+                } else {
+                    when (days) {
+                        1 -> "1 day ago"
+                        else -> "$days days ago"
+                    }
                 }
             }
             else -> {
-                // More than a week, return formatted date
+                // More than 30 days ago, return formatted date
                 formatDate(dateTime.toLocalDate(), locale)
             }
         }
