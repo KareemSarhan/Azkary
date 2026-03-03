@@ -74,6 +74,7 @@ fun SettingsScreen(
     val currentLanguageName = viewModel.getCurrentLanguageDisplayName()
     val themeSettings by viewModel.themeSettings.collectAsState()
     val holdToComplete by viewModel.holdToComplete.collectAsState()
+    val showWeeklyProgress by viewModel.showWeeklyProgress.collectAsState()
 
     // Support/Feedback sheet state
     var showSupportSheet by remember { mutableStateOf(false) }
@@ -219,6 +220,16 @@ fun SettingsScreen(
                 title = stringResource(R.string.settings_hold_to_complete_title),
                 isEnabled = holdToComplete,
                 onToggle = { viewModel.setHoldToComplete(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_show_weekly_progress),
+                isEnabled = showWeeklyProgress,
+                onToggle = { viewModel.setShowWeeklyProgress(it) },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor
             )
