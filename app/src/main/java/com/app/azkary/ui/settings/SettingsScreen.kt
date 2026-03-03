@@ -59,7 +59,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.R
-
+import com.app.azkary.data.prefs.ThemeMode
+import com.app.azkary.notification.NotificationPermissionHelper
+import com.app.azkary.notification.requestNotificationPermission
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,6 +92,7 @@ fun SettingsScreen(
     val onSurfaceVariantColor = MaterialTheme.colorScheme.onSurfaceVariant
     val primaryColor = MaterialTheme.colorScheme.primary
 
+    val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Location permission launcher
@@ -101,6 +104,19 @@ fun SettingsScreen(
             viewModel.refreshLocation()
         } else {
             // Show error or prompt to enable in settings
+        }
+    }
+
+    // Notification permission launcher
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (!isGranted) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(
+                    context.getString(R.string.notification_permission_denied)
+                )
+            }
         }
     }
 
@@ -267,7 +283,12 @@ fun SettingsScreen(
                 title = stringResource(R.string.settings_morning_azkar),
                 subtitle = stringResource(R.string.settings_morning_azkar_desc),
                 isEnabled = notificationPrefs.morningAzkarEnabled,
-                onToggle = { viewModel.setMorningAzkarEnabled(it) },
+                onToggle = { enabled ->
+                    if (enabled) {
+                        notificationPermissionLauncher.requestNotificationPermission()
+                    }
+                    viewModel.setMorningAzkarEnabled(enabled)
+                },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor,
                 onSurfaceVariantColor = onSurfaceVariantColor
@@ -279,7 +300,12 @@ fun SettingsScreen(
                 title = stringResource(R.string.settings_evening_azkar),
                 subtitle = stringResource(R.string.settings_evening_azkar_desc),
                 isEnabled = notificationPrefs.eveningAzkarEnabled,
-                onToggle = { viewModel.setEveningAzkarEnabled(it) },
+                onToggle = { enabled ->
+                    if (enabled) {
+                        notificationPermissionLauncher.requestNotificationPermission()
+                    }
+                    viewModel.setEveningAzkarEnabled(enabled)
+                },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor,
                 onSurfaceVariantColor = onSurfaceVariantColor
@@ -291,7 +317,12 @@ fun SettingsScreen(
                 title = stringResource(R.string.settings_night_azkar),
                 subtitle = stringResource(R.string.settings_night_azkar_desc),
                 isEnabled = notificationPrefs.nightAzkarEnabled,
-                onToggle = { viewModel.setNightAzkarEnabled(it) },
+                onToggle = { enabled ->
+                    if (enabled) {
+                        notificationPermissionLauncher.requestNotificationPermission()
+                    }
+                    viewModel.setNightAzkarEnabled(enabled)
+                },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor,
                 onSurfaceVariantColor = onSurfaceVariantColor
@@ -303,7 +334,12 @@ fun SettingsScreen(
                 title = stringResource(R.string.settings_sleep_azkar),
                 subtitle = stringResource(R.string.settings_sleep_azkar_desc),
                 isEnabled = notificationPrefs.sleepAzkarEnabled,
-                onToggle = { viewModel.setSleepAzkarEnabled(it) },
+                onToggle = { enabled ->
+                    if (enabled) {
+                        notificationPermissionLauncher.requestNotificationPermission()
+                    }
+                    viewModel.setSleepAzkarEnabled(enabled)
+                },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor,
                 onSurfaceVariantColor = onSurfaceVariantColor
@@ -311,7 +347,6 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            val context = LocalContext.current
             val unknownText = stringResource(R.string.unknown_location)
             val versionName = remember {
                 try {
