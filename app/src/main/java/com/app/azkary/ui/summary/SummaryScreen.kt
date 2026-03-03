@@ -1,5 +1,10 @@
 package com.app.azkary.ui.summary
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -51,8 +56,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.R
 import com.app.azkary.data.model.CategoryUi
-import com.app.azkary.ui.theme.SessionGradientEnd
-import com.app.azkary.ui.theme.SessionGradientStart
 import com.app.azkary.ui.theme.SessionRingColor
 import com.app.azkary.util.BidiHelper
 import java.time.LocalDate
@@ -77,6 +80,7 @@ fun SummaryScreen(
     val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
     val showWeeklyProgress by viewModel.showWeeklyProgress.collectAsState()
     val weeklyProgress by viewModel.weeklyProgress.collectAsState(initial = emptyList())
+    val currentTimePeriod by viewModel.currentTimePeriod.collectAsState()
 
     val today = androidx.compose.runtime.remember {
         val currentLocale = Locale.getDefault()
@@ -128,6 +132,7 @@ fun SummaryScreen(
                     CurrentSessionCard(
                         category = session,
                         sessionEndTime = sessionEndTime,
+                        timePeriod = currentTimePeriod,
                         onContinue = { onNavigateToCategory(session.id) })
                 }
             }
@@ -199,6 +204,7 @@ fun SummaryScreen(
 fun CurrentSessionCard(
     category: CategoryUi,
     sessionEndTime: String?,
+    timePeriod: SummaryViewModel.TimePeriod,
     onContinue: () -> Unit
 ) {
     val context = LocalContext.current
@@ -209,58 +215,94 @@ fun CurrentSessionCard(
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()                 // ✅ important (fixes cut-off look)
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(SessionGradientStart, SessionGradientEnd)
-                    )
-                )
-                .padding(24.dp)
-        ) {
-            Column {
-                Text(category.name, color = Color.White, style = MaterialTheme.typography.headlineSmall)
-                Text(
-                    text = sessionEndTime?.let { stringResource(R.string.summary_session_ends, it) } ?: stringResource(R.string.summary_session_missed),
-                    color = Color.White.copy(alpha = 0.7f)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            text = BidiHelper.formatProgress((progress * 100).toInt(), context),
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(
-                            onClick = onContinue,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White,
-                                contentColor = Color.Black
+        AnimatedContent(
+            targetState = timePeriod,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(600)) togetherWith
+                fadeOut(animationSpec = tween(400))
+            },
+            label = "day_cycle_transition"
+        ) { period ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = when (period) {
+                            SummaryViewModel.TimePeriod.MORNING -> Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFFFF6B35),
+                                    Color(0xFFF7931E),
+                                    Color(0xFFFFD700)
+                                )
                             )
-                        ) {
-                            Text(stringResource(R.string.summary_continue))
+                            SummaryViewModel.TimePeriod.DAY -> Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF4FC3F7),
+                                    Color(0xFF29B6F6),
+                                    Color(0xFF039BE5)
+                                )
+                            )
+                            SummaryViewModel.TimePeriod.EVENING -> Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFFFF7043),
+                                    Color(0xFFFF5722),
+                                    Color(0xFFE64A19)
+                                )
+                            )
+                            SummaryViewModel.TimePeriod.NIGHT -> Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF1A237E),
+                                    Color(0xFF283593),
+                                    Color(0xFF3949AB)
+                                )
+                            )
                         }
-                    }
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    RingProgress(
-                        progress = progress,
-                        modifier = Modifier.size(64.dp),
-                        strokeWidth = 8.dp,
-                        color = SessionRingColor,
-                        trackColor = Color.White.copy(alpha = 0.25f) // faint ring behind
                     )
+                    .padding(24.dp)
+            ) {
+                Column {
+                    Text(category.name, color = Color.White, style = MaterialTheme.typography.headlineSmall)
+                    Text(
+                        text = sessionEndTime?.let { stringResource(R.string.summary_session_ends, it) }
+                            ?: stringResource(R.string.summary_session_missed),
+                        color = Color.White.copy(alpha = 0.85f)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
 
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = BidiHelper.formatProgress((progress * 100).toInt(), context),
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = onContinue,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.White,
+                                    contentColor = Color.Black
+                                )
+                            ) {
+                                Text(stringResource(R.string.summary_continue))
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        RingProgress(
+                            progress = progress,
+                            modifier = Modifier.size(64.dp),
+                            strokeWidth = 8.dp,
+                            color = SessionRingColor,
+                            trackColor = Color.White.copy(alpha = 0.3f)
+                        )
+                    }
                 }
             }
         }

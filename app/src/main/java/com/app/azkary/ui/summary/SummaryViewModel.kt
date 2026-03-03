@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.ZoneId
@@ -113,6 +114,35 @@ class SummaryViewModel @Inject constructor(
             ?: categoryList.find { it.systemKey == SystemCategoryKey.MORNING }
             ?: categoryList.find { it.systemKey == SystemCategoryKey.NIGHT }
             ?: categoryList.firstOrNull()
+    }
+
+    /**
+     * Exposes the current time period for day cycle theming
+     * Returns: MORNING (5:00-11:59), DAY (12:00-16:59), EVENING (17:00-19:59), NIGHT (20:00-4:59)
+     */
+    val currentTimePeriod: StateFlow<TimePeriod> = flow {
+        while (true) {
+            emit(calculateTimePeriod())
+            kotlinx.coroutines.delay(60000) // Update every minute
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = calculateTimePeriod()
+    )
+
+    private fun calculateTimePeriod(): TimePeriod {
+        val hour = java.time.LocalTime.now().hour
+        return when (hour) {
+            in 5..11 -> TimePeriod.MORNING   // 5:00 - 11:59
+            in 12..16 -> TimePeriod.DAY      // 12:00 - 16:59
+            in 17..19 -> TimePeriod.EVENING  // 17:00 - 19:59
+            else -> TimePeriod.NIGHT         // 20:00 - 4:59
+        }
+    }
+
+    enum class TimePeriod {
+        MORNING, DAY, EVENING, NIGHT
     }
 
     /**
