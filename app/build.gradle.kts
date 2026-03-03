@@ -131,7 +131,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     // Google Play Services - only for Play flavor (proprietary)
-    playImplementation(libs.play.services.location)
+    "playImplementation"(libs.play.services.location)
 
     // Networking
     implementation(libs.retrofit)
