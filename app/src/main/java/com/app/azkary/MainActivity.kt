@@ -25,6 +25,7 @@ import com.app.azkary.ui.settings.SettingsScreen
 import com.app.azkary.ui.summary.SummaryScreen
 import com.app.azkary.ui.theme.AzkaryTheme
 import com.app.azkary.ui.category.CategoryCreationScreen
+import com.app.azkary.util.AppUpdateManager
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -38,10 +39,15 @@ class MainActivity : ComponentActivity() {
     lateinit var themePreferencesRepository: ThemePreferencesRepository
     @Inject lateinit var localeManager: LocaleManager
 
+    private lateinit var appUpdateManager: AppUpdateManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         enableEdgeToEdge()
+        
+        appUpdateManager = AppUpdateManager(this, this)
+        appUpdateManager.checkForUpdate()
 
         setContent {
             val themeSettings by themePreferencesRepository.themeSettings.collectAsState(initial = ThemeSettings())
@@ -123,7 +129,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Check for language changes when returning from settings
+        appUpdateManager.onResume()
         localeManager.notifyLocaleChanged()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        appUpdateManager.onDestroy()
     }
 }
