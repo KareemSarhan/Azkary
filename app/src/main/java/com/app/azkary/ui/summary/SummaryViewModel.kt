@@ -59,6 +59,17 @@ class SummaryViewModel @Inject constructor(
         }
     }
 
+    // Prayer times state - must be declared before categories uses it
+    private val _sessionEndTime = MutableStateFlow<String?>(null)
+    val sessionEndTime: StateFlow<String?> = _sessionEndTime.asStateFlow()
+
+    private val _currentWindows = MutableStateFlow<WindowCalculationResult?>(null)
+    val currentWindows: StateFlow<WindowCalculationResult?> = _currentWindows.asStateFlow()
+
+    // Edit mode state - must be declared before categories uses it
+    private val _isEditMode = MutableStateFlow(false)
+    val isEditMode: StateFlow<Boolean> = _isEditMode.asStateFlow()
+
     val categories: Flow<List<CategoryUi>> = combine(
         localeManager.currentLangTagFlow.flatMapLatest { lang ->
             flow { emit(islamicDateProvider.getCurrentDate().toString()) }.flatMapLatest { date ->
@@ -79,17 +90,6 @@ class SummaryViewModel @Inject constructor(
             sortCategoriesByTimeRelevance(categoryList, windows)
         }
     }
-
-    // Prayer times state - must be declared before currentSession uses it
-    private val _sessionEndTime = MutableStateFlow<String?>(null)
-    val sessionEndTime: StateFlow<String?> = _sessionEndTime.asStateFlow()
-
-    private val _currentWindows = MutableStateFlow<WindowCalculationResult?>(null)
-    val currentWindows: StateFlow<WindowCalculationResult?> = _currentWindows.asStateFlow()
-
-    // Edit mode state
-    private val _isEditMode = MutableStateFlow(false)
-    val isEditMode: StateFlow<Boolean> = _isEditMode.asStateFlow()
 
     val holdToComplete: StateFlow<Boolean> = userPreferencesRepository.holdToComplete
         .stateIn(
