@@ -45,23 +45,6 @@ class SummaryViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    init {
-        println("DEBUG: SummaryViewModel - ViewModel initialized")
-        // Auto-refresh prayer times when ViewModel is created and location is enabled
-        viewModelScope.launch {
-            userPreferencesRepository.locationPreferences.collect { prefs ->
-                println("DEBUG: SummaryViewModel - Location prefs changed: useLocation=${prefs.useLocation}, location=${prefs.lastResolvedLocation}")
-                if (prefs.useLocation && prefs.lastResolvedLocation != null) {
-                    println("DEBUG: SummaryViewModel - Location enabled, calling refreshPrayerTimes")
-                    refreshPrayerTimes()
-                } else {
-                    println("DEBUG: SummaryViewModel - Location not enabled or no location, keeping sessionEndTime null")
-                    _sessionEndTime.value = null
-                }
-            }
-        }
-    }
-
     val categories: Flow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         flow { emit(islamicDateProvider.getCurrentDate().toString()) }.flatMapLatest { date ->
             repository.observeCategoriesWithDisplayName(
@@ -138,6 +121,23 @@ class SummaryViewModel @Inject constructor(
                     progress = progress,
                     isToday = date == today
                 )
+            }
+        }
+    }
+
+    init {
+        println("DEBUG: SummaryViewModel - ViewModel initialized")
+        // Auto-refresh prayer times when ViewModel is created and location is enabled
+        viewModelScope.launch {
+            userPreferencesRepository.locationPreferences.collect { prefs ->
+                println("DEBUG: SummaryViewModel - Location prefs changed: useLocation=${prefs.useLocation}, location=${prefs.lastResolvedLocation}")
+                if (prefs.useLocation && prefs.lastResolvedLocation != null) {
+                    println("DEBUG: SummaryViewModel - Location enabled, calling refreshPrayerTimes")
+                    refreshPrayerTimes()
+                } else {
+                    println("DEBUG: SummaryViewModel - Location not enabled or no location, keeping sessionEndTime null")
+                    _sessionEndTime.value = null
+                }
             }
         }
     }

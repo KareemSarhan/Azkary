@@ -18,7 +18,7 @@ android {
         versionCode = 18
         versionName = "3.0.8"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.app.azkary.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -110,6 +110,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
     testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
