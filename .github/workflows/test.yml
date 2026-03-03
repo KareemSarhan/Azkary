@@ -74,18 +74,18 @@ jobs:
       run: chmod +x gradlew
 
     - name: Run Tests with Coverage
-      run: ./gradlew koverXmlReportDebug
+      run: ./gradlew koverXmlReport
 
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
-        path: app/build/reports/kover/reportDebug/
+        path: app/build/reports/kover/
 
     - name: Add Coverage PR Comment
       uses: mi-kas/kover-report@v1
       with:
-        path: app/build/reports/kover/reportDebug/report.xml
+        path: app/build/reports/kover/report.xml
         token: ${{ secrets.GITHUB_TOKEN }}
         title: Code Coverage
         update-comment: true
