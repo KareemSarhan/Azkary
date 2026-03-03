@@ -1,0 +1,49 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature!
+  
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem/Use Case
+      description: What problem are you trying to solve? Or what use case do you have?
+      placeholder: I often find it difficult to...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature or solution you'd like to see
+      placeholder: It would be great if the app could...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions or workarounds?
+  
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context, mockups, or examples about the feature request
+  
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate request
+          required: true
+        - label: This feature aligns with the app's purpose (Islamic remembrance/azkar)
+          required: true
