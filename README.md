@@ -28,6 +28,7 @@ A beautiful, privacy-focused Islamic remembrance (Azkar) app with prayer times, 
 
 For Muslims worldwide who want to maintain their daily dhikr routine with authentic remembrances, prayer time integration, and beautiful progress tracking — all while keeping their data completely private.
 
+[<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=com.app.azkary&pcampaignid=web_share)
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.app.azkary)
 [<img src="https://img.shields.io/badge/GET_IT_ON-GitHub%20Releases-181717?style=for-the-badge&logo=github&logoColor=white" alt="Get it on GitHub" />](https://github.com/KareemSarhan/Azkary/releases)
 
