@@ -55,6 +55,20 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+
+    flavorDimensions += "distribution"
+
+    productFlavors {
+        create("fdroid") {
+            dimension = "distribution"
+            applicationIdSuffix = ".fdroid"
+            // F-Droid flavor: FOSS only, no proprietary dependencies
+        }
+        create("play") {
+            dimension = "distribution"
+            // Play flavor: includes Google Play Services
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -115,7 +129,9 @@ dependencies {
 
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.play.services.location)
+
+    // Google Play Services - only for Play flavor (proprietary)
+    playImplementation(libs.play.services.location)
 
     // Networking
     implementation(libs.retrofit)
