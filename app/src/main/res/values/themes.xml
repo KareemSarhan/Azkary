@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme used to launch the Compose Activity -->
-    <style name="Theme.Azkary" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="Theme.Azkary" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
 </resources>

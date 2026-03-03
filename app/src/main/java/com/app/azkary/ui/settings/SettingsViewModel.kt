@@ -58,6 +58,13 @@ class SettingsViewModel @Inject constructor(
             initialValue = true
         )
 
+    val showWeeklyProgress: StateFlow<Boolean> = userPreferencesRepository.showWeeklyProgress
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
+
     private val _isRefreshingLocation = MutableStateFlow(false)
     val isRefreshingLocation: StateFlow<Boolean> = _isRefreshingLocation.asStateFlow()
 
@@ -142,6 +149,12 @@ class SettingsViewModel @Inject constructor(
     fun setHoldToComplete(enabled: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.setHoldToComplete(enabled)
+        }
+    }
+
+    fun setShowWeeklyProgress(enabled: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.setShowWeeklyProgress(enabled)
         }
     }
 

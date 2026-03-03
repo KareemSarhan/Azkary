@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.CategoryUi
+import com.app.azkary.data.model.DayProgress
 import com.app.azkary.data.model.SystemCategoryKey
+import java.time.LocalDate
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.ZoneId
@@ -86,6 +89,13 @@ class SummaryViewModel @Inject constructor(
             initialValue = true
         )
 
+    val showWeeklyProgress: StateFlow<Boolean> = userPreferencesRepository.showWeeklyProgress
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
+
     /**
      * Maps AzkarWindow to SystemCategoryKey for category selection
      */
@@ -103,6 +113,33 @@ class SummaryViewModel @Inject constructor(
             ?: categoryList.find { it.systemKey == SystemCategoryKey.MORNING }
             ?: categoryList.find { it.systemKey == SystemCategoryKey.NIGHT }
             ?: categoryList.firstOrNull()
+    }
+
+    /**
+     * Weekly progress for the last 7 days.
+     * Combines repository data with current date to create DayProgress list.
+     */
+    val weeklyProgress: Flow<List<DayProgress>> = localeManager.currentLangTagFlow.flatMapLatest { langTag ->
+        repository.getWeeklyProgress(langTag).map { dateProgressMap ->
+            val today = LocalDate.now()
+            val todayDayOfWeek = today.dayOfWeek.value % 7 + 1 // Convert to 1-7 (Sun-Sat)
+
+            // Build list for last 7 days (oldest to newest)
+            (0..6).map { daysAgo ->
+                val date = today.minusDays(6 - daysAgo.toLong()) // Start from 6 days ago
+                val dateString = date.toString()
+                val progress = dateProgressMap[dateString] ?: 0f
+                val dayOfWeek = date.dayOfWeek.value % 7 + 1 // Convert ISO (Mon=1) to Sun=1
+
+                DayProgress(
+                    date = dateString,
+                    dayOfWeek = dayOfWeek,
+                    dayOfMonth = date.dayOfMonth,
+                    progress = progress,
+                    isToday = date == today
+                )
+            }
+        }
     }
 
     private fun refreshPrayerTimes() {

@@ -60,8 +60,8 @@ interface AzkarItemDao {
     @Upsert
     suspend fun upsertItem(item: AzkarItemEntity)
 
-    @Query("SELECT * FROM azkar_items WHERE source = 'SEEDED' ORDER BY itemId")
-    fun getSeededItems(): Flow<List<AzkarItemEntity>>
+    @Query("SELECT * FROM azkar_items WHERE source IN ('SEEDED', 'USER') ORDER BY itemId")
+    fun getAvailableItems(): Flow<List<AzkarItemEntity>>
 
     @Query("DELETE FROM azkar_items WHERE itemId = :itemId AND source = 'USER'")
     suspend fun deleteCustomItem(itemId: String)
@@ -167,4 +167,11 @@ interface ProgressDao {
 
     @Query("DELETE FROM user_progress WHERE categoryId = :categoryId")
     suspend fun deleteProgressForCategory(categoryId: String)
+
+    /**
+     * Get all progress entries for a date range (inclusive)
+     * Used for weekly progress calculation
+     */
+    @Query("SELECT * FROM user_progress WHERE date >= :startDate AND date <= :endDate")
+    fun observeProgressForDateRange(startDate: String, endDate: String): Flow<List<UserProgressEntity>>
 }

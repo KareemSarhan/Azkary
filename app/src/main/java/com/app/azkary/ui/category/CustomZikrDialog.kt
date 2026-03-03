@@ -13,10 +13,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import com.app.azkary.R
 import com.app.azkary.data.model.CategoryItemConfig
 import kotlinx.coroutines.flow.Flow
@@ -60,9 +62,9 @@ fun CustomZikrDialog(
                     text = stringResource(R.string.custom_zikr_dialog_title),
                     style = MaterialTheme.typography.headlineSmall
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 TextField(
                     value = arabicText,
                     onValueChange = { arabicText = it },
@@ -71,9 +73,9 @@ fun CustomZikrDialog(
                     maxLines = 3,
                     isError = showError != null && arabicText.isEmpty()
                 )
-                
+
                 Spacer(modifier = Modifier.height(12.dp))
-                
+
                 TextField(
                     value = transliteration,
                     onValueChange = { transliteration = it },
@@ -81,9 +83,9 @@ fun CustomZikrDialog(
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3
                 )
-                
+
                 Spacer(modifier = Modifier.height(12.dp))
-                
+
                 TextField(
                     value = translation,
                     onValueChange = { translation = it },
@@ -91,9 +93,9 @@ fun CustomZikrDialog(
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3
                 )
-                
+
                 Spacer(modifier = Modifier.height(12.dp))
-                
+
                 TextField(
                     value = reference,
                     onValueChange = { reference = it },
@@ -101,9 +103,9 @@ fun CustomZikrDialog(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
-                
+
                 Spacer(modifier = Modifier.height(20.dp))
-                
+
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -117,45 +119,47 @@ fun CustomZikrDialog(
                         onCheckedChange = { isInfinite = it }
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 if (!isInfinite) {
                     Text(
                         text = stringResource(R.string.custom_zikr_repeat_count_label),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Button(
-                            onClick = { if (requiredRepeats > 1) requiredRepeats-- },
-                            modifier = Modifier.size(48.dp),
-                            shape = RoundedCornerShape(50.dp),
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Icon(Icons.Default.Remove, contentDescription = null)
-                        }
-                        
-                        Text(
-                            text = requiredRepeats.toString(),
-                            style = MaterialTheme.typography.headlineSmall
+                    var countText by remember(requiredRepeats) { mutableStateOf(requiredRepeats.toString()) }
+                    OutlinedTextField(
+                        value = countText,
+                        onValueChange = { newValue ->
+                            if (newValue.isEmpty() || newValue.all { it.isDigit() }) {
+                                countText = newValue
+                                val newCount = newValue.toIntOrNull() ?: 0
+                                if (newCount > 0) {
+                                    requiredRepeats = newCount
+                                }
+                            }
+                        },
+                        modifier = Modifier.defaultMinSize(minWidth = 2.dp),
+                        textStyle = MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 16.sp,  // Adjusted font size
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            color = MaterialTheme.colorScheme.primary,
+                            lineHeight = 24.sp  // Adjusted line height
+                        ),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                        shape = RoundedCornerShape(16.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                            focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
                         )
-                        
-                        Button(
-                            onClick = { requiredRepeats++ },
-                            modifier = Modifier.size(48.dp),
-                            shape = RoundedCornerShape(50.dp),
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = null)
-                        }
-                    }
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-                
+
                 showError?.let { error ->
                     Text(
                         text = error,
@@ -164,7 +168,7 @@ fun CustomZikrDialog(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
-                
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,

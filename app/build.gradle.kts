@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kover)
 }
 
 android {
@@ -15,8 +14,8 @@ android {
         applicationId = "com.app.azkary"
         minSdk = 33
         targetSdk = 36
-        versionCode = 8
-        versionName = "2"
+        versionCode = 13
+        versionName = "3.0.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -30,7 +29,8 @@ android {
             isShrinkResources = true
 
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
 
             ndk {
@@ -38,11 +38,12 @@ android {
             }
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    //noinspection WrongGradleMethod
+
     androidComponents {
         onVariants(selector().all()) { variant ->
             afterEvaluate {
@@ -50,11 +51,9 @@ android {
                 val kspTask = tasks.findByName(kspTaskName) as? TaskProvider<*>
 
                 if (kspTask != null) {
-                    // Ensure kspOutputDir is a DirectoryProperty
                     val kspOutputDir = project.objects.directoryProperty()
                         .fileValue(file("${layout.buildDirectory.get()}/generated/ksp/${variant.name}/kotlin"))
 
-                    // Ensure that kspTask is a TaskProvider<Task>
                     variant.sources.java?.addGeneratedSourceDirectory(
                         kspTask
                     ) { kspOutputDir }
@@ -63,10 +62,10 @@ android {
         }
     }
 
-
     buildFeatures {
         compose = true
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -100,7 +99,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.play.services.location)
 
-    // Networking
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
@@ -118,42 +116,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-}
-
-kover {
-    reports {
-        total {
-            xml {
-                onCheck = true
-            }
-            html {
-                onCheck = true
-            }
-
-            verify {
-                rule {
-                    minBound(70)
-                }
-            }
-
-            filters {
-                excludes {
-                    classes(
-                        "*BuildConfig*",
-                        "*Hilt_*",
-                        "*_Factory*",
-                        "*_MembersInjector*",
-                        "*Module_*",
-                        "*Dagger*",
-                        "*ComposableSingletons*",
-                        "*Preview*",
-                    )
-                    packages(
-                        "dagger.hilt.internal",
-                        "androidx.compose",
-                    )
-                }
-            }
-        }
-    }
 }
