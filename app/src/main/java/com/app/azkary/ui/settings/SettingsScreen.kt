@@ -75,6 +75,7 @@ fun SettingsScreen(
     val themeSettings by viewModel.themeSettings.collectAsState()
     val holdToComplete by viewModel.holdToComplete.collectAsState()
     val showWeeklyProgress by viewModel.showWeeklyProgress.collectAsState()
+    val notificationPrefs by viewModel.notificationPreferences.collectAsState()
 
     // Support/Feedback sheet state
     var showSupportSheet by remember { mutableStateOf(false) }
@@ -154,7 +155,8 @@ fun SettingsScreen(
                 isEnabled = locationPrefs.useLocation,
                 onToggle = { viewModel.toggleUseLocation(it) },
                 surfaceColor = surfaceColor,
-                onSurfaceColor = onSurfaceColor
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
             )
 
             Spacer(Modifier.height(8.dp))
@@ -221,7 +223,8 @@ fun SettingsScreen(
                 isEnabled = holdToComplete,
                 onToggle = { viewModel.setHoldToComplete(it) },
                 surfaceColor = surfaceColor,
-                onSurfaceColor = onSurfaceColor
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
             )
 
             Spacer(Modifier.height(8.dp))
@@ -231,7 +234,79 @@ fun SettingsScreen(
                 isEnabled = showWeeklyProgress,
                 onToggle = { viewModel.setShowWeeklyProgress(it) },
                 surfaceColor = surfaceColor,
-                onSurfaceColor = onSurfaceColor
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            // Theme Section
+            SectionHeader(
+                title = stringResource(R.string.settings_section_theme),
+                color = onBackgroundColor.copy(alpha = 0.6f)
+            )
+
+            ThemeSettingItem(
+                themeMode = themeSettings.themeMode,
+                onThemeModeChange = { viewModel.setThemeMode(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor,
+                primaryColor = primaryColor
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            // Notifications Section
+            SectionHeader(
+                title = stringResource(R.string.settings_section_notifications),
+                color = onBackgroundColor.copy(alpha = 0.6f)
+            )
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_morning_azkar),
+                subtitle = stringResource(R.string.settings_morning_azkar_desc),
+                isEnabled = notificationPrefs.morningAzkarEnabled,
+                onToggle = { viewModel.setMorningAzkarEnabled(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_evening_azkar),
+                subtitle = stringResource(R.string.settings_evening_azkar_desc),
+                isEnabled = notificationPrefs.eveningAzkarEnabled,
+                onToggle = { viewModel.setEveningAzkarEnabled(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_night_azkar),
+                subtitle = stringResource(R.string.settings_night_azkar_desc),
+                isEnabled = notificationPrefs.nightAzkarEnabled,
+                onToggle = { viewModel.setNightAzkarEnabled(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_sleep_azkar),
+                subtitle = stringResource(R.string.settings_sleep_azkar_desc),
+                isEnabled = notificationPrefs.sleepAzkarEnabled,
+                onToggle = { viewModel.setSleepAzkarEnabled(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
             )
 
             Spacer(Modifier.height(32.dp))
@@ -284,10 +359,12 @@ private fun SectionHeader(
 @Composable
 private fun SettingsToggleItem(
     title: String,
+    subtitle: String? = null,
     isEnabled: Boolean,
     onToggle: (Boolean) -> Unit,
     surfaceColor: Color,
-    onSurfaceColor: Color
+    onSurfaceColor: Color,
+    onSurfaceVariantColor: Color? = null
 ) {
     Surface(
         color = surfaceColor,
@@ -302,12 +379,21 @@ private fun SettingsToggleItem(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                title,
-                color = onSurfaceColor,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.weight(1f)
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    title,
+                    color = onSurfaceColor,
+                    fontWeight = FontWeight.Medium
+                )
+                if (!subtitle.isNullOrBlank()) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        subtitle,
+                        color = onSurfaceVariantColor ?: onSurfaceColor.copy(alpha = 0.7f),
+                        fontSize = 14.sp
+                    )
+                }
+            }
 
             CustomIosToggle(
                 isOn = isEnabled, onToggle = { onToggle(!isEnabled) })
