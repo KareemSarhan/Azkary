@@ -97,9 +97,10 @@ class SummaryViewModelTest {
         localeManager = mockk(relaxed = true)
         context = mockk(relaxed = true)
 
-        // Default mock behaviors - use MutableStateFlow for stateIn compatibility
+        // Default mock behaviors
         every { localeManager.currentLangTagFlow } returns MutableStateFlow("en")
         every { userPreferencesRepository.holdToComplete } returns MutableStateFlow(true)
+        every { userPreferencesRepository.showWeeklyProgress } returns MutableStateFlow(true)
         every { userPreferencesRepository.locationPreferences } returns MutableStateFlow(
             LocationPreferences(useLocation = false, lastResolvedLocation = null, locationName = null)
         )
