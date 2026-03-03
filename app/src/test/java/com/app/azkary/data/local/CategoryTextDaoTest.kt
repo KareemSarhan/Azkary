@@ -7,6 +7,7 @@ import com.app.azkary.data.model.CategoryType
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CategoryTextDaoTest : DatabaseTest() {

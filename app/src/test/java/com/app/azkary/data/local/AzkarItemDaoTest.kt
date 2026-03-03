@@ -93,12 +93,12 @@ class AzkarItemDaoTest : DatabaseTest() {
 
         azkarItemDao.upsertItems(items)
 
-        azkarItemDao.getSeededItems().test {
+        azkarItemDao.getAvailableItems().test {
             val result = awaitItem()
             assertEquals(2, result.size)
             // Should be ordered by itemId: m-item, z-item
-            assertEquals("m-item", result[0].itemId)
-            assertEquals("z-item", result[1].itemId)
+            assertEquals("m-item", result[0].azkarItem.itemId)
+            assertEquals("z-item", result[1].azkarItem.itemId)
             cancel()
         }
     }
