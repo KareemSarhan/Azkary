@@ -27,15 +27,34 @@ android {
         create("release") {
             val keystorePath = System.getenv("KEYSTORE_PATH") ?: "keystore.jks"
             val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
-            val keyAlias = System.getenv("KEY_ALIAS")
-            val keyPassword = System.getenv("KEY_PASSWORD")
+            val keyAliasEnv = System.getenv("KEY_ALIAS")
+            val keyPasswordEnv = System.getenv("KEY_PASSWORD")
 
-            if (keystorePassword != null && keyAlias != null && keyPassword != null) {
+            if (keystorePassword != null && keyAliasEnv != null && keyPasswordEnv != null) {
                 storeFile = file(keystorePath)
                 storePassword = keystorePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
+                this.keyAlias = keyAliasEnv
+                this.keyPassword = keyPasswordEnv
             }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
+
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
+
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
         }
     }
 
