@@ -85,6 +85,9 @@ dependencies {
     implementation(libs.app.update.ktx)
     implementation(libs.play.review)
     implementation(libs.play.review.ktx)
+    testImplementation(libs.app.update)
+    testImplementation(libs.app.update.ktx)
+    implementation(libs.workmanager)
 
     implementation(libs.retrofit)
     implementation(libs.okhttp)
