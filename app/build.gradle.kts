@@ -14,12 +14,28 @@ android {
         applicationId = "com.app.azkary"
         minSdk = 33
         targetSdk = 36
-        versionCode = 8
-        versionName = "2"
+        versionCode = 10
+        versionName = "3.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+    }
+
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("KEYSTORE_PATH") ?: "keystore.jks"
+            val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
+            val keyAlias = System.getenv("KEY_ALIAS")
+            val keyPassword = System.getenv("KEY_PASSWORD")
+
+            if (keystorePassword != null && keyAlias != null && keyPassword != null) {
+                storeFile = file(keystorePath)
+                storePassword = keystorePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            }
         }
     }
 
@@ -35,6 +51,8 @@ android {
             ndk {
                 debugSymbolLevel = "FULL"
             }
+
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
