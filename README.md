@@ -7,7 +7,7 @@
 [![Android](https://img.shields.io/badge/Android-13+-3DDC84)](https://developer.android.com/about/versions/13)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0+-7F52FF)](https://kotlinlang.org/)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25_Offline-FF6B6B)](https://github.com/KareemSarhan/Azkary)
-[![F-Droid](https://img.shields.io/f-droid/v/com.app.azkary?color=1976d2)](https://f-droid.org/packages/com.app.azkary/)
+[![F-Droid](https://img.shields.io/f-droid/v/com.app.azkary.fdroid?color=1976d2)](https://f-droid.org/packages/com.app.azkary.fdroid/)
 [![GitHub release](https://img.shields.io/github/v/release/KareemSarhan/Azkary)](https://github.com/KareemSarhan/Azkary/releases)
 [![GitHub last commit](https://img.shields.io/github/last-commit/KareemSarhan/Azkary)](https://github.com/KareemSarhan/Azkary/commits)
 
@@ -28,7 +28,7 @@ A beautiful, privacy-focused Islamic remembrance (Azkar) app with prayer times, 
 
 For Muslims worldwide who want to maintain their daily dhikr routine with authentic remembrances, prayer time integration, and beautiful progress tracking — all while keeping their data completely private.
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.app.azkary)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.app.azkary.fdroid)
 [<img src="https://img.shields.io/badge/GET_IT_ON-GitHub%20Releases-181717?style=for-the-badge&logo=github&logoColor=white" alt="Get it on GitHub" />](https://github.com/KareemSarhan/Azkary/releases)
 
 ### How it works
@@ -176,6 +176,28 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 - True black (OLED) option for battery saving
 - Smooth animations for progress changes
 - Responsive layouts for different screen sizes
+
+## F-Droid Distribution
+
+Azkary is available on F-Droid as a fully FOSS version. The F-Droid flavor uses Android's standard LocationManager instead of Google Play Services for location features.
+
+### Build Flavors
+
+| Flavor | Application ID | Location Provider |
+|--------|---------------|-------------------|
+| `fdroid` | `com.app.azkary.fdroid` | Android LocationManager |
+| `play` | `com.app.azkary` | Google Play Services |
+
+### Building for F-Droid
+
+```bash
+# Build F-Droid release APK
+./gradlew assembleFdroidRelease
+
+# Output: app/build/outputs/apk/fdroid/release/app-fdroid-release-unsigned.apk
+```
+
+For F-Droid submission details, see [docs/FDROID_SUBMISSION.md](docs/FDROID_SUBMISSION.md).
 
 ## Contributing
 
