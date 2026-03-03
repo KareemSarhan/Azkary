@@ -67,7 +67,8 @@ data class AzkarTextEntity(
     val title: String? = null,
     val text: String? = null,
     val translation: String? = null,
-    val referenceText: String? = null
+    val benefit: String? = null,
+    val reference: String? = null
 )
 
 @Entity(

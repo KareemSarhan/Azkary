@@ -112,6 +112,7 @@
     <string name="custom_zikr_arabic_label">النص العربي</string>
     <string name="custom_zikr_transliteration_label">النحو</string>
     <string name="custom_zikr_translation_label">الترجمة (اختياري)</string>
+    <string name="custom_zikr_benefit_label">الفضل/الثواب (اختياري)</string>
     <string name="custom_zikr_reference_label">المصدر (اختياري)</string>
     <string name="custom_zikr_infinite_counter_label">عداد لانهائي</string>
     <string name="custom_zikr_repeat_count_label">عدد التكرارات</string>
@@ -123,6 +124,7 @@
     <!-- Reading Screen Labels -->
     <string name="reading_transliteration">النطق</string>
     <string name="reading_translation">الترجمة</string>
+    <string name="reading_benefit">الفضل</string>
     <string name="reading_reference">المصدر</string>
     <string name="unknown_location">غير معروف</string>
     <string name="error_category_name_required">الرجاء إدخال اسم الفئة</string>

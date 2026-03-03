@@ -209,6 +209,7 @@ class CategoryCreationViewModel @Inject constructor(
         arabicText: String,
         transliteration: String,
         translation: String,
+        benefit: String,
         reference: String,
         requiredRepeats: Int,
         isInfinite: Boolean
@@ -219,6 +220,7 @@ class CategoryCreationViewModel @Inject constructor(
                     arabicText = arabicText,
                     transliteration = transliteration,
                     translation = translation,
+                    benefit = benefit,
                     reference = reference,
                     requiredRepeats = requiredRepeats,
                     isInfinite = isInfinite,

@@ -119,7 +119,8 @@ class AzkarRepository @Inject constructor(
                         arabicText = arabicText,
                         transliteration = if (langTag != "ar") bestText?.text else null,
                         translation = bestText?.translation,
-                        reference = bestText?.referenceText,
+                        benefit = bestText?.benefit,
+                        reference = bestText?.reference,
                         requiredRepeats = crossRef.requiredRepeats,
                         currentRepeats = progress?.currentRepeats ?: 0,
                         isCompleted = progress?.isCompleted ?: false,
@@ -384,6 +385,7 @@ class AzkarRepository @Inject constructor(
         arabicText: String,
         transliteration: String,
         translation: String,
+        benefit: String,
         reference: String,
         requiredRepeats: Int,
         isInfinite: Boolean,
@@ -404,7 +406,8 @@ class AzkarRepository @Inject constructor(
             langTag = "ar",
             text = arabicText.ifBlank { null },
             translation = translation.ifBlank { null },
-            referenceText = reference.ifBlank { null }
+            benefit = benefit.ifBlank { null },
+            reference = reference.ifBlank { null }
         ))
         
         // Save transliteration for current language
@@ -413,7 +416,8 @@ class AzkarRepository @Inject constructor(
             langTag = langTag,
             text = transliteration.ifBlank { null },
             translation = translation.ifBlank { null },
-            referenceText = reference.ifBlank { null }
+            benefit = benefit.ifBlank { null },
+            reference = reference.ifBlank { null }
         ))
         
         // Also save to English as fallback
@@ -423,7 +427,8 @@ class AzkarRepository @Inject constructor(
                 langTag = "en",
                 text = transliteration.ifBlank { null },
                 translation = translation.ifBlank { null },
-                referenceText = reference.ifBlank { null }
+                benefit = benefit.ifBlank { null },
+                reference = reference.ifBlank { null }
             ))
         }
         

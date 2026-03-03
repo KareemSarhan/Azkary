@@ -25,11 +25,12 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun CustomZikrDialog(
     onDismiss: () -> Unit,
-    onSave: (arabicText: String, transliteration: String, translation: String, reference: String, requiredRepeats: Int, isInfinite: Boolean) -> Unit
+    onSave: (arabicText: String, transliteration: String, translation: String, benefit: String, reference: String, requiredRepeats: Int, isInfinite: Boolean) -> Unit
 ) {
     var arabicText by remember { mutableStateOf("") }
     var transliteration by remember { mutableStateOf("") }
     var translation by remember { mutableStateOf("") }
+    var benefit by remember { mutableStateOf("") }
     var reference by remember { mutableStateOf("") }
     var requiredRepeats by remember { mutableStateOf(3) }
     var isInfinite by remember { mutableStateOf(false) }
@@ -93,7 +94,17 @@ fun CustomZikrDialog(
                 )
                 
                 Spacer(modifier = Modifier.height(12.dp))
-                
+
+                TextField(
+                    value = benefit,
+                    onValueChange = { benefit = it },
+                    label = { Text(stringResource(R.string.custom_zikr_benefit_label)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 3
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 TextField(
                     value = reference,
                     onValueChange = { reference = it },
@@ -101,7 +112,7 @@ fun CustomZikrDialog(
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
-                
+
                 Spacer(modifier = Modifier.height(20.dp))
                 
                 Row(
@@ -184,7 +195,7 @@ fun CustomZikrDialog(
                                 showError = errorMinRepeat
                                 return@Button
                             }
-                            onSave(arabicText, transliteration, translation, reference, requiredRepeats, isInfinite)
+                            onSave(arabicText, transliteration, translation, benefit, reference, requiredRepeats, isInfinite)
                         }
                     ) {
                         Text(stringResource(R.string.custom_zikr_button_save))

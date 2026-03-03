@@ -82,7 +82,8 @@ class SeedManager @Inject constructor(
                         title = content.title,
                         text = content.text,
                         translation = content.translation,
-                        referenceText = content.referenceText
+                        benefit = content.benefit,
+                        reference = content.reference
                     )
                 }
                 textDao.upsertTexts(itemTexts)

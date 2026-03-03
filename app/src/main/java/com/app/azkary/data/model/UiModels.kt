@@ -16,6 +16,7 @@ data class AzkarItemUi(
     val arabicText: String?,
     val transliteration: String?,
     val translation: String?,
+    val benefit: String?,
     val reference: String?,
     val requiredRepeats: Int,
     val currentRepeats: Int,

@@ -47,5 +47,6 @@ data class SeedItemText(
     val title: String? = null,
     val text: String? = null, // Used for Arabic or Transliteration
     val translation: String? = null,
-    val referenceText: String? = null
+    val benefit: String? = null,
+    val reference: String? = null
 )

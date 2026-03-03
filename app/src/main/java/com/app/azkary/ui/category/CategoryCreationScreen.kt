@@ -322,11 +322,12 @@ items(
     if (showCustomZikrDialog) {
         CustomZikrDialog(
             onDismiss = { showCustomZikrDialog = false },
-            onSave = { arabic, transliteration, translation, reference, repeats, isInfinite ->
+            onSave = { arabic, transliteration, translation, benefit, reference, repeats, isInfinite ->
                 viewModel.onAddCustomZikr(
                     arabicText = arabic,
                     transliteration = transliteration,
                     translation = translation,
+                    benefit = benefit,
                     reference = reference,
                     requiredRepeats = repeats,
                     isInfinite = isInfinite

@@ -96,9 +96,15 @@ fun AzkarReadingItem(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Benefit card
+            if (!item.benefit.isNullOrBlank()) {
+                BenefitCardLtr(benefitText = item.benefit)
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
             // Reference card
             if (!item.reference.isNullOrBlank()) {
-                HadithInformationCardLtr(referenceText = item.reference)
+                ReferenceCardLtr(referenceText = item.reference)
             }
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -142,7 +148,39 @@ private fun ReadingSectionLtr(
 }
 
 @Composable
-private fun HadithInformationCardLtr(referenceText: String) {
+private fun BenefitCardLtr(benefitText: String) {
+    val colors = MaterialTheme.colorScheme
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = colors.secondaryContainer.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            LtrText(
+                text = benefitText,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = colors.onSurfaceVariant.copy(alpha = 0.85f),
+                    lineHeight = 18.sp,
+                    fontSize = 13.sp
+                )
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = stringResource(R.string.reading_benefit),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    color = colors.secondary,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReferenceCardLtr(referenceText: String) {
     val colors = MaterialTheme.colorScheme
 
     Card(

@@ -43,6 +43,16 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
     }
 }
 
+val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        // Split referenceText into benefit and reference fields
+        db.execSQL("ALTER TABLE azkar_texts ADD COLUMN benefit TEXT")
+        db.execSQL("ALTER TABLE azkar_texts ADD COLUMN reference TEXT")
+        // Copy existing referenceText data to the new reference field
+        db.execSQL("UPDATE azkar_texts SET reference = referenceText")
+    }
+}
+
 @Database(
     entities = [
         CategoryEntity::class,
@@ -54,7 +64,7 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
         PrayerMonthEntity::class,
         PrayerDayEntity::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

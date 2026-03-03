@@ -112,6 +112,7 @@
     <string name="custom_zikr_arabic_label">Arabic Text</string>
     <string name="custom_zikr_transliteration_label">Transliteration</string>
     <string name="custom_zikr_translation_label">Translation (Optional)</string>
+    <string name="custom_zikr_benefit_label">Benefit/Virtue (Optional)</string>
     <string name="custom_zikr_reference_label">Reference (Optional)</string>
     <string name="custom_zikr_infinite_counter_label">Infinite Counter</string>
     <string name="custom_zikr_repeat_count_label">Repeat Count</string>
@@ -123,6 +124,7 @@
     <!-- Reading Screen Labels -->
     <string name="reading_transliteration">Transliteration</string>
     <string name="reading_translation">Translation</string>
+    <string name="reading_benefit">Benefit</string>
     <string name="reading_reference">Reference</string>
     <string name="unknown_location">Unknown</string>
     <string name="error_category_name_required">Please enter a category name</string>
