@@ -47,49 +47,29 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Decode keystore
-        env:
-          ENCODED_KEYSTORE: ${{ secrets.KEYSTORE_BASE64 }}
-        run: |
-          echo "$ENCODED_KEYSTORE" | base64 -d > app/keystore.jks
-
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
       - name: Build Release AAB
         run: ./gradlew bundleRelease
 
-      - name: Sign APK with apksigner
-        env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: |
-          # Get apksigner from Android SDK
-          SDK_ROOT=$HOME/android-sdk
-          mkdir -p $SDK_ROOT/cmdline-tools
-          
-          # Download command-line tools
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O /tmp/cmdline-tools.zip
-          unzip -q /tmp/cmdline-tools.zip -d $SDK_ROOT/cmdline-tools
-          mv $SDK_ROOT/cmdline-tools/cmdline-tools $SDK_ROOT/cmdline-tools/latest
-          
-          # Accept licenses and install build-tools
-          yes | $SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1
-          $SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" > /dev/null 2>&1
-          
-          # Sign the APK
-          APKSIGNER=$SDK_ROOT/build-tools/34.0.0/apksigner
-          $APKSIGNER sign \
-            --ks app/keystore.jks \
-            --ks-pass pass:$KEYSTORE_PASSWORD \
-            --ks-key-alias $KEY_ALIAS \
-            --key-pass pass:$KEY_PASSWORD \
-            --out app/build/outputs/apk/release/app-release-signed.apk \
-            app/build/outputs/apk/release/app-release.apk
-          
-          # Replace unsigned APK with signed one
-          mv app/build/outputs/apk/release/app-release-signed.apk app/build/outputs/apk/release/app-release.apk
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Sign AAB
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Get version from tag
         id: get_version
@@ -112,10 +92,11 @@ jobs:
           VERSION="${{ steps.get_version.outputs.VERSION }}"
           VERSION_CODE="${{ steps.get_version_code.outputs.VERSION_CODE }}"
           
-          mv app/build/outputs/apk/release/app-release.apk \
+          # The sign action appends -signed to the filename
+          mv app/build/outputs/apk/release/*-signed.apk \
              "app/build/outputs/apk/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk"
           
-          mv app/build/outputs/bundle/release/app-release.aab \
+          mv app/build/outputs/bundle/release/*-signed.aab \
              "app/build/outputs/bundle/release/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
 
       - name: Generate Release Notes
@@ -178,7 +159,3 @@ jobs:
         with:
           name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-release-aab
           path: app/build/outputs/bundle/release/Azkary-v*.aab
-
-      - name: Clean up keystore
-        if: always()
-        run: rm -f app/keystore.jks

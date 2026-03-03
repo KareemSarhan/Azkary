@@ -14,21 +14,12 @@ android {
         applicationId = "com.app.azkary"
         minSdk = 33
         targetSdk = 36
-        versionCode = 16
-        versionName = "3.0.6"
+        versionCode = 17
+        versionName = "3.0.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
-        }
-    }
-
-    signingConfigs {
-        create("release") {
-            storeFile = file("keystore.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
-            keyAlias = System.getenv("KEY_ALIAS") ?: ""
-            keyPassword = System.getenv("KEY_PASSWORD") ?: ""
         }
     }
 
@@ -45,8 +36,6 @@ android {
             ndk {
                 debugSymbolLevel = "FULL"
             }
-
-            signingConfig = signingConfigs.getByName("release")
         }
     }
 
@@ -83,6 +72,7 @@ android {
         }
     }
 }
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
