@@ -76,6 +76,7 @@ fun SettingsScreen(
     val themeSettings by viewModel.themeSettings.collectAsState()
     val holdToComplete by viewModel.holdToComplete.collectAsState()
     val showWeeklyProgress by viewModel.showWeeklyProgress.collectAsState()
+    val enableAnimations by viewModel.enableAnimations.collectAsState()
 
     // Support/Feedback sheet state
     var showSupportSheet by remember { mutableStateOf(false) }
@@ -231,6 +232,16 @@ fun SettingsScreen(
                 title = stringResource(R.string.settings_show_weekly_progress),
                 isEnabled = showWeeklyProgress,
                 onToggle = { viewModel.setShowWeeklyProgress(it) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_enable_animations),
+                isEnabled = enableAnimations,
+                onToggle = { viewModel.setEnableAnimations(it) },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor
             )

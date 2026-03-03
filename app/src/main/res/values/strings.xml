@@ -55,6 +55,10 @@
     <string name="settings_hold_to_complete_title">Hold to complete</string>
     <string name="settings_show_weekly_progress">Show weekly progress</string>
     <string name="settings_show_weekly_progress_description">Display weekly progress card on summary screen</string>
+    
+    <!-- Animation Settings -->
+    <string name="settings_enable_animations">Enable kid-friendly animations</string>
+    <string name="settings_enable_animations_description">Show interactive animations during zikr recitation</string>
 
     <!-- Long Press Feedback -->
     <string name="category_marked_complete">Category marked complete</string>

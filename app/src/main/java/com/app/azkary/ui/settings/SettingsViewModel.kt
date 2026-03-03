@@ -65,6 +65,13 @@ class SettingsViewModel @Inject constructor(
             initialValue = true
         )
 
+    val enableAnimations: StateFlow<Boolean> = userPreferencesRepository.enableAnimations
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
+
     private val _isRefreshingLocation = MutableStateFlow(false)
     val isRefreshingLocation: StateFlow<Boolean> = _isRefreshingLocation.asStateFlow()
 
@@ -155,6 +162,12 @@ class SettingsViewModel @Inject constructor(
     fun setShowWeeklyProgress(enabled: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.setShowWeeklyProgress(enabled)
+        }
+    }
+
+    fun setEnableAnimations(enabled: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.setEnableAnimations(enabled)
         }
     }
 

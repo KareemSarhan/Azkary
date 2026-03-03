@@ -33,15 +33,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.azkary.R
 import com.app.azkary.data.model.AzkarItemUi
+import com.app.azkary.ui.reading.animations.ZikrAnimation
+import com.app.azkary.ui.reading.animations.ZikrAnimationType
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AzkarReadingItem(
     item: AzkarItemUi,
     onIncrement: () -> Unit,
-    onHoldComplete: (() -> Unit)? = null
+    onHoldComplete: (() -> Unit)? = null,
+    enableAnimations: Boolean = false,
+    animationType: ZikrAnimationType = ZikrAnimationType.NONE
 ) {
     val colors = MaterialTheme.colorScheme
+
+    val itemProgress = if (item.isInfinite) {
+        (item.currentRepeats % 33) / 33f
+    } else if (item.requiredRepeats > 0) {
+        item.currentRepeats.toFloat() / item.requiredRepeats.toFloat()
+    } else {
+        0f
+    }
 
     Box(
         modifier = Modifier
@@ -52,6 +64,16 @@ fun AzkarReadingItem(
                 onLongClick = onHoldComplete
             )
     ) {
+        if (enableAnimations && animationType != ZikrAnimationType.NONE) {
+            ZikrAnimation(
+                animationType = animationType,
+                progress = itemProgress,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center)
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -59,12 +81,11 @@ fun AzkarReadingItem(
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Arabic Text
             item.arabicText?.let { arabic ->
                 Text(
                     text = arabic,
                     style = MaterialTheme.typography.headlineMedium.copy(
-                        fontSize = 28.sp, // Reduced further for better fit
+                        fontSize = 28.sp,
                         lineHeight = 42.sp,
                         fontFamily = FontFamily.Default,
                         color = colors.onBackground
@@ -76,7 +97,6 @@ fun AzkarReadingItem(
                 )
             }
 
-            // Transliteration
             if (!item.transliteration.isNullOrBlank()) {
                 ReadingSectionLtr(
                     title = stringResource(R.string.reading_transliteration),
@@ -85,7 +105,6 @@ fun AzkarReadingItem(
                 )
             }
 
-            // Translation
             if (!item.translation.isNullOrBlank()) {
                 ReadingSectionLtr(
                     title = stringResource(R.string.reading_translation),
@@ -96,7 +115,6 @@ fun AzkarReadingItem(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Reference card
             if (!item.reference.isNullOrBlank()) {
                 HadithInformationCardLtr(referenceText = item.reference)
             }

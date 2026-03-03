@@ -45,6 +45,13 @@ class ReadingViewModel @Inject constructor(
             initialValue = true
         )
 
+    val enableAnimations: StateFlow<Boolean> = userPreferencesRepository.enableAnimations
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
+
     val items: Flow<List<AzkarItemUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         if (categoryId == null) {
             flowOf(emptyList())

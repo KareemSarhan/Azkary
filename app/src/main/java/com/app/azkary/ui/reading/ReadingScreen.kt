@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.R
 import com.app.azkary.util.BidiHelper
+import com.app.azkary.ui.reading.animations.ZikrAnimationRegistry
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -66,6 +67,7 @@ fun ReadingScreen(
     val items by viewModel.items.collectAsState(initial = emptyList())
     val weightedProgress by viewModel.weightedProgress.collectAsState(initial = 0f)
     val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
+    val enableAnimations by viewModel.enableAnimations.collectAsState(initial = true)
 
     // If categoryId is null, navigate back immediately
     LaunchedEffect(Unit) {
@@ -228,6 +230,9 @@ fun ReadingScreen(
                 )
             } else if (items.isNotEmpty()) {
                 val item = items[page]
+                val animationType = remember(item.arabicText, item.transliteration) {
+                    ZikrAnimationRegistry.getAnimationType(item.arabicText, item.transliteration)
+                }
 
                 AzkarReadingItem(
                     item = item,
@@ -275,7 +280,9 @@ fun ReadingScreen(
                                 snackbarHostState.showSnackbar(holdToCompleteDisabledMessage)
                             }
                         }
-                    }
+                    },
+                    enableAnimations = enableAnimations,
+                    animationType = animationType
                 )
             }
         }

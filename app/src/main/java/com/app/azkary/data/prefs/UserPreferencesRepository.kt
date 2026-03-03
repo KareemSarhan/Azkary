@@ -37,6 +37,7 @@ class UserPreferencesRepository @Inject constructor(
     private val LOCATION_NAME = stringPreferencesKey("location_name")
     private val HOLD_TO_COMPLETE = booleanPreferencesKey("hold_to_complete")
     private val SHOW_WEEKLY_PROGRESS = booleanPreferencesKey("show_weekly_progress")
+    private val ENABLE_ANIMATIONS = booleanPreferencesKey("enable_animations")
 
     val locationPreferences: Flow<LocationPreferences> = context.dataStore.data.map { preferences ->
         LocationPreferences(
@@ -54,6 +55,10 @@ class UserPreferencesRepository @Inject constructor(
 
     val showWeeklyProgress: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[SHOW_WEEKLY_PROGRESS] ?: true
+    }
+
+    val enableAnimations: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[ENABLE_ANIMATIONS] ?: true
     }
 
     suspend fun setUseLocation(enabled: Boolean) {
@@ -86,5 +91,9 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setShowWeeklyProgress(enabled: Boolean) {
         context.dataStore.edit { it[SHOW_WEEKLY_PROGRESS] = enabled }
+    }
+
+    suspend fun setEnableAnimations(enabled: Boolean) {
+        context.dataStore.edit { it[ENABLE_ANIMATIONS] = enabled }
     }
 }
