@@ -108,6 +108,7 @@
     <string name="category_stock_limited_editing_content_description">تصنيف افتراضي - تعديل محدود</string>
     <string name="category_decrease_content_description">إنقاص</string>
     <string name="category_increase_content_description">زيادة</string>
+    <string name="category_complete_editing">تأكيد</string>
 
     <!-- Custom Zikr Dialog -->
     <string name="custom_zikr_dialog_title">إضافة ذكر مخصص</string>
