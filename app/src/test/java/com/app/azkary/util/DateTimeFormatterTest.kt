@@ -228,13 +228,15 @@ class DateTimeFormatterTest {
 
     // ==================== Relative Time Formatting Tests ====================
 
+    private val fixedNow = LocalDateTime.of(2026, 1, 15, 12, 0, 0)
+
     @Test
     fun `formatRelativeTime returns 'just now' for recent time in English`() {
         // Arrange
-        val recentTime = LocalDateTime.now().minusSeconds(30)
+        val recentTime = fixedNow.minusSeconds(30)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(recentTime, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(recentTime, englishLocale, fixedNow)
 
         // Assert
         assertEquals("just now", result)
@@ -243,10 +245,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'الآن' for recent time in Arabic`() {
         // Arrange
-        val recentTime = LocalDateTime.now().minusSeconds(30)
+        val recentTime = fixedNow.minusSeconds(30)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(recentTime, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(recentTime, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("الآن", result)
@@ -255,10 +257,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '1 minute ago' in English`() {
         // Arrange
-        val oneMinuteAgo = LocalDateTime.now().minusMinutes(1)
+        val oneMinuteAgo = fixedNow.minusMinutes(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneMinuteAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneMinuteAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("1 minute ago", result)
@@ -267,10 +269,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ دقيقة' in Arabic`() {
         // Arrange
-        val oneMinuteAgo = LocalDateTime.now().minusMinutes(1)
+        val oneMinuteAgo = fixedNow.minusMinutes(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneMinuteAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneMinuteAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ دقيقة", result)
@@ -279,10 +281,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '2 minutes ago' in English`() {
         // Arrange
-        val twoMinutesAgo = LocalDateTime.now().minusMinutes(2)
+        val twoMinutesAgo = fixedNow.minusMinutes(2)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(twoMinutesAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(twoMinutesAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("2 minutes ago", result)
@@ -291,10 +293,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ دقيقتين' in Arabic`() {
         // Arrange
-        val twoMinutesAgo = LocalDateTime.now().minusMinutes(2)
+        val twoMinutesAgo = fixedNow.minusMinutes(2)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(twoMinutesAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(twoMinutesAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ دقيقتين", result)
@@ -303,10 +305,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '5 minutes ago' in English`() {
         // Arrange
-        val fiveMinutesAgo = LocalDateTime.now().minusMinutes(5)
+        val fiveMinutesAgo = fixedNow.minusMinutes(5)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fiveMinutesAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fiveMinutesAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("5 minutes ago", result)
@@ -315,10 +317,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ 5 دقائق' in Arabic`() {
         // Arrange
-        val fiveMinutesAgo = LocalDateTime.now().minusMinutes(5)
+        val fiveMinutesAgo = fixedNow.minusMinutes(5)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fiveMinutesAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fiveMinutesAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ 5 دقائق", result)
@@ -327,10 +329,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '15 minutes ago' in English`() {
         // Arrange
-        val fifteenMinutesAgo = LocalDateTime.now().minusMinutes(15)
+        val fifteenMinutesAgo = fixedNow.minusMinutes(15)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fifteenMinutesAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fifteenMinutesAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("15 minutes ago", result)
@@ -339,10 +341,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ 15 دقيقة' in Arabic`() {
         // Arrange
-        val fifteenMinutesAgo = LocalDateTime.now().minusMinutes(15)
+        val fifteenMinutesAgo = fixedNow.minusMinutes(15)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fifteenMinutesAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fifteenMinutesAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ 15 دقيقة", result)
@@ -351,10 +353,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '1 hour ago' in English`() {
         // Arrange
-        val oneHourAgo = LocalDateTime.now().minusHours(1)
+        val oneHourAgo = fixedNow.minusHours(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneHourAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneHourAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("1 hour ago", result)
@@ -363,10 +365,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ ساعة' in Arabic`() {
         // Arrange
-        val oneHourAgo = LocalDateTime.now().minusHours(1)
+        val oneHourAgo = fixedNow.minusHours(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneHourAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneHourAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ ساعة", result)
@@ -375,10 +377,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '2 hours ago' in English`() {
         // Arrange
-        val twoHoursAgo = LocalDateTime.now().minusHours(2)
+        val twoHoursAgo = fixedNow.minusHours(2)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(twoHoursAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(twoHoursAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("2 hours ago", result)
@@ -387,10 +389,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ ساعتين' in Arabic`() {
         // Arrange
-        val twoHoursAgo = LocalDateTime.now().minusHours(2)
+        val twoHoursAgo = fixedNow.minusHours(2)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(twoHoursAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(twoHoursAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ ساعتين", result)
@@ -399,10 +401,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '5 hours ago' in English`() {
         // Arrange
-        val fiveHoursAgo = LocalDateTime.now().minusHours(5)
+        val fiveHoursAgo = fixedNow.minusHours(5)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fiveHoursAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fiveHoursAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("5 hours ago", result)
@@ -411,10 +413,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ 5 ساعات' in Arabic`() {
         // Arrange
-        val fiveHoursAgo = LocalDateTime.now().minusHours(5)
+        val fiveHoursAgo = fixedNow.minusHours(5)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fiveHoursAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fiveHoursAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ 5 ساعات", result)
@@ -423,10 +425,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '15 hours ago' in English`() {
         // Arrange
-        val fifteenHoursAgo = LocalDateTime.now().minusHours(15)
+        val fifteenHoursAgo = fixedNow.minusHours(15)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fifteenHoursAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fifteenHoursAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("15 hours ago", result)
@@ -435,10 +437,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ 15 ساعة' in Arabic`() {
         // Arrange
-        val fifteenHoursAgo = LocalDateTime.now().minusHours(15)
+        val fifteenHoursAgo = fixedNow.minusHours(15)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fifteenHoursAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fifteenHoursAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ 15 ساعة", result)
@@ -447,10 +449,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '1 day ago' in English`() {
         // Arrange
-        val oneDayAgo = LocalDateTime.now().minusDays(1)
+        val oneDayAgo = fixedNow.minusDays(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneDayAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneDayAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("1 day ago", result)
@@ -459,10 +461,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ يوم' in Arabic`() {
         // Arrange
-        val oneDayAgo = LocalDateTime.now().minusDays(1)
+        val oneDayAgo = fixedNow.minusDays(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneDayAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneDayAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ يوم", result)
@@ -471,10 +473,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '2 days ago' in English`() {
         // Arrange
-        val twoDaysAgo = LocalDateTime.now().minusDays(2)
+        val twoDaysAgo = fixedNow.minusDays(2)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(twoDaysAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(twoDaysAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("2 days ago", result)
@@ -483,10 +485,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ يومين' in Arabic`() {
         // Arrange
-        val twoDaysAgo = LocalDateTime.now().minusDays(2)
+        val twoDaysAgo = fixedNow.minusDays(2)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(twoDaysAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(twoDaysAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ يومين", result)
@@ -495,10 +497,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '5 days ago' in English`() {
         // Arrange
-        val fiveDaysAgo = LocalDateTime.now().minusDays(5)
+        val fiveDaysAgo = fixedNow.minusDays(5)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fiveDaysAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fiveDaysAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("5 days ago", result)
@@ -507,10 +509,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ 5 أيام' in Arabic`() {
         // Arrange
-        val fiveDaysAgo = LocalDateTime.now().minusDays(5)
+        val fiveDaysAgo = fixedNow.minusDays(5)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fiveDaysAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fiveDaysAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ 5 أيام", result)
@@ -519,10 +521,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns '15 days ago' in English`() {
         // Arrange
-        val fifteenDaysAgo = LocalDateTime.now().minusDays(15)
+        val fifteenDaysAgo = fixedNow.minusDays(15)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fifteenDaysAgo, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fifteenDaysAgo, englishLocale, fixedNow)
 
         // Assert
         assertEquals("15 days ago", result)
@@ -531,10 +533,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'منذ 15 يومًا' in Arabic`() {
         // Arrange
-        val fifteenDaysAgo = LocalDateTime.now().minusDays(15)
+        val fifteenDaysAgo = fixedNow.minusDays(15)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fifteenDaysAgo, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fifteenDaysAgo, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("منذ 15 يومًا", result)
@@ -543,10 +545,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'in 1 minute' for future time in English`() {
         // Arrange
-        val oneMinuteFuture = LocalDateTime.now().plusMinutes(1)
+        val oneMinuteFuture = fixedNow.plusMinutes(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneMinuteFuture, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneMinuteFuture, englishLocale, fixedNow)
 
         // Assert
         assertEquals("in 1 minute", result)
@@ -555,10 +557,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'خلال دقيقة' for future time in Arabic`() {
         // Arrange
-        val oneMinuteFuture = LocalDateTime.now().plusMinutes(1)
+        val oneMinuteFuture = fixedNow.plusMinutes(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneMinuteFuture, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneMinuteFuture, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("خلال دقيقة", result)
@@ -567,10 +569,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'in 5 minutes' for future time in English`() {
         // Arrange
-        val fiveMinutesFuture = LocalDateTime.now().plusMinutes(5)
+        val fiveMinutesFuture = fixedNow.plusMinutes(5)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fiveMinutesFuture, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fiveMinutesFuture, englishLocale, fixedNow)
 
         // Assert
         assertEquals("in 5 minutes", result)
@@ -579,10 +581,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'خلال 5 دقائق' for future time in Arabic`() {
         // Arrange
-        val fiveMinutesFuture = LocalDateTime.now().plusMinutes(5)
+        val fiveMinutesFuture = fixedNow.plusMinutes(5)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(fiveMinutesFuture, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(fiveMinutesFuture, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("خلال 5 دقائق", result)
@@ -591,10 +593,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'in 1 hour' for future time in English`() {
         // Arrange
-        val oneHourFuture = LocalDateTime.now().plusHours(1)
+        val oneHourFuture = fixedNow.plusHours(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneHourFuture, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneHourFuture, englishLocale, fixedNow)
 
         // Assert
         assertEquals("in 1 hour", result)
@@ -603,10 +605,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'خلال ساعة' for future time in Arabic`() {
         // Arrange
-        val oneHourFuture = LocalDateTime.now().plusHours(1)
+        val oneHourFuture = fixedNow.plusHours(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneHourFuture, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneHourFuture, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("خلال ساعة", result)
@@ -615,10 +617,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'in 1 day' for future time in English`() {
         // Arrange
-        val oneDayFuture = LocalDateTime.now().plusDays(1)
+        val oneDayFuture = fixedNow.plusDays(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneDayFuture, englishLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneDayFuture, englishLocale, fixedNow)
 
         // Assert
         assertEquals("in 1 day", result)
@@ -627,10 +629,10 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns 'خلال يوم' for future time in Arabic`() {
         // Arrange
-        val oneDayFuture = LocalDateTime.now().plusDays(1)
+        val oneDayFuture = fixedNow.plusDays(1)
 
         // Act
-        val result = dateTimeFormatter.formatRelativeTime(oneDayFuture, arabicLocale)
+        val result = dateTimeFormatter.formatRelativeTime(oneDayFuture, arabicLocale, fixedNow)
 
         // Assert
         assertEquals("خلال يوم", result)
@@ -639,11 +641,11 @@ class DateTimeFormatterTest {
     @Test
     fun `formatRelativeTime returns formatted date for old time`() {
         // Arrange
-        val oldTime = LocalDateTime.now().minusDays(10)
+        val oldTime = fixedNow.minusDays(10)
 
         // Act
-        val resultEn = dateTimeFormatter.formatRelativeTime(oldTime, englishLocale)
-        val resultAr = dateTimeFormatter.formatRelativeTime(oldTime, arabicLocale)
+        val resultEn = dateTimeFormatter.formatRelativeTime(oldTime, englishLocale, fixedNow)
+        val resultAr = dateTimeFormatter.formatRelativeTime(oldTime, arabicLocale, fixedNow)
 
         // Assert
         assertTrue(resultEn.isNotEmpty())

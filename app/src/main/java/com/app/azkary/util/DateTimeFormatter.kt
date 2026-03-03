@@ -79,8 +79,7 @@ class DateTimeFormatter @Inject constructor() {
      * @param locale The locale to use for formatting
      * @return Relative time string (e.g., "2 hours ago", "in 3 days", "just now")
      */
-    fun formatRelativeTime(dateTime: LocalDateTime, locale: Locale): String {
-        val now = LocalDateTime.now()
+    fun formatRelativeTime(dateTime: LocalDateTime, locale: Locale, now: LocalDateTime = LocalDateTime.now()): String {
         val diff = ChronoUnit.SECONDS.between(dateTime, now)
         
         return when {
