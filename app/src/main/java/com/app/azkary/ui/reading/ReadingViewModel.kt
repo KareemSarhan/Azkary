@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -44,6 +46,31 @@ class ReadingViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = true
         )
+
+    val vibrationEnabled: StateFlow<Boolean> = userPreferencesRepository.vibrationEnabled
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
+
+    private val _vibrationEnabledInternal = MutableStateFlow(true)
+    val vibrationEnabledInternal = _vibrationEnabledInternal.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            userPreferencesRepository.vibrationEnabled.collect { enabled ->
+                _vibrationEnabledInternal.value = enabled
+            }
+        }
+    }
+
+    fun toggleVibration() {
+        viewModelScope.launch {
+            val currentEnabled = vibrationEnabled.value
+            userPreferencesRepository.setVibrationEnabled(!currentEnabled)
+        }
+    }
 
     val items: Flow<List<AzkarItemUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         if (categoryId == null) {

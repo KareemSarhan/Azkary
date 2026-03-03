@@ -54,6 +54,10 @@
     <!-- Hold-to-Complete Settings -->
     <string name="settings_hold_to_complete_title">Hold to complete</string>
 
+    <!-- Vibration Toggle -->
+    <string name="vibration_enabled_content_description">Vibration enabled - tap to disable</string>
+    <string name="vibration_disabled_content_description">Vibration disabled - tap to enable</string>
+
     <!-- Long Press Feedback -->
     <string name="category_marked_complete">Category marked complete</string>
     <string name="category_marked_incomplete">Category marked incomplete</string>

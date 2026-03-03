@@ -18,6 +18,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -66,6 +68,7 @@ fun ReadingScreen(
     val items by viewModel.items.collectAsState(initial = emptyList())
     val weightedProgress by viewModel.weightedProgress.collectAsState(initial = 0f)
     val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
+    val vibrationEnabled by viewModel.vibrationEnabled.collectAsState(initial = true)
 
     // If categoryId is null, navigate back immediately
     LaunchedEffect(Unit) {
@@ -125,9 +128,11 @@ fun ReadingScreen(
         vibratorManager.defaultVibrator
     }
 
-    // Helper to trigger vibration
+    // Helper to trigger vibration (respects user preference)
     val performVibration: (Long) -> Unit = { duration ->
-        vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+        if (vibrationEnabled) {
+            vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+        }
     }
 
     val colors = MaterialTheme.colorScheme
@@ -177,6 +182,18 @@ fun ReadingScreen(
                         }
                     },
                     actions = {
+                        // Vibration toggle button
+                        IconButton(onClick = { viewModel.toggleVibration() }) {
+                            Icon(
+                                imageVector = if (vibrationEnabled) Icons.Filled.Notifications else Icons.Filled.NotificationsOff,
+                                contentDescription = stringResource(
+                                    if (vibrationEnabled) R.string.vibration_enabled_content_description
+                                    else R.string.vibration_disabled_content_description
+                                ),
+                                tint = if (vibrationEnabled) colors.primary else colors.onSurfaceVariant.copy(alpha = 0.5f)
+                            )
+                        }
+
                         val currentItem = if (isComplete && pagerState.currentPage == items.size) null else items.getOrNull(pagerState.currentPage)
                         if (currentItem != null) {
                             Surface(
