@@ -8,6 +8,7 @@ import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.domain.model.AzkarWindow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.first
 
 @HiltWorker
 class AzkarNotificationWorker @AssistedInject constructor(
@@ -25,12 +26,7 @@ class AzkarNotificationWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val windowType = inputData.getString(KEY_WINDOW_TYPE) ?: return Result.failure()
 
-        val notificationPrefs = userPreferencesRepository.notificationPreferences
-            .let { flow ->
-                var prefs: com.app.azkary.data.prefs.NotificationPreferences? = null
-                flow.collect { prefs = it }
-                prefs
-            } ?: return Result.failure()
+        val notificationPrefs = userPreferencesRepository.notificationPreferences.first()
 
         when (windowType) {
             AzkarWindow.MORNING.name -> {
