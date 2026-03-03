@@ -23,15 +23,6 @@ android {
         }
     }
 
-    signingConfigs {
-        getByName("debug") {
-            storeFile = file("debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
-    }
-
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -45,9 +36,6 @@ android {
             ndk {
                 debugSymbolLevel = "FULL"
             }
-
-            // Use debug signing for releases (works for GitHub Actions and local)
-            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
