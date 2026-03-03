@@ -108,14 +108,13 @@ fun SettingsScreen(
     }
 
     // Notification permission launcher
+    val notificationPermissionDeniedText = stringResource(R.string.notification_permission_denied)
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (!isGranted) {
             coroutineScope.launch {
-                snackbarHostState.showSnackbar(
-                    context.getString(R.string.notification_permission_denied)
-                )
+                snackbarHostState.showSnackbar(notificationPermissionDeniedText)
             }
         }
     }
