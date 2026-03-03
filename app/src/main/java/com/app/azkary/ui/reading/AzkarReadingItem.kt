@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -28,11 +29,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.azkary.R
 import com.app.azkary.data.model.AzkarItemUi
+import com.app.azkary.util.BidiHelper
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -113,6 +116,12 @@ private fun ReadingSectionLtr(
     titleColor: androidx.compose.ui.graphics.Color
 ) {
     val colors = MaterialTheme.colorScheme
+    val context = LocalContext.current
+
+    // Format content with proper bidirectional handling for mixed text
+    val formattedContent = remember(content, context) {
+        BidiHelper.formatMixedText(content, context)
+    }
 
     Column(
         modifier = Modifier
@@ -131,7 +140,7 @@ private fun ReadingSectionLtr(
         Spacer(modifier = Modifier.height(6.dp))
 
         LtrText(
-            text = content,
+            text = formattedContent,
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = colors.onBackground.copy(alpha = 0.9f),
                 lineHeight = 22.sp,
@@ -144,6 +153,13 @@ private fun ReadingSectionLtr(
 @Composable
 private fun HadithInformationCardLtr(referenceText: String) {
     val colors = MaterialTheme.colorScheme
+    val context = LocalContext.current
+
+    // Format reference text with proper bidirectional handling
+    // This handles mixed Arabic/English references correctly
+    val formattedReference = remember(referenceText, context) {
+        BidiHelper.formatVerseReference(referenceText, context)
+    }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = colors.surfaceVariant.copy(alpha = 0.5f)),
@@ -152,7 +168,7 @@ private fun HadithInformationCardLtr(referenceText: String) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             LtrText(
-                text = referenceText,
+                text = formattedReference,
                 style = MaterialTheme.typography.bodySmall.copy(
                     color = colors.onSurfaceVariant.copy(alpha = 0.85f),
                     lineHeight = 18.sp,

@@ -451,4 +451,101 @@ class BidiHelperTest {
             assertTrue(result.contains("10"))
         }
     }
+
+    // ==================== Arabic with English Reference Tests (Issue #12) ====================
+
+    @Test
+    fun `formatVerseReference handles Arabic text with English reference for RTL locale`() {
+        setLocale(Locale("ar"))
+
+        // Mixed Arabic text with English hadith reference
+        val mixedReference = "[البخاري 5074]"
+        val result = BidiHelper.formatVerseReference(mixedReference, mockContext)
+
+        assertFalse(result.isEmpty())
+        assertTrue(result.contains("البخاري"))
+        assertTrue(result.contains("5074"))
+    }
+
+    @Test
+    fun `formatVerseReference handles Arabic text with English reference for LTR locale`() {
+        setLocale(Locale("en"))
+
+        // Mixed Arabic text with English hadith reference
+        val mixedReference = "[البخاري 5074]"
+        val result = BidiHelper.formatVerseReference(mixedReference, mockContext)
+
+        assertFalse(result.isEmpty())
+        assertTrue(result.contains("البخاري"))
+        assertTrue(result.contains("5074"))
+    }
+
+    @Test
+    fun `formatMixedText handles Arabic zikr with English reference`() {
+        setLocale(Locale("ar"))
+
+        // Arabic zikr with English reference
+        val mixedText = "رواه البخاري [Bukhari 123] ومسلم [Muslim 456]"
+        val result = BidiHelper.formatMixedText(mixedText, mockContext)
+
+        assertFalse(result.isEmpty())
+        assertTrue(result.contains("البخاري"))
+        assertTrue(result.contains("Bukhari"))
+        assertTrue(result.contains("مسلم"))
+        assertTrue(result.contains("Muslim"))
+    }
+
+    @Test
+    fun `formatMixedText handles complex mixed content with numbers and Latin`() {
+        setLocale(Locale("ar"))
+
+        // Complex mixed content: Arabic + English + numbers
+        val complexText = "سبحان الله 33 مرة - [Tirmidhi 3567]"
+        val result = BidiHelper.formatMixedText(complexText, mockContext)
+
+        assertFalse(result.isEmpty())
+        assertTrue(result.contains("سبحان الله"))
+        assertTrue(result.contains("33"))
+        assertTrue(result.contains("Tirmidhi"))
+        assertTrue(result.contains("3567"))
+    }
+
+    @Test
+    fun `formatAsLtr handles Arabic text with LTR forced direction`() {
+        setLocale(Locale("ar"))
+
+        // Arabic text that should be forced LTR (like references)
+        val arabicText = "[البخاري 5074]"
+        val result = BidiHelper.formatAsLtr(arabicText, mockContext)
+
+        assertFalse(result.isEmpty())
+        assertTrue(result.contains("البخاري"))
+        assertTrue(result.contains("5074"))
+    }
+
+    @Test
+    fun `formatMixedText handles English reference in Arabic context`() {
+        setLocale(Locale("ar"))
+
+        // English reference only, displayed in Arabic context
+        val englishReference = "[Bukhari 5074]"
+        val result = BidiHelper.formatMixedText(englishReference, mockContext)
+
+        assertFalse(result.isEmpty())
+        assertTrue(result.contains("Bukhari"))
+        assertTrue(result.contains("5074"))
+    }
+
+    @Test
+    fun `formatVerseReference handles nested brackets`() {
+        setLocale(Locale("ar"))
+
+        // Reference with nested brackets
+        val nestedReference = "[رواه البخاري (كتاب الصلاة) 123]"
+        val result = BidiHelper.formatVerseReference(nestedReference, mockContext)
+
+        assertFalse(result.isEmpty())
+        assertTrue(result.contains("البخاري"))
+        assertTrue(result.contains("123"))
+    }
 }
