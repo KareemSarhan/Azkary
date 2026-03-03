@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">اذکار</string>
+
+    <string name="summary_title">خلاصہ</string>
+    <string name="summary_today">آج</string>
+    <string name="summary_no_categories">آج کے لیے کوئی زمرہ نہیں</string>
+    <string name="summary_session_ends">ختم %s</string>
+    <string name="summary_session_missed">چھوڑ دیا</string>
+    <string name="summary_progress_completed">%d%% مکمل</string>
+    <string name="summary_continue">جاری رکھیں</string>
+    <string name="summary_scheduled">شیڈولڈ</string>
+    <string name="summary_add_category">زمرہ شامل کریں</string>
+    <string name="summary_create_category">زمرہ بنائیں</string>
+    <string name="summary_settings_content_description">ترتیبات</string>
+
+    <string name="reading_title">پڑھنا</string>
+    <string name="reading_back_content_description">واپس</string>
+    <string name="reading_page_counter">%1$d میں سے %2$d</string>
+    <string name="reading_repeat_counter">%1$d / %2$d</string>
+
+    <string name="settings_title">ترتیبات</string>
+    <string name="settings_back_content_description">واپس</string>
+    <string name="settings_section_prayer_times">نماز کے اوقات</string>
+    <string name="settings_use_location_title">نماز کے اوقات کے لیے لوکیشن استعمال کریں</string>
+    <string name="settings_current_location">موجودہ لوکیشن</string>
+    <string name="settings_location_not_available">دستیاب نہیں</string>
+    <string name="settings_refresh_location_content_description">لوکیشن ریفریش کریں</string>
+    <string name="settings_section_general">عام</string>
+    <string name="settings_language">زبان</string>
+    <string name="settings_language_content_description">زبان کی ترتیبات</string>
+    <string name="settings_language_subtitle">ایپ کی زبان تبدیل کریں</string>
+    <string name="settings_section_theme">تھیم</string>
+    <string name="settings_true_black_oled">خالص سیاہ (OLED)</string>
+    <string name="settings_true_black_description">OLED اسکرینوں کے لیے خالص سیاہ پس منظر</string>
+
+    <string name="language_system_default">سسٹم ڈیفالٹ</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_turkish">Türkçe</string>
+    <string name="language_urdu">اردو</string>
+    <string name="language_indonesian">Bahasa Indonesia</string>
+
+    <string name="theme_system">سسٹم ڈیفالٹ</string>
+    <string name="theme_light">روشنی</string>
+    <string name="theme_dark">تاریک</string>
+
+    <string name="date_format_pattern">EEEE dd MMMM</string>
+
+    <string name="settings_hold_to_complete_title">مکمل کرنے کے لیے دبائے رکھیں</string>
+    <string name="settings_show_weekly_progress">ہفتہ وار پیشرفت دکھائیں</string>
+    <string name="settings_show_weekly_progress_description">خلاصہ اسکرین پر ہفتہ وار پیشرفت کارڈ دکھائیں</string>
+
+    <string name="category_marked_complete">زمرہ مکمل标记 شد</string>
+    <string name="category_marked_incomplete">زمرہ نامکمل标记 شد</string>
+    <string name="hold_to_complete_disabled">ترتیبات میں مکمل کرنے کے لیے دبائے رکھنا غیر فعال ہے</string>
+
+    <string name="completion_title">ماشاءاللہ!</string>
+    <string name="completion_message">آپ نے یہ زمرہ مکمل کر لیا ہے</string>
+    <string name="completion_back_to_summary">خلاصہ پر واپس جائیں</string>
+
+    <string name="settings_support_feedback">سپورٹ / رائے</string>
+    <string name="settings_version">ورژن %s</string>
+    <string name="support_option_email">ای میل</string>
+    <string name="support_email_address" translatable="false">azkary@hearo.support</string>
+    <string name="support_email_subject">ایپ کی رائے / سپورٹ</string>
+    <string name="support_useful_info_label">[مفید معلومات]</string>
+    <string name="support_app_version_label">ایپ ورژن:</string>
+    <string name="support_build_label">بلڈ</string>
+    <string name="support_android_version_label">اینڈرائیڈ:</string>
+    <string name="support_device_label">آلہ:</string>
+    <string name="support_locale_label">زبان:</string>
+    <string name="support_timezone_label">ٹائم زون:</string>
+    <string name="support_install_id_label">انسٹالیشن آئی ڈی:</string>
+    <string name="support_write_message_instruction">======= براہ کرم نیچے اپنا پیغام لکھیں (کسی بھی زبان میں) =======</string>
+    <string name="support_no_app_found">اس عمل کو مکمل کرنے کے لیے کوئی ایپ نہیں ملی۔</string>
+
+    <string name="category_create_title">زمرہ بنائیں</string>
+    <string name="category_edit_title">زمرہ میں ترمیم کریں</string>
+    <string name="category_back_content_description">واپس</string>
+    <string name="category_save_content_description">محفوظ کریں</string>
+    <string name="category_name_label">زمرے کا نام</string>
+    <string name="category_name_placeholder">مثال: میرے صبح کے ذکر</string>
+    <string name="category_search_placeholder">ذکر تلاش کریں...</string>
+    <string name="category_clear_content_description">صاف کریں</string>
+    <string name="category_selected_items">منتخب آئٹمز</string>
+    <string name="category_choose_zikr">ذکر منتخب کریں</string>
+    <string name="category_loading_zikr">دستیاب ذکر لوڈ ہو رہے ہیں...</string>
+    <string name="category_no_zikr_found">آپ کی تلاش سے میل کھانے والا کوئی ذکر نہیں ملا</string>
+    <string name="category_add_custom_zikr">اپنی مرضی کا ذکر شامل کریں</string>
+    <string name="category_button_add">شامل کریں</string>
+    <string name="category_button_remove">ہٹائیں</string>
+    <string name="category_count_label">تعداد:</string>
+    <string name="category_infinite_label">لا محدود</string>
+    <string name="category_move_up_content_description">اوپر منتقل کریں</string>
+    <string name="category_move_down_content_description">نیچے منتقل کریں</string>
+    <string name="category_remove_content_description">ہٹائیں</string>
+    <string name="category_edit_counts_content_description">شماراؤں میں ترمیم کریں</string>
+    <string name="category_stock_limited_editing_content_description">پہلے سے طے شدہ زمرہ - محدود ترمیم</string>
+    <string name="category_decrease_content_description">کم کریں</string>
+    <string name="category_increase_content_description">بڑھائیں</string>
+    <string name="category_complete_editing">تصدیق کریں</string>
+
+    <string name="custom_zikr_dialog_title">اپنی مرضی کا ذکر شامل کریں</string>
+    <string name="custom_zikr_arabic_label">عربی متن</string>
+    <string name="custom_zikr_transliteration_label">نقل حرفی</string>
+    <string name="custom_zikr_translation_label">ترجمہ (اختیاری)</string>
+    <string name="custom_zikr_reference_label">حوالہ (اختیاری)</string>
+    <string name="custom_zikr_infinite_counter_label">لا محدود کاؤنٹر</string>
+    <string name="custom_zikr_repeat_count_label">دہرائی کی تعداد</string>
+    <string name="custom_zikr_error_fill_text">براہ کرم کم از کم عربی متن یا نقل حرفی بھریں</string>
+    <string name="custom_zikr_error_min_repeat">دہرائی کی تعداد کم از کم 1 ہونی چاہیے</string>
+    <string name="custom_zikr_button_cancel">منسوخ کریں</string>
+    <string name="custom_zikr_button_save">ذکر محفوظ کریں</string>
+
+    <string name="reading_transliteration">نقل حرفی</string>
+    <string name="reading_translation">ترجمہ</string>
+    <string name="reading_reference">حوالہ</string>
+    <string name="unknown_location">نامعلوم</string>
+    <string name="error_category_name_required">براہ کرم زمرے کا نام درج کریں</string>
+    <string name="error_select_zikr">براہ کرم کم از کم ایک ذکر منتخب کریں</string>
+    <string name="error_failed_load_category">زمرہ لوڈ کرنے میں ناکام</string>
+    <string name="error_failed_create_zikr">ذکر بنانے میں ناکام</string>
+    <string name="error_location_permission">لوکیشن حاصل نہیں ہو سکی۔ اجازتیں چیک کریں۔</string>
+    <string name="error_location_generic">لوکیشن کی خرابی</string>
+    <string name="error_location_disabled">نماز کے اوقات کے لیے براہ کرم لوکیشن فعال کریں</string>
+    <string name="error_prayer_times">نماز کے اوقات لوڈ کرنے میں ناکام</string>
+
+    <string name="section_schedule">شیڈول</string>
+    <string name="schedule_from_label">سے</string>
+    <string name="schedule_to_label">تک</string>
+    <string name="schedule_to">تک</string>
+    <string name="schedule_from">سے</string>
+    <string name="schedule_fajr">فجر</string>
+    <string name="schedule_sunrise">طلوع آفتاب</string>
+    <string name="schedule_dhuhr">ظہر</string>
+    <string name="schedule_asr">عصر</string>
+    <string name="schedule_maghrib">مغرب</string>
+    <string name="schedule_isha">عشاء</string>
+    <string name="schedule_firstthird">پہلا تہائی</string>
+    <string name="schedule_midnight">آدھی رات</string>
+    <string name="schedule_lastthird">آخری تہائی</string>
+    <string name="schedule_next_day_suffix">(+1)</string>
+
+    <string name="weekly_progress_title">پچھلے 7 دن</string>
+    <string name="weekly_progress_today">آج</string>
+    <string name="weekly_progress_day_sunday">اتوار</string>
+    <string name="weekly_progress_day_monday">پیر</string>
+    <string name="weekly_progress_day_tuesday">منگل</string>
+    <string name="weekly_progress_day_wednesday">بدھ</string>
+    <string name="weekly_progress_day_thursday">جمعرات</string>
+    <string name="weekly_progress_day_friday">جمعہ</string>
+    <string name="weekly_progress_day_saturday">ہفتہ</string>
+</resources>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Azkary</string>
+
+    <string name="summary_title">Özet</string>
+    <string name="summary_today">Bugün</string>
+    <string name="summary_no_categories">Bugün için kategori yok</string>
+    <string name="summary_session_ends">%s sona eriyor</string>
+    <string name="summary_session_missed">Kaçırıldı</string>
+    <string name="summary_progress_completed">%% %d Tamamlandı</string>
+    <string name="summary_continue">Devam Et</string>
+    <string name="summary_scheduled">Planlandı</string>
+    <string name="summary_add_category">Kategori Ekle</string>
+    <string name="summary_create_category">Kategori Oluştur</string>
+    <string name="summary_settings_content_description">Ayarlar</string>
+
+    <string name="reading_title">Okuma</string>
+    <string name="reading_back_content_description">Geri</string>
+    <string name="reading_page_counter">%2$d / %1$d</string>
+    <string name="reading_repeat_counter">%2$d / %1$d</string>
+
+    <string name="settings_title">Ayarlar</string>
+    <string name="settings_back_content_description">Geri</string>
+    <string name="settings_section_prayer_times">NAMAZ VAKİTLERİ</string>
+    <string name="settings_use_location_title">Namaz vakitleri için konumu kullan</string>
+    <string name="settings_current_location">Mevcut Konum</string>
+    <string name="settings_location_not_available">Mevcut değil</string>
+    <string name="settings_refresh_location_content_description">Konumu yenile</string>
+    <string name="settings_section_general">GENEL</string>
+    <string name="settings_language">Dil</string>
+    <string name="settings_language_content_description">Dil ayarları</string>
+    <string name="settings_language_subtitle">Uygulama dilini değiştir</string>
+    <string name="settings_section_theme">TEMA</string>
+    <string name="settings_true_black_oled">Gerçek Siyah (OLED)</string>
+    <string name="settings_true_black_description">OLED ekranlar için saf siyah arka plan</string>
+
+    <string name="language_system_default">Sistem Varsayılanı</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_turkish">Türkçe</string>
+    <string name="language_urdu">اردو</string>
+    <string name="language_indonesian">Bahasa Indonesia</string>
+
+    <string name="theme_system">Sistem Varsayılanı</string>
+    <string name="theme_light">Açık</string>
+    <string name="theme_dark">Koyu</string>
+
+    <string name="date_format_pattern">EEEE dd MMMM</string>
+
+    <string name="settings_hold_to_complete_title">Tamamlamak için basılı tut</string>
+    <string name="settings_show_weekly_progress">Haftalık ilerlemeyi göster</string>
+    <string name="settings_show_weekly_progress_description">Özet ekranında haftalık ilerleme kartını göster</string>
+
+    <string name="category_marked_complete">Kategori tamamlandı olarak işaretlendi</string>
+    <string name="category_marked_incomplete">Kategori tamamlanmadı olarak işaretlendi</string>
+    <string name="hold_to_complete_disabled">Ayarlar tamamlamak için basılı tut devre dışı</string>
+
+    <string name="completion_title">MaşaAllah!</string>
+    <string name="completion_message">Bu kategoriyi tamamladınız</string>
+    <string name="completion_back_to_summary">Özete Dön</string>
+
+    <string name="settings_support_feedback">Destek / Geri Bildirim</string>
+    <string name="settings_version">Sürüm %s</string>
+    <string name="support_option_email">E-posta</string>
+    <string name="support_email_address" translatable="false">azkary@hearo.support</string>
+    <string name="support_email_subject">Uygulama Geri Bildirimi / Destek</string>
+    <string name="support_useful_info_label">[Faydalı Bilgiler]</string>
+    <string name="support_app_version_label">Uygulama Sürümü:</string>
+    <string name="support_build_label">derleme</string>
+    <string name="support_android_version_label">Android:</string>
+    <string name="support_device_label">Cihaz:</string>
+    <string name="support_locale_label">Dil:</string>
+    <string name="support_timezone_label">Saat Dilimi:</string>
+    <string name="support_install_id_label">Kurulum ID:</string>
+    <string name="support_write_message_instruction">======= Lütfen mesajınızı aşağıya yazın (herhangi bir dilde) =======</string>
+    <string name="support_no_app_found">Bu işlemi tamamlamak için uygulama bulunamadı.</string>
+
+    <string name="category_create_title">Kategori Oluştur</string>
+    <string name="category_edit_title">Kategoriyi Düzenle</string>
+    <string name="category_back_content_description">Geri</string>
+    <string name="category_save_content_description">Kaydet</string>
+    <string name="category_name_label">Kategori Adı</string>
+    <string name="category_name_placeholder">Örn: Sabah Zikirlerim</string>
+    <string name="category_search_placeholder">Zikir ara...</string>
+    <string name="category_clear_content_description">Temizle</string>
+    <string name="category_selected_items">Seçili Öğeler</string>
+    <string name="category_choose_zikr">Zikir Seç</string>
+    <string name="category_loading_zikr">Mevcut zikirler yükleniyor...</string>
+    <string name="category_no_zikr_found">Aramanızla eşleşen zikir bulunamadı</string>
+    <string name="category_add_custom_zikr">Özel Zikir Ekle</string>
+    <string name="category_button_add">Ekle</string>
+    <string name="category_button_remove">Kaldır</string>
+    <string name="category_count_label">Sayı:</string>
+    <string name="category_infinite_label">Sonsuz</string>
+    <string name="category_move_up_content_description">Yukarı taşı</string>
+    <string name="category_move_down_content_description">Aşağı taşı</string>
+    <string name="category_remove_content_description">Kaldır</string>
+    <string name="category_edit_counts_content_description">Sayıları düzenle</string>
+    <string name="category_stock_limited_editing_content_description">Varsayılan kategori - sınırlı düzenleme</string>
+    <string name="category_decrease_content_description">Azalt</string>
+    <string name="category_increase_content_description">Artır</string>
+    <string name="category_complete_editing">Onayla</string>
+
+    <string name="custom_zikr_dialog_title">Özel Zikir Ekle</string>
+    <string name="custom_zikr_arabic_label">Arapça Metin</string>
+    <string name="custom_zikr_transliteration_label">Transliterasyon</string>
+    <string name="custom_zikr_translation_label">Çeviri (İsteğe Bağlı)</string>
+    <string name="custom_zikr_reference_label">Referans (İsteğe Bağlı)</string>
+    <string name="custom_zikr_infinite_counter_label">Sonsuz Sayaç</string>
+    <string name="custom_zikr_repeat_count_label">Tekrar Sayısı</string>
+    <string name="custom_zikr_error_fill_text">Lütfen en az Arapça metin veya transliterasyonu doldurun</string>
+    <string name="custom_zikr_error_min_repeat">Tekrar sayısı en az 1 olmalıdır</string>
+    <string name="custom_zikr_button_cancel">İptal</string>
+    <string name="custom_zikr_button_save">Zikri Kaydet</string>
+
+    <string name="reading_transliteration">Transliterasyon</string>
+    <string name="reading_translation">Çeviri</string>
+    <string name="reading_reference">Referans</string>
+    <string name="unknown_location">Bilinmiyor</string>
+    <string name="error_category_name_required">Lütfen bir kategori adı girin</string>
+    <string name="error_select_zikr">Lütfen en az bir zikir seçin</string>
+    <string name="error_failed_load_category">Kategori yüklenemedi</string>
+    <string name="error_failed_create_zikr">Zikir oluşturulamadı</string>
+    <string name="error_location_permission">Konum alınamadı. İzinleri kontrol edin.</string>
+    <string name="error_location_generic">Konum hatası</string>
+    <string name="error_location_disabled">Namaz vakitleri için lütfen konumu etkinleştirin</string>
+    <string name="error_prayer_times">Namaz vakitleri yüklenemedi</string>
+
+    <string name="section_schedule">Program</string>
+    <string name="schedule_from_label">Başlangıç</string>
+    <string name="schedule_to_label">Bitiş</string>
+    <string name="schedule_to">ile</string>
+    <string name="schedule_from">Başlangıç</string>
+    <string name="schedule_fajr">İmsak</string>
+    <string name="schedule_sunrise">Gün Doğumu</string>
+    <string name="schedule_dhuhr">Öğle</string>
+    <string name="schedule_asr">İkindi</string>
+    <string name="schedule_maghrib">Akşam</string>
+    <string name="schedule_isha">Yatsı</string>
+    <string name="schedule_firstthird">İlk Üçte Bir</string>
+    <string name="schedule_midnight">Gece Yarısı</string>
+    <string name="schedule_lastthird">Son Üçte Bir</string>
+    <string name="schedule_next_day_suffix">(+1)</string>
+
+    <string name="weekly_progress_title">Son 7 Gün</string>
+    <string name="weekly_progress_today">Bugün</string>
+    <string name="weekly_progress_day_sunday">Paz</string>
+    <string name="weekly_progress_day_monday">Pzt</string>
+    <string name="weekly_progress_day_tuesday">Sal</string>
+    <string name="weekly_progress_day_wednesday">Çar</string>
+    <string name="weekly_progress_day_thursday">Per</string>
+    <string name="weekly_progress_day_friday">Cum</string>
+    <string name="weekly_progress_day_saturday">Cmt</string>
+</resources>

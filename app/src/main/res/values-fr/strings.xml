@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Azkary</string>
+
+    <!-- Summary Screen -->
+    <string name="summary_title">Résumé</string>
+    <string name="summary_today">Aujourd\'hui</string>
+    <string name="summary_no_categories">Aucune catégorie pour aujourd\'hui</string>
+    <string name="summary_session_ends">Se termine %s</string>
+    <string name="summary_session_missed">Manqué</string>
+    <string name="summary_progress_completed">%d%% Terminé</string>
+    <string name="summary_continue">Continuer</string>
+    <string name="summary_scheduled">Planifié</string>
+    <string name="summary_add_category">Ajouter une catégorie</string>
+    <string name="summary_create_category">Créer une catégorie</string>
+    <string name="summary_settings_content_description">Paramètres</string>
+
+    <!-- Reading Screen -->
+    <string name="reading_title">Lecture</string>
+    <string name="reading_back_content_description">Retour</string>
+    <string name="reading_page_counter">%1$d sur %2$d</string>
+    <string name="reading_repeat_counter">%1$d / %2$d</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_back_content_description">Retour</string>
+    <string name="settings_section_prayer_times">HEURES DE PRIÈRE</string>
+    <string name="settings_use_location_title">Utiliser la localisation pour les heures de prière</string>
+    <string name="settings_current_location">Localisation actuelle</string>
+    <string name="settings_location_not_available">Non disponible</string>
+    <string name="settings_refresh_location_content_description">Actualiser la localisation</string>
+    <string name="settings_section_general">GÉNÉRAL</string>
+    <string name="settings_language">Langue</string>
+    <string name="settings_language_content_description">Paramètres de langue</string>
+    <string name="settings_language_subtitle">Changer la langue de l\'application</string>
+    <string name="settings_section_theme">THÈME</string>
+    <string name="settings_true_black_oled">Noir pur (OLED)</string>
+    <string name="settings_true_black_description">Fond noir pur pour les écrans OLED</string>
+
+    <!-- Language Options -->
+    <string name="language_system_default">Par défaut du système</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_turkish">Türkçe</string>
+    <string name="language_urdu">اردو</string>
+    <string name="language_indonesian">Bahasa Indonesia</string>
+
+    <!-- Theme Options -->
+    <string name="theme_system">Par défaut du système</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+
+    <!-- Date Format (for SummaryScreen) -->
+    <string name="date_format_pattern">EEEE dd MMMM</string>
+
+    <!-- Hold-to-Complete Settings -->
+    <string name="settings_hold_to_complete_title">Maintenir pour terminer</string>
+    <string name="settings_show_weekly_progress">Afficher la progression hebdomadaire</string>
+    <string name="settings_show_weekly_progress_description">Afficher la carte de progression hebdomadaire sur l\'écran de résumé</string>
+
+    <!-- Long Press Feedback -->
+    <string name="category_marked_complete">Catégorie marquée comme terminée</string>
+    <string name="category_marked_incomplete">Catégorie marquée comme non terminée</string>
+    <string name="hold_to_complete_disabled">Maintenir pour terminer est désactivé dans les paramètres</string>
+
+    <!-- Completion Screen -->
+    <string name="completion_title">MashaAllah!</string>
+    <string name="completion_message">Vous avez terminé cette catégorie</string>
+    <string name="completion_back_to_summary">Retour au résumé</string>
+
+    <!-- Support / Feedback -->
+    <string name="settings_support_feedback">Support / Commentaires</string>
+    <string name="settings_version">Version %s</string>
+    <string name="support_option_email">Email</string>
+    <string name="support_email_address" translatable="false">azkary@hearo.support</string>
+    <string name="support_email_subject">Commentaires sur l\'application / Support</string>
+    <string name="support_useful_info_label">[Informations utiles]</string>
+    <string name="support_app_version_label">Version de l\'application:</string>
+    <string name="support_build_label">build</string>
+    <string name="support_android_version_label">Android:</string>
+    <string name="support_device_label">Appareil:</string>
+    <string name="support_locale_label">Langue:</string>
+    <string name="support_timezone_label">Fuseau horaire:</string>
+    <string name="support_install_id_label">ID d\'installation:</string>
+    <string name="support_write_message_instruction">======= Veuillez écrire votre message ci-dessous (dans n\'importe quelle langue) =======</string>
+    <string name="support_no_app_found">Aucune application trouvée pour effectuer cette action.</string>
+
+    <!-- Category Creation Screen -->
+    <string name="category_create_title">Créer une catégorie</string>
+    <string name="category_edit_title">Modifier la catégorie</string>
+    <string name="category_back_content_description">Retour</string>
+    <string name="category_save_content_description">Enregistrer</string>
+    <string name="category_name_label">Nom de la catégorie</string>
+    <string name="category_name_placeholder">Ex: Mes Azkar du matin</string>
+    <string name="category_search_placeholder">Rechercher un zikr...</string>
+    <string name="category_clear_content_description">Effacer</string>
+    <string name="category_selected_items">Éléments sélectionnés</string>
+    <string name="category_choose_zikr">Choisir un zikr</string>
+    <string name="category_loading_zikr">Chargement des zikr disponibles...</string>
+    <string name="category_no_zikr_found">Aucun zikr trouvé correspondant à votre recherche</string>
+    <string name="category_add_custom_zikr">Ajouter un zikr personnalisé</string>
+    <string name="category_button_add">Ajouter</string>
+    <string name="category_button_remove">Supprimer</string>
+    <string name="category_count_label">Compteur:</string>
+    <string name="category_infinite_label">Infini</string>
+    <string name="category_move_up_content_description">Déplacer vers le haut</string>
+    <string name="category_move_down_content_description">Déplacer vers le bas</string>
+    <string name="category_remove_content_description">Supprimer</string>
+    <string name="category_edit_counts_content_description">Modifier les compteurs</string>
+    <string name="category_stock_limited_editing_content_description">Catégorie par défaut - modification limitée</string>
+    <string name="category_decrease_content_description">Diminuer</string>
+    <string name="category_increase_content_description">Augmenter</string>
+    <string name="category_complete_editing">Confirmer</string>
+
+    <!-- Custom Zikr Dialog -->
+    <string name="custom_zikr_dialog_title">Ajouter un zikr personnalisé</string>
+    <string name="custom_zikr_arabic_label">Texte arabe</string>
+    <string name="custom_zikr_transliteration_label">Translittération</string>
+    <string name="custom_zikr_translation_label">Traduction (Optionnel)</string>
+    <string name="custom_zikr_reference_label">Référence (Optionnel)</string>
+    <string name="custom_zikr_infinite_counter_label">Compteur infini</string>
+    <string name="custom_zikr_repeat_count_label">Nombre de répétitions</string>
+    <string name="custom_zikr_error_fill_text">Veuillez remplir au moins le texte arabe ou la translittération</string>
+    <string name="custom_zikr_error_min_repeat">Le nombre de répétitions doit être d\'au moins 1</string>
+    <string name="custom_zikr_button_cancel">Annuler</string>
+    <string name="custom_zikr_button_save">Enregistrer le zikr</string>
+
+    <!-- Reading Screen Labels -->
+    <string name="reading_transliteration">Translittération</string>
+    <string name="reading_translation">Traduction</string>
+    <string name="reading_reference">Référence</string>
+    <string name="unknown_location">Inconnu</string>
+    <string name="error_category_name_required">Veuillez entrer un nom de catégorie</string>
+    <string name="error_select_zikr">Veuillez sélectionner au moins un zikr</string>
+    <string name="error_failed_load_category">Échec du chargement de la catégorie</string>
+    <string name="error_failed_create_zikr">Échec de la création du zikr</string>
+    <string name="error_location_permission">Impossible d\'obtenir la localisation. Vérifiez les autorisations.</string>
+    <string name="error_location_generic">Erreur de localisation</string>
+    <string name="error_location_disabled">Veuillez activer la localisation pour les heures de prière</string>
+    <string name="error_prayer_times">Échec du chargement des heures de prière</string>
+
+    <!-- Schedule / Prayer Times (0-8) -->
+    <string name="section_schedule">Planification</string>
+    <string name="schedule_from_label">De</string>
+    <string name="schedule_to_label">À</string>
+    <string name="schedule_to">à</string>
+    <string name="schedule_from">De</string>
+    <string name="schedule_fajr">Fajr</string>
+    <string name="schedule_sunrise">Lever du soleil</string>
+    <string name="schedule_dhuhr">Dhuhr</string>
+    <string name="schedule_asr">Asr</string>
+    <string name="schedule_maghrib">Maghrib</string>
+    <string name="schedule_isha">Isha</string>
+    <string name="schedule_firstthird">Premier tiers</string>
+    <string name="schedule_midnight">Minuit</string>
+    <string name="schedule_lastthird">Dernier tiers</string>
+    <string name="schedule_next_day_suffix">(+1)</string>
+
+    <!-- Weekly Progress Card -->
+    <string name="weekly_progress_title">7 derniers jours</string>
+    <string name="weekly_progress_today">Aujourd\'hui</string>
+    <string name="weekly_progress_day_sunday">Dim</string>
+    <string name="weekly_progress_day_monday">Lun</string>
+    <string name="weekly_progress_day_tuesday">Mar</string>
+    <string name="weekly_progress_day_wednesday">Mer</string>
+    <string name="weekly_progress_day_thursday">Jeu</string>
+    <string name="weekly_progress_day_friday">Ven</string>
+    <string name="weekly_progress_day_saturday">Sam</string>
+</resources>

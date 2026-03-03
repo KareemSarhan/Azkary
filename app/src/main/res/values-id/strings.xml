@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Azkary</string>
+
+    <string name="summary_title">Ringkasan</string>
+    <string name="summary_today">Hari Ini</string>
+    <string name="summary_no_categories">Tidak ada kategori untuk hari ini</string>
+    <string name="summary_session_ends">Berakhir %s</string>
+    <string name="summary_session_missed">Terlewat</string>
+    <string name="summary_progress_completed">%d%% Selesai</string>
+    <string name="summary_continue">Lanjutkan</string>
+    <string name="summary_scheduled">Dijadwalkan</string>
+    <string name="summary_add_category">Tambah Kategori</string>
+    <string name="summary_create_category">Buat Kategori</string>
+    <string name="summary_settings_content_description">Pengaturan</string>
+
+    <string name="reading_title">Membaca</string>
+    <string name="reading_back_content_description">Kembali</string>
+    <string name="reading_page_counter">%1$d dari %2$d</string>
+    <string name="reading_repeat_counter">%1$d / %2$d</string>
+
+    <string name="settings_title">Pengaturan</string>
+    <string name="settings_back_content_description">Kembali</string>
+    <string name="settings_section_prayer_times">WAKTU SHOLAT</string>
+    <string name="settings_use_location_title">Gunakan lokasi untuk waktu sholat</string>
+    <string name="settings_current_location">Lokasi Saat Ini</string>
+    <string name="settings_location_not_available">Tidak tersedia</string>
+    <string name="settings_refresh_location_content_description">Perbarui lokasi</string>
+    <string name="settings_section_general">UMUM</string>
+    <string name="settings_language">Bahasa</string>
+    <string name="settings_language_content_description">Pengaturan bahasa</string>
+    <string name="settings_language_subtitle">Ubah bahasa aplikasi</string>
+    <string name="settings_section_theme">TEMA</string>
+    <string name="settings_true_black_oled">Hitam Murni (OLED)</string>
+    <string name="settings_true_black_description">Latar belakang hitam murni untuk layar OLED</string>
+
+    <string name="language_system_default">Bawaan Sistem</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">العربية</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_turkish">Türkçe</string>
+    <string name="language_urdu">اردو</string>
+    <string name="language_indonesian">Bahasa Indonesia</string>
+
+    <string name="theme_system">Bawaan Sistem</string>
+    <string name="theme_light">Terang</string>
+    <string name="theme_dark">Gelap</string>
+
+    <string name="date_format_pattern">EEEE dd MMMM</string>
+
+    <string name="settings_hold_to_complete_title">Tahan untuk menyelesaikan</string>
+    <string name="settings_show_weekly_progress">Tampilkan kemajuan mingguan</string>
+    <string name="settings_show_weekly_progress_description">Tampilkan kartu kemajuan mingguan di layar ringkasan</string>
+
+    <string name="category_marked_complete">Kategori ditandai selesai</string>
+    <string name="category_marked_incomplete">Kategori ditandai belum selesai</string>
+    <string name="hold_to_complete_disabled">Tahan untuk menyelesaikan dinonaktifkan di pengaturan</string>
+
+    <string name="completion_title">MasyaAllah!</string>
+    <string name="completion_message">Anda telah menyelesaikan kategori ini</string>
+    <string name="completion_back_to_summary">Kembali ke Ringkasan</string>
+
+    <string name="settings_support_feedback">Dukungan / Masukan</string>
+    <string name="settings_version">Versi %s</string>
+    <string name="support_option_email">Email</string>
+    <string name="support_email_address" translatable="false">azkary@hearo.support</string>
+    <string name="support_email_subject">Masukan Aplikasi / Dukungan</string>
+    <string name="support_useful_info_label">[Informasi Berguna]</string>
+    <string name="support_app_version_label">Versi Aplikasi:</string>
+    <string name="support_build_label">build</string>
+    <string name="support_android_version_label">Android:</string>
+    <string name="support_device_label">Perangkat:</string>
+    <string name="support_locale_label">Bahasa:</string>
+    <string name="support_timezone_label">Zona Waktu:</string>
+    <string name="support_install_id_label">ID Instalasi:</string>
+    <string name="support_write_message_instruction">======= Silakan tulis pesan Anda di bawah (dalam bahasa apa pun) =======</string>
+    <string name="support_no_app_found">Tidak ada aplikasi yang ditemukan untuk menyelesaikan tindakan ini.</string>
+
+    <string name="category_create_title">Buat Kategori</string>
+    <string name="category_edit_title">Edit Kategori</string>
+    <string name="category_back_content_description">Kembali</string>
+    <string name="category_save_content_description">Simpan</string>
+    <string name="category_name_label">Nama Kategori</string>
+    <string name="category_name_placeholder">Cth: Dzikir Pagi Saya</string>
+    <string name="category_search_placeholder">Cari dzikir...</string>
+    <string name="category_clear_content_description">Hapus</string>
+    <string name="category_selected_items">Item Terpilih</string>
+    <string name="category_choose_zikr">Pilih Dzikir</string>
+    <string name="category_loading_zikr">Memuat dzikir yang tersedia...</string>
+    <string name="category_no_zikr_found">Tidak ada dzikir yang cocok dengan pencarian Anda</string>
+    <string name="category_add_custom_zikr">Tambah Dzikir Kustom</string>
+    <string name="category_button_add">Tambah</string>
+    <string name="category_button_remove">Hapus</string>
+    <string name="category_count_label">Jumlah:</string>
+    <string name="category_infinite_label">Tak Terbatas</string>
+    <string name="category_move_up_content_description">Pindah ke atas</string>
+    <string name="category_move_down_content_description">Pindah ke bawah</string>
+    <string name="category_remove_content_description">Hapus</string>
+    <string name="category_edit_counts_content_description">Edit jumlah</string>
+    <string name="category_stock_limited_editing_content_description">Kategori bawaan - pengeditan terbatas</string>
+    <string name="category_decrease_content_description">Kurangi</string>
+    <string name="category_increase_content_description">Tambah</string>
+    <string name="category_complete_editing">Konfirmasi</string>
+
+    <string name="custom_zikr_dialog_title">Tambah Dzikir Kustom</string>
+    <string name="custom_zikr_arabic_label">Teks Arab</string>
+    <string name="custom_zikr_transliteration_label">Transliterasi</string>
+    <string name="custom_zikr_translation_label">Terjemahan (Opsional)</string>
+    <string name="custom_zikr_reference_label">Referensi (Opsional)</string>
+    <string name="custom_zikr_infinite_counter_label">Penghitung Tak Terbatas</string>
+    <string name="custom_zikr_repeat_count_label">Jumlah Pengulangan</string>
+    <string name="custom_zikr_error_fill_text">Harap isi setidaknya teks Arab atau transliterasi</string>
+    <string name="custom_zikr_error_min_repeat">Jumlah pengulangan harus minimal 1</string>
+    <string name="custom_zikr_button_cancel">Batal</string>
+    <string name="custom_zikr_button_save">Simpan Dzikir</string>
+
+    <string name="reading_transliteration">Transliterasi</string>
+    <string name="reading_translation">Terjemahan</string>
+    <string name="reading_reference">Referensi</string>
+    <string name="unknown_location">Tidak Diketahui</string>
+    <string name="error_category_name_required">Harap masukkan nama kategori</string>
+    <string name="error_select_zikr">Harap pilih setidaknya satu dzikir</string>
+    <string name="error_failed_load_category">Gagal memuat kategori</string>
+    <string name="error_failed_create_zikr">Gagal membuat dzikir</string>
+    <string name="error_location_permission">Tidak dapat mengambil lokasi. Periksa izin.</string>
+    <string name="error_location_generic">Kesalahan lokasi</string>
+    <string name="error_location_disabled">Harap aktifkan lokasi untuk waktu sholat</string>
+    <string name="error_prayer_times">Gagal memuat waktu sholat</string>
+
+    <string name="section_schedule">Jadwal</string>
+    <string name="schedule_from_label">Dari</string>
+    <string name="schedule_to_label">Sampai</string>
+    <string name="schedule_to">sampai</string>
+    <string name="schedule_from">Dari</string>
+    <string name="schedule_fajr">Subuh</string>
+    <string name="schedule_sunrise">Terbit</string>
+    <string name="schedule_dhuhr">Dzuhur</string>
+    <string name="schedule_asr">Ashar</string>
+    <string name="schedule_maghrib">Maghrib</string>
+    <string name="schedule_isha">Isya</string>
+    <string name="schedule_firstthird">Sepertiga Pertama</string>
+    <string name="schedule_midnight">Tengah Malam</string>
+    <string name="schedule_lastthird">Sepertiga Akhir</string>
+    <string name="schedule_next_day_suffix">(+1)</string>
+
+    <string name="weekly_progress_title">7 Hari Terakhir</string>
+    <string name="weekly_progress_today">Hari Ini</string>
+    <string name="weekly_progress_day_sunday">Min</string>
+    <string name="weekly_progress_day_monday">Sen</string>
+    <string name="weekly_progress_day_tuesday">Sel</string>
+    <string name="weekly_progress_day_wednesday">Rab</string>
+    <string name="weekly_progress_day_thursday">Kam</string>
+    <string name="weekly_progress_day_friday">Jum</string>
+    <string name="weekly_progress_day_saturday">Sab</string>
+</resources>
