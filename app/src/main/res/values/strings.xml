@@ -82,6 +82,8 @@
     <string name="support_install_id_label">Install ID:</string>
     <string name="support_write_message_instruction">======= Please write your message below (any language) =======</string>
     <string name="support_no_app_found">No app found to complete this action.</string>
+    <string name="support_option_discord">Discord</string>
+    <string name="support_discord_description">Join our community server</string>
 
     <!-- Category Creation Screen -->
     <string name="category_create_title">Create Category</string>
