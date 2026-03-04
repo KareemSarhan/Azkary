@@ -29,6 +29,7 @@ class SupportHelper @Inject constructor(
 
     companion object {
         private const val SUPPORT_EMAIL = "azkary@hearo.support"
+        private const val DISCORD_INVITE_URL = "https://discord.gg/2Kb7scp48C"
     }
 
     /**
@@ -131,6 +132,16 @@ class SupportHelper @Inject constructor(
             // Instruction line
             append(context.getString(R.string.support_write_message_instruction))
             append("\n\n")
+        }
+    }
+
+    /**
+     * Build Discord invite intent
+     * Opens Discord app if installed, otherwise opens browser
+     */
+    fun buildDiscordIntent(): Intent {
+        return Intent(Intent.ACTION_VIEW, DISCORD_INVITE_URL.toUri()).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }
 

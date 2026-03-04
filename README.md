@@ -251,7 +251,10 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Support
 
-For support, email [azkary@hearo.support](mailto:azkary@hearo.support) or open an [issue](https://github.com/KareemSarhan/Azkary/issues).
+For support:
+- Email: [azkary@hearo.support](mailto:azkary@hearo.support)
+- Discord: [Join our community](https://discord.gg/2Kb7scp48C)
+- GitHub: [Open an issue](https://github.com/KareemSarhan/Azkary/issues)
 
 ## License
 
