@@ -29,10 +29,15 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import retrofit2.Response
 import retrofit2.Retrofit
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [33])
 class PrayerTimesNetworkRepositoryTest {
 
     private lateinit var server: MockWebServer
@@ -109,7 +114,11 @@ class PrayerTimesNetworkRepositoryTest {
                             "Dhuhr": "12:06",
                             "Asr": "15:26",
                             "Maghrib": "18:01",
-                            "Isha": "19:16"
+                            "Isha": "19:16",
+                            "Sunset": "18:01",
+                            "Firstthird": "23:01",
+                            "Midnight": "00:01",
+                            "Lastthird": "01:01"
                           },
                           "date": { 
                             "gregorian": { 
@@ -338,11 +347,11 @@ class PrayerTimesNetworkRepositoryTest {
 
     @Test(expected = ApiException::class)
     fun `fetchMonthlyPrayerTimes maps unexpected error code to ApiException`() = runTest {
-        // Given
+        // Given - use a redirect status code (301) to test unexpected error path
         server.enqueue(
             MockResponse()
-                .setResponseCode(418) // I'm a teapot
-                .setBody("Unexpected")
+                .setResponseCode(301)
+                .setBody("Moved Permanently")
         )
 
         // When/Then
@@ -350,7 +359,7 @@ class PrayerTimesNetworkRepositoryTest {
             repository.fetchMonthlyPrayerTimes(2026, 1, 24.7136, 46.6753)
         } catch (e: ApiException) {
             assertTrue(e.message?.contains("Unexpected HTTP error") == true)
-            assertEquals(418, e.httpCode)
+            assertEquals(301, e.httpCode)
             throw e
         }
     }
@@ -374,7 +383,11 @@ class PrayerTimesNetworkRepositoryTest {
                             "Dhuhr": "12:15",
                             "Asr": "15:45",
                             "Maghrib": "18:30",
-                            "Isha": "19:45"
+                            "Isha": "19:45",
+                            "Sunset": "18:30",
+                            "Firstthird": "22:30",
+                            "Midnight": "00:15",
+                            "Lastthird": "02:00"
                           },
                           "date": { 
                             "gregorian": { 

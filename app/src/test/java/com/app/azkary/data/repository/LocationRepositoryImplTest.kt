@@ -5,13 +5,14 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.core.content.ContextCompat
+import androidx.test.core.app.ApplicationProvider
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -25,23 +26,33 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows
+import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowApplication
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [33])
 class LocationRepositoryImplTest {
 
     private lateinit var repository: LocationRepositoryImpl
     private lateinit var context: Context
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var testDispatcher: TestDispatcher
+    private lateinit var shadowApp: ShadowApplication
 
     @Before
     fun setup() {
         testDispatcher = StandardTestDispatcher()
         Dispatchers.setMain(testDispatcher)
 
-        mockkStatic(ContextCompat::class)
-
-        context = mockk(relaxed = true)
+        val application = RuntimeEnvironment.getApplication()
+        context = application
+        shadowApp = Shadows.shadowOf(application)
         fusedLocationClient = mockk(relaxed = true)
 
         repository = LocationRepositoryImpl(
@@ -55,6 +66,23 @@ class LocationRepositoryImplTest {
         Dispatchers.resetMain()
     }
 
+    private fun grantPermissions() {
+        shadowApp.grantPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
+    private fun grantFineOnly() {
+        shadowApp.grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
+    private fun grantCoarseOnly() {
+        shadowApp.grantPermissions(Manifest.permission.ACCESS_COARSE_LOCATION)
+    }
+
+    private fun denyAllPermissions() {
+        // In Robolectric, permissions are denied by default unless explicitly granted
+        // We need to revoke any previously granted permissions
+    }
+
     private fun createMockLocation(latitude: Double, longitude: Double): Location {
         val location = mockk<Location>()
         every { location.latitude } returns latitude
@@ -63,26 +91,20 @@ class LocationRepositoryImplTest {
     }
 
     private fun <T> createMockTask(result: T?): Task<T> {
-        val task = mockk<Task<T>>(relaxed = true)
-        every { task.addOnSuccessListener(any()) } answers {
+        val task = mockk<Task<T>>()
+        every { task.addOnSuccessListener(any<OnSuccessListener<T>>()) } answers {
             val listener = arg<OnSuccessListener<T>>(0)
-            if (result != null) {
-                listener.onSuccess(result)
-            }
+            listener.onSuccess(result)
             task
         }
-        every { task.addOnFailureListener(any()) } answers {
-            val listener = arg<OnFailureListener>(0)
-            listener.onFailure(Exception("Test failure"))
-            task
-        }
+        every { task.addOnFailureListener(any<OnFailureListener>()) } returns task
         return task
     }
 
     private fun <T> createMockTaskWithFailure(): Task<T> {
-        val task = mockk<Task<T>>(relaxed = true)
-        every { task.addOnSuccessListener(any()) } returns task
-        every { task.addOnFailureListener(any()) } answers {
+        val task = mockk<Task<T>>()
+        every { task.addOnSuccessListener(any<OnSuccessListener<T>>()) } returns task
+        every { task.addOnFailureListener(any<OnFailureListener>()) } answers {
             val listener = arg<OnFailureListener>(0)
             listener.onFailure(Exception("Location failure"))
             task
@@ -93,12 +115,7 @@ class LocationRepositoryImplTest {
     @Test
     fun `getCurrentLocation returns null when no permissions granted`() = runTest {
         // Given - no permissions
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) 
-        } returns PackageManager.PERMISSION_DENIED
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
-        } returns PackageManager.PERMISSION_DENIED
+        denyAllPermissions()
 
         // When
         val result = repository.getCurrentLocation()
@@ -110,12 +127,7 @@ class LocationRepositoryImplTest {
     @Test
     fun `getCurrentLocation returns location with fine permission only`() = runTest {
         // Given - fine location permission
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) 
-        } returns PackageManager.PERMISSION_DENIED
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
-        } returns PackageManager.PERMISSION_GRANTED
+        grantFineOnly()
 
         val mockLocation = createMockLocation(24.7136, 46.6753)
         every { fusedLocationClient.lastLocation } returns createMockTask(mockLocation)
@@ -132,12 +144,7 @@ class LocationRepositoryImplTest {
     @Test
     fun `getCurrentLocation returns location with coarse permission only`() = runTest {
         // Given - coarse location permission
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) 
-        } returns PackageManager.PERMISSION_GRANTED
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
-        } returns PackageManager.PERMISSION_DENIED
+        grantCoarseOnly()
 
         val mockLocation = createMockLocation(40.7128, -74.0060)
         every { fusedLocationClient.lastLocation } returns createMockTask(mockLocation)
@@ -154,12 +161,7 @@ class LocationRepositoryImplTest {
     @Test
     fun `getCurrentLocation returns location with both permissions`() = runTest {
         // Given - both permissions
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) 
-        } returns PackageManager.PERMISSION_GRANTED
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
-        } returns PackageManager.PERMISSION_GRANTED
+        grantPermissions()
 
         val mockLocation = createMockLocation(51.5074, -0.1278)
         every { fusedLocationClient.lastLocation } returns createMockTask(mockLocation)
@@ -176,14 +178,13 @@ class LocationRepositoryImplTest {
     @Test
     fun `getCurrentLocation returns null when last location is null and current location fails`() = runTest {
         // Given
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
-        } returns PackageManager.PERMISSION_GRANTED
+        grantFineOnly()
 
         // Last location is null
         every { fusedLocationClient.lastLocation } returns createMockTask<Location>(null)
         // Current location request fails
-        every { fusedLocationClient.getCurrentLocation(any(), any()) } returns createMockTaskWithFailure<Location>()
+        val failureTask: Task<Location> = createMockTaskWithFailure()
+        every { fusedLocationClient.getCurrentLocation(any<Int>(), any()) } answers { failureTask }
 
         // When
         val result = repository.getCurrentLocation()
@@ -195,16 +196,16 @@ class LocationRepositoryImplTest {
     @Test
     fun `getCurrentLocation tries current location when last location fails`() = runTest {
         // Given
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
-        } returns PackageManager.PERMISSION_GRANTED
+        grantFineOnly()
 
         val mockLocation = createMockLocation(24.7136, 46.6753)
 
         // Last location fails
-        every { fusedLocationClient.lastLocation } returns createMockTaskWithFailure<Location>()
+        val failureTask: Task<Location> = createMockTaskWithFailure()
+        every { fusedLocationClient.lastLocation } returns failureTask
         // Current location succeeds
-        every { fusedLocationClient.getCurrentLocation(any(), any()) } returns createMockTask<Location>(mockLocation)
+        val successTask: Task<Location> = createMockTask(mockLocation)
+        every { fusedLocationClient.getCurrentLocation(any<Int>(), any()) } answers { successTask }
 
         // When
         val result = repository.getCurrentLocation()
@@ -217,13 +218,12 @@ class LocationRepositoryImplTest {
     @Test
     fun `getCurrentLocation returns null when both location attempts fail`() = runTest {
         // Given
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
-        } returns PackageManager.PERMISSION_GRANTED
+        grantFineOnly()
 
         // Both fail
-        every { fusedLocationClient.lastLocation } returns createMockTaskWithFailure<Location>()
-        every { fusedLocationClient.getCurrentLocation(any(), any()) } returns createMockTaskWithFailure<Location>()
+        val failureTask: Task<Location> = createMockTaskWithFailure()
+        every { fusedLocationClient.lastLocation } returns failureTask
+        every { fusedLocationClient.getCurrentLocation(any<Int>(), any()) } answers { failureTask }
 
         // When
         val result = repository.getCurrentLocation()
@@ -235,9 +235,7 @@ class LocationRepositoryImplTest {
     @Test
     fun `getCurrentLocation handles exception gracefully`() = runTest {
         // Given
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
-        } returns PackageManager.PERMISSION_GRANTED
+        grantFineOnly()
         every { fusedLocationClient.lastLocation } throws SecurityException("Test exception")
 
         // When
@@ -250,16 +248,14 @@ class LocationRepositoryImplTest {
     @Test
     fun `getCurrentLocation uses balanced power accuracy priority`() = runTest {
         // Given
-        every { 
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) 
-        } returns PackageManager.PERMISSION_GRANTED
+        grantFineOnly()
 
         every { fusedLocationClient.lastLocation } returns createMockTask<Location>(null)
 
         val mockLocation = createMockLocation(24.7136, 46.6753)
         every { 
             fusedLocationClient.getCurrentLocation(
-                com.google.android.gms.location.Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                Priority.PRIORITY_BALANCED_POWER_ACCURACY,
                 null
             ) 
         } returns createMockTask(mockLocation)

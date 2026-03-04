@@ -537,7 +537,7 @@ class AzkarRepositoryTest {
         // Then
         assertEquals(2, result.size)
         assertEquals("Alhamdulillah", result[0].transliteration)
-        assertNull(result[1].transliteration) // No English text for item2
+        assertEquals("الله أكبر", result[1].transliteration) // Falls back to Arabic when no English text
     }
 
     @Test
