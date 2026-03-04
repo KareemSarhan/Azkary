@@ -252,7 +252,7 @@ fun ReadingScreen(
                         if (!isActive) return@AzkarReadingItem
 
                         if (item.isInfinite) {
-                            performVibration(50L)
+                            if (vibrationEnabled) vibrator.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
                             viewModel.incrementRepeat(item.id)
                             return@AzkarReadingItem
                         }
@@ -262,21 +262,21 @@ fun ReadingScreen(
                         if (isAlreadyComplete) {
                             if (page < items.size - 1) {
                                 scope.launch {
-                                    performVibration(350L)
+                                    vibrator.vibrate(VibrationEffect.createOneShot(350L, VibrationEffect.DEFAULT_AMPLITUDE))
                                     pagerState.animateScrollToPage(page + 1)
                                 }
                             }
                             return@AzkarReadingItem
                         }
 
-                        performVibration(50L)
+                        if (vibrationEnabled) vibrator.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
                         viewModel.incrementRepeat(item.id)
 
                         val willBeComplete = (item.currentRepeats + 1) >= item.requiredRepeats
                         if (willBeComplete) {
                             scope.launch {
                                 delay(0)
-                                performVibration(350L)
+                                vibrator.vibrate(VibrationEffect.createOneShot(350L, VibrationEffect.DEFAULT_AMPLITUDE))
                                 pagerState.animateScrollToPage(page + 1)
                             }
                         }
@@ -285,7 +285,7 @@ fun ReadingScreen(
                         if (!isActive) return@AzkarReadingItem
 
                         if (holdToComplete) {
-                            performVibration(50L)
+                            if (vibrationEnabled) vibrator.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
                             viewModel.markItemComplete(item.id)
                         } else {
                             scope.launch {
