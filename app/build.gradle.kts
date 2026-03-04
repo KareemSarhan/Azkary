@@ -113,6 +113,7 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.mockwebserver)
     testImplementation(libs.room.testing)
+    testImplementation(libs.datastore.preferences.core)
     testImplementation(libs.turbine)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
