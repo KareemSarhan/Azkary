@@ -158,7 +158,31 @@ class PrayerTimesNetworkRepositoryTest {
                     {
                       "code": 200,
                       "status": "OK",
-                      "data": []
+                      "data": [
+                        {
+                          "timings": {
+                            "Fajr": "05:00",
+                            "Sunrise": "06:10",
+                            "Dhuhr": "12:05",
+                            "Asr": "15:25",
+                            "Maghrib": "18:00",
+                            "Isha": "19:15",
+                            "Sunset": "18:00",
+                            "Firstthird": "23:00",
+                            "Midnight": "00:00",
+                            "Lastthird": "01:00"
+                          },
+                          "date": { 
+                            "gregorian": { 
+                              "date":"01-01-2026",
+                              "day":"01",
+                              "month":{"number":1,"en":"January"},
+                              "year":"2026"
+                            } 
+                          },
+                          "meta": { "timezone":"Asia/Riyadh" }
+                        }
+                      ]
                     }
                 """.trimIndent())
         )
@@ -182,7 +206,31 @@ class PrayerTimesNetworkRepositoryTest {
                     {
                       "code": 200,
                       "status": "OK",
-                      "data": []
+                      "data": [
+                        {
+                          "timings": {
+                            "Fajr": "05:00",
+                            "Sunrise": "06:10",
+                            "Dhuhr": "12:05",
+                            "Asr": "15:25",
+                            "Maghrib": "18:00",
+                            "Isha": "19:15",
+                            "Sunset": "18:00",
+                            "Firstthird": "23:00",
+                            "Midnight": "00:00",
+                            "Lastthird": "01:00"
+                          },
+                          "date": { 
+                            "gregorian": { 
+                              "date":"01-01-2026",
+                              "day":"01",
+                              "month":{"number":1,"en":"January"},
+                              "year":"2026"
+                            } 
+                          },
+                          "meta": { "timezone":"Asia/Riyadh" }
+                        }
+                      ]
                     }
                 """.trimIndent())
         )
@@ -423,7 +471,31 @@ class PrayerTimesNetworkRepositoryTest {
                     {
                       "code": 200,
                       "status": "OK",
-                      "data": []
+                      "data": [
+                        {
+                          "timings": {
+                            "Fajr": "05:30",
+                            "Sunrise": "07:00",
+                            "Dhuhr": "12:30",
+                            "Asr": "15:30",
+                            "Maghrib": "18:00",
+                            "Isha": "19:30",
+                            "Sunset": "18:00",
+                            "Firstthird": "22:30",
+                            "Midnight": "00:00",
+                            "Lastthird": "01:30"
+                          },
+                          "date": { 
+                            "gregorian": { 
+                              "date":"01-01-2026",
+                              "day":"01",
+                              "month":{"number":1,"en":"January"},
+                              "year":"2026"
+                            } 
+                          },
+                          "meta": { "timezone":"America/New_York" }
+                        }
+                      ]
                     }
                 """.trimIndent())
         )
