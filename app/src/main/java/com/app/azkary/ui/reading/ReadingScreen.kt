@@ -285,7 +285,7 @@ fun ReadingScreen(
                         if (!isActive) return@AzkarReadingItem
 
                         if (holdToComplete) {
-                            if (vibrationEnabled) vibrator.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
+                            vibrator.vibrate(VibrationEffect.createOneShot(50L, VibrationEffect.DEFAULT_AMPLITUDE))
                             viewModel.markItemComplete(item.id)
                         } else {
                             scope.launch {
