@@ -45,24 +45,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    androidComponents {
-        onVariants(selector().all()) { variant ->
-            afterEvaluate {
-                val kspTaskName = "ksp${variant.name.replaceFirstChar { it.uppercase() }}Kotlin"
-                val kspTask = tasks.findByName(kspTaskName) as? TaskProvider<*>
-
-                if (kspTask != null) {
-                    val kspOutputDir = project.objects.directoryProperty()
-                        .fileValue(file("${layout.buildDirectory.get()}/generated/ksp/${variant.name}/kotlin"))
-
-                    variant.sources.java?.addGeneratedSourceDirectory(
-                        kspTask
-                    ) { kspOutputDir }
-                }
-            }
-        }
-    }
-
     buildFeatures {
         compose = true
     }
