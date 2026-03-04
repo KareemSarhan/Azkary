@@ -99,6 +99,10 @@ dependencies {
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.play.services.location)
+    implementation(libs.app.update)
+    implementation(libs.app.update.ktx)
+    testImplementation(libs.app.update)
+    testImplementation(libs.app.update.ktx)
 
     implementation(libs.retrofit)
     implementation(libs.okhttp)

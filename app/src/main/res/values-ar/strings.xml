@@ -170,4 +170,8 @@
     <string name="weekly_progress_day_thursday">الخميس</string>
     <string name="weekly_progress_day_friday">الجمعة</string>
     <string name="weekly_progress_day_saturday">السبت</string>
+
+    <!-- In-App Update -->
+    <string name="update_ready_message">تم تحميل تحديث جديد.</string>
+    <string name="update_restart">إعادة التشغيل</string>
 </resources>

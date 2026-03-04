@@ -170,4 +170,8 @@
     <string name="weekly_progress_day_thursday">Thu</string>
     <string name="weekly_progress_day_friday">Fri</string>
     <string name="weekly_progress_day_saturday">Sat</string>
+
+    <!-- In-App Update -->
+    <string name="update_ready_message">An update has just been downloaded.</string>
+    <string name="update_restart">Restart</string>
 </resources>

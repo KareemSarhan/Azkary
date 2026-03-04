@@ -25,6 +25,8 @@ import com.app.azkary.ui.settings.SettingsScreen
 import com.app.azkary.ui.summary.SummaryScreen
 import com.app.azkary.ui.theme.AzkaryTheme
 import com.app.azkary.ui.category.CategoryCreationScreen
+import com.app.azkary.util.InAppUpdateManager
+import com.app.azkary.util.InAppUpdateManager.Companion.UPDATE_REQUEST_CODE
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -38,10 +40,15 @@ class MainActivity : ComponentActivity() {
     lateinit var themePreferencesRepository: ThemePreferencesRepository
     @Inject lateinit var localeManager: LocaleManager
 
+    private lateinit var inAppUpdateManager: InAppUpdateManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         enableEdgeToEdge()
+        
+        inAppUpdateManager = InAppUpdateManager(this, this)
+        inAppUpdateManager.checkForUpdate()
 
         setContent {
             val themeSettings by themePreferencesRepository.themeSettings.collectAsState(initial = ThemeSettings())
@@ -123,7 +130,20 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Check for language changes when returning from settings
+        inAppUpdateManager.onResume()
         localeManager.notifyLocaleChanged()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        inAppUpdateManager.onDestroy()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == UPDATE_REQUEST_CODE) {
+            inAppUpdateManager.onActivityResult(requestCode, resultCode)
+        }
     }
 }
