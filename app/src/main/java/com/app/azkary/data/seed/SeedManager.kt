@@ -8,6 +8,7 @@ import com.app.azkary.data.local.entities.AzkarTextEntity
 import com.app.azkary.data.local.entities.CategoryEntity
 import com.app.azkary.data.local.entities.CategoryItemCrossRefEntity
 import com.app.azkary.data.local.entities.CategoryTextEntity
+import com.app.azkary.data.model.AzkarSource
 import com.app.azkary.data.model.CategoryType
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
@@ -26,22 +27,25 @@ class SeedManager @Inject constructor(
 
     suspend fun seedIfNeeded(context: Context) {
         try {
-            val jsonString =
-                context.assets.open("seed_azkar.json").bufferedReader().use { it.readText() }
+            val manifestJsonString = context.assets
+                .open("seed/manifest.json")
+                .bufferedReader()
+                .use { it.readText() }
 
-            val seedPack = jsonConfig.decodeFromString<SeedPack>(jsonString)
+            val manifest = jsonConfig.decodeFromString<SeedManifest>(manifestJsonString)
             val currentDbVersion = database.getDbVersion()
-            
-            // Check if database is empty
+
             val categoryCount = database.categoryDao().getActiveCategoriesOrdered().first().size
             val isDbEmpty = categoryCount == 0
-            
-            println("DEBUG: SeedManager - Current DB version: $currentDbVersion, Seed schema version: ${seedPack.schemaVersion}")
+
+            println("DEBUG: SeedManager - Current DB version: $currentDbVersion, Seed schema version: ${manifest.schemaVersion}")
             println("DEBUG: SeedManager - Category count: $categoryCount, Database empty: $isDbEmpty")
-             
-            if (currentDbVersion < seedPack.schemaVersion || isDbEmpty) {
-                println("DEBUG: SeedManager - Starting seed import")
-                importSeedPack(seedPack)
+
+            if (currentDbVersion < manifest.schemaVersion || isDbEmpty) {
+                println("DEBUG: SeedManager - Starting seed import from split files")
+                val categories = loadCategories(context, manifest)
+                val items = loadAndMergeItems(context, manifest)
+                importSeedData(categories, items)
                 println("DEBUG: SeedManager - Seed import completed")
             } else {
                 println("DEBUG: SeedManager - Skipping seed import - DB version is up to date and has data")
@@ -52,8 +56,114 @@ class SeedManager @Inject constructor(
         }
     }
 
+    private suspend fun loadCategories(context: Context, manifest: SeedManifest): List<SeedCategory> {
+        val categoriesJsonString = context.assets
+            .open("seed/${manifest.categoriesFile}")
+            .bufferedReader()
+            .use { it.readText() }
 
-    private suspend fun importSeedPack(seedPack: SeedPack) {
+        return jsonConfig.decodeFromString<SeedCategoriesFile>(categoriesJsonString).categories
+    }
+
+    private suspend fun loadAndMergeItems(context: Context, manifest: SeedManifest): Map<String, SeedItem> {
+        val mergedItems = mutableMapOf<String, MutableSeedItem>()
+        val arItems = mutableMapOf<String, SeedItemLocalized>()
+        val enItems = mutableMapOf<String, SeedItemLocalized>()
+
+        manifest.itemsFiles.forEach { (langCode, filePath) ->
+            val jsonString = context.assets
+                .open("seed/$filePath")
+                .bufferedReader()
+                .use { it.readText() }
+
+            val itemsFile = jsonConfig.decodeFromString<SeedItemsFile>(jsonString)
+
+            require(itemsFile.language == langCode) {
+                "Language mismatch: file claims ${itemsFile.language}, expected $langCode"
+            }
+
+            itemsFile.items.forEach { item ->
+                when (langCode) {
+                    "ar" -> arItems[item.itemId] = item
+                    "en" -> enItems[item.itemId] = item
+                }
+            }
+        }
+
+        val allItemIds = arItems.keys + enItems.keys
+
+        allItemIds.forEach { itemId ->
+            val arItem = arItems[itemId]
+            val enItem = enItems[itemId]
+
+            if (arItem == null && enItem != null) {
+                println("DEBUG: SeedManager - Warning: Item $itemId exists in EN but not AR, skipping")
+                return@forEach
+            }
+
+            val baseItem = arItem ?: enItem!!
+
+            val existingItem = mergedItems[itemId]
+            if (existingItem != null && existingItem.requiredRepeats != baseItem.requiredRepeats) {
+                throw IllegalStateException(
+                    "requiredRepeats mismatch for $itemId: AR has ${arItem?.requiredRepeats}, EN has ${enItem?.requiredRepeats}"
+                )
+            }
+
+            val texts = mutableMapOf<String, SeedItemText>()
+
+            arItem?.let {
+                texts["ar"] = SeedItemText(
+                    title = it.title,
+                    text = it.text,
+                    translation = it.translation,
+                    referenceText = it.referenceText
+                )
+            }
+
+            if (enItem != null) {
+                texts["en"] = SeedItemText(
+                    title = enItem.title,
+                    text = enItem.text,
+                    translation = enItem.translation,
+                    referenceText = enItem.referenceText
+                )
+            } else if (arItem != null) {
+                println("DEBUG: SeedManager - Warning: Item $itemId missing EN translation, using AR as fallback")
+                texts["en"] = SeedItemText(
+                    title = arItem.title,
+                    text = arItem.text,
+                    translation = arItem.translation,
+                    referenceText = arItem.referenceText
+                )
+            }
+
+            mergedItems[itemId] = MutableSeedItem(
+                itemId = itemId,
+                requiredRepeats = baseItem.requiredRepeats,
+                source = arItem?.source ?: enItem?.source ?: AzkarSource.SEEDED,
+                texts = texts
+            )
+        }
+
+        return mergedItems.mapValues { (_, mutableItem) ->
+            SeedItem(
+                itemId = mutableItem.itemId,
+                requiredRepeats = mutableItem.requiredRepeats,
+                source = mutableItem.source,
+                texts = mutableItem.texts
+            )
+        }
+    }
+
+    private data class MutableSeedItem(
+        val itemId: String,
+        val requiredRepeats: Int,
+        val source: AzkarSource,
+        val texts: Map<String, SeedItemText>
+    )
+
+    private suspend fun importSeedData(categories: List<SeedCategory>, items: Map<String, SeedItem>) {
         database.withTransaction {
             val categoryDao = database.categoryDao()
             val categoryTextDao = database.categoryTextDao()
@@ -61,10 +171,7 @@ class SeedManager @Inject constructor(
             val textDao = database.azkarTextDao()
             val crossRefDao = database.categoryItemDao()
 
-            // 1. Insert all items first
-            val availableItemIds = mutableSetOf<String>()
-            val itemMap = mutableMapOf<String, SeedItem>()  // Map itemId -> SeedItem
-            seedPack.items.forEach { seedItem ->
+            items.values.forEach { seedItem ->
                 itemDao.upsertItems(
                     listOf(
                         AzkarItemEntity(
@@ -86,12 +193,9 @@ class SeedManager @Inject constructor(
                     )
                 }
                 textDao.upsertTexts(itemTexts)
-                itemMap[seedItem.itemId] = seedItem
-                availableItemIds.add(seedItem.itemId)
             }
 
-            // 2. Insert all categories
-            seedPack.categories.forEach { seedCat ->
+            categories.forEach { seedCat ->
                 categoryDao.insertCategory(
                     CategoryEntity(
                         categoryId = seedCat.categoryId,
@@ -109,11 +213,9 @@ class SeedManager @Inject constructor(
                 }
                 categoryTextDao.upsertCategoryTexts(categoryTexts)
 
-                // 3. Link items to categories via crossrefs
-                // ONLY if the item was defined in the 'items' array to avoid FK constraint failure
                 seedCat.items.forEachIndexed { index, ref ->
-                    if (availableItemIds.contains(ref.itemId)) {
-                        val seedItem = itemMap[ref.itemId]!!
+                    val seedItem = items[ref.itemId]
+                    if (seedItem != null) {
                         crossRefDao.insertCrossRef(
                             CategoryItemCrossRefEntity(
                                 categoryId = seedCat.categoryId,
