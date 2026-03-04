@@ -382,4 +382,174 @@ class ArabicNormalizerTest {
         // Assert
         assertEquals("", result)
     }
+
+    // ==================== normalizeForSearch Tests ====================
+
+    @Test
+    fun `normalizeForSearch removes diacritics and lowercases`() {
+        // Arrange
+        val input = "بِسْمِ اللَّهِ"
+
+        // Act
+        val result = ArabicNormalizer.normalizeForSearch(input)
+
+        // Assert
+        assertEquals("بسم الله", result)
+    }
+
+    @Test
+    fun `normalizeForSearch handles null input`() {
+        // Act
+        val result = ArabicNormalizer.normalizeForSearch(null)
+
+        // Assert
+        assertEquals("", result)
+    }
+
+    @Test
+    fun `normalizeForSearch lowercases English text`() {
+        // Arrange
+        val input = "HELLO World"
+
+        // Act
+        val result = ArabicNormalizer.normalizeForSearch(input)
+
+        // Assert
+        assertEquals("hello world", result)
+    }
+
+    @Test
+    fun `normalizeForSearch normalizes whitespace`() {
+        // Arrange
+        val input = "hello   \t\n  world"
+
+        // Act
+        val result = ArabicNormalizer.normalizeForSearch(input)
+
+        // Assert
+        assertEquals("hello world", result)
+    }
+
+    @Test
+    fun `normalizeForSearch trims whitespace`() {
+        // Arrange
+        val input = "  hello world  "
+
+        // Act
+        val result = ArabicNormalizer.normalizeForSearch(input)
+
+        // Assert
+        assertEquals("hello world", result)
+    }
+
+    // ==================== fuzzyMatch Tests ====================
+
+    @Test
+    fun `fuzzyMatch returns false for null text`() {
+        // Act
+        val result = ArabicNormalizer.fuzzyMatch("test", null)
+
+        // Assert
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun `fuzzyMatch returns false for blank text`() {
+        // Act
+        val result = ArabicNormalizer.fuzzyMatch("test", "   ")
+
+        // Assert
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun `fuzzyMatch returns true for blank query`() {
+        // Act
+        val result = ArabicNormalizer.fuzzyMatch("", "some text")
+
+        // Assert
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `fuzzyMatch matches exact substring`() {
+        // Act
+        val result = ArabicNormalizer.fuzzyMatch("الله", "بسم الله الرحمن")
+
+        // Assert
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `fuzzyMatch matches case insensitive`() {
+        // Act
+        val result = ArabicNormalizer.fuzzyMatch("HELLO", "hello world")
+
+        // Assert
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `fuzzyMatch ignores diacritics in both query and text`() {
+        // Act & Assert
+        assertEquals(true, ArabicNormalizer.fuzzyMatch("بسم", "بِسْمِ اللَّهِ"))
+        assertEquals(true, ArabicNormalizer.fuzzyMatch("بِسْمِ", "بسم الله"))
+        assertEquals(true, ArabicNormalizer.fuzzyMatch("الله", "بِسْمِ اللَّهِ"))
+    }
+
+    @Test
+    fun `fuzzyMatch matches similar strings with Levenshtein`() {
+        // Act - "سبحان" vs "سبحن" (missing alef) should match with threshold 0.7
+        val result = ArabicNormalizer.fuzzyMatch("سبحن", "سبحان", 0.6f)
+
+        // Assert
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `fuzzyMatch matches English with typo`() {
+        // Act - "glory" vs "glor" (missing letter)
+        val result = ArabicNormalizer.fuzzyMatch("glor", "glory", 0.7f)
+
+        // Assert
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `fuzzyMatch rejects dissimilar strings below threshold`() {
+        // Act - "abc" vs "xyz" are very different
+        val result = ArabicNormalizer.fuzzyMatch("abc", "xyz", 0.7f)
+
+        // Assert
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun `fuzzyMatch handles Arabic transliteration search`() {
+        // Act - searching "subhan" should match "subhanallah"
+        val result = ArabicNormalizer.fuzzyMatch("subhan", "subhanallah")
+
+        // Assert
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `fuzzyMatch matches partial Arabic word`() {
+        // Act
+        val result = ArabicNormalizer.fuzzyMatch("رحمن", "الرحمن الرحيم")
+
+        // Assert
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `fuzzyMatch with high threshold requires closer match`() {
+        // Act - "glory" vs "gloy" (missing 'r') = 4/5 = 0.8 similarity
+        val resultHigh = ArabicNormalizer.fuzzyMatch("gloy", "glory", 0.9f)
+        val resultLow = ArabicNormalizer.fuzzyMatch("gloy", "glory", 0.7f)
+
+        // Assert
+        assertEquals(false, resultHigh)
+        assertEquals(true, resultLow)
+    }
 }

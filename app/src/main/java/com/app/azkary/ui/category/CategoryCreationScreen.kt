@@ -82,6 +82,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.app.azkary.R
+import com.app.azkary.util.ArabicNormalizer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -128,11 +129,10 @@ fun CategoryCreationScreen(
     val filteredItems = if (uiState.searchQuery.isBlank()) {
         availableItems
     } else {
-        val query = uiState.searchQuery.lowercase()
         availableItems.filter { item ->
-            (item.arabicText?.lowercase()?.contains(query) == true) ||
-            (item.title?.lowercase()?.contains(query) == true) ||
-            (item.transliteration?.lowercase()?.contains(query) == true)
+            ArabicNormalizer.fuzzyMatch(uiState.searchQuery, item.arabicText) ||
+            ArabicNormalizer.fuzzyMatch(uiState.searchQuery, item.title) ||
+            ArabicNormalizer.fuzzyMatch(uiState.searchQuery, item.transliteration)
         }
     }
     
