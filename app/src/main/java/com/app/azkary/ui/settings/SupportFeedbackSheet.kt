@@ -39,6 +39,7 @@ import dagger.hilt.components.SingletonComponent
  *
  * Shows two options:
  * - Email: Opens email client with pre-filled support message
+ * - Discord: Opens Discord invite link
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,6 +96,33 @@ fun SupportFeedbackSheet(
                 subtitle = stringResource(R.string.support_email_address),
                 onClick = {
                     val intent = supportHelper.buildEmailIntent()
+                    val launched = supportHelper.launchIntentSafely(intent)
+                    if (launched) {
+                        onDismiss()
+                    } else {
+                        onShowToast(supportHelper.getString(R.string.support_no_app_found))
+                    }
+                },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            // Discord Option
+            SupportOptionItem(
+                icon = {
+                    Icon(
+                        painter = androidx.compose.ui.res.painterResource(R.drawable.ic_discord),
+                        contentDescription = stringResource(R.string.support_option_discord),
+                        tint = androidx.compose.ui.graphics.Color.Unspecified,
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
+                title = stringResource(R.string.support_option_discord),
+                subtitle = stringResource(R.string.support_discord_description),
+                onClick = {
+                    val intent = supportHelper.buildDiscordIntent()
                     val launched = supportHelper.launchIntentSafely(intent)
                     if (launched) {
                         onDismiss()
