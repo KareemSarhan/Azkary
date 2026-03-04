@@ -4,6 +4,9 @@
   "categoriesFile": "categories.json",
   "itemsFiles": {
     "ar": "items/items_ar.json",
-    "en": "items/items_en.json"
+    "en": "items/items_en.json",
+    "id": "items/items_id.json",
+    "ur": "items/items_ur.json",
+    "tr": "items/items_tr.json"
   }
 }

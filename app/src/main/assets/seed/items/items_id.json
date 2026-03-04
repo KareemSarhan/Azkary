@@ -1,0 +1,29 @@
+{
+  "language": "id",
+  "items": [
+    {
+      "itemId": "itm-ayat-al-kursi-1",
+      "requiredRepeats": 1,
+      "title": "Ayatul Kursi",
+      "text": "Allāhu lā ilāha illā huwa al-ḥayyul-qayyūm... (Qur'an 2:255)",
+      "translation": "Allah! Tidak ada tuhan selain Dia, Yang Mahahidup, Yang terus-menerus mengurus makhluk-Nya... (Qur'an 2:255).",
+      "referenceText": "Abu Huraira meriwayatkan kisah menjaga zakat dan diajarkan membaca Ayatul Kursi sebelum tidur untuk perlindungan; Nabi ﷺ mengonfirmasikannya. Sahih al-Bukhari (5010)."
+    },
+    {
+      "itemId": "itm-subhanallah-wabihamdihi-100",
+      "requiredRepeats": 100,
+      "title": "Tasbih (100x)",
+      "text": "Subḥānallāhi wa biḥamdih.",
+      "translation": "Maha Suci Allah dan segala puji bagi-Nya.",
+      "referenceText": "Diriwayatkan dari Abu Hurairah: Rasulullah ﷺ bersabda: \"Barangsiapa mengucapkan 'Subhan Allah wa bihamdihi' seratus kali sehari, dosa-dosanya akan diampuni meskipun sebanyak buih lautan.\" Sahih al-Bukhari (6405)."
+    },
+    {
+      "itemId": "itm-tahlil-100",
+      "requiredRepeats": 100,
+      "title": "Tahlil (100x)",
+      "text": "Lā ilāha illā Allāhu waḥdahu lā sharīka lah, lahul-mulku wa lahul-ḥamdu, wa huwa ʿalā kulli shayʾin qadīr.",
+      "translation": "Tidak ada tuhan yang berhak disembah selain Allah semata, tanpa sekutu. Milik-Nya kerajaan dan puji-pujian, dan Dia Maha Kuasa atas segala sesuatu.",
+      "referenceText": "Diriwayatkan dari Abu Hurairah: Rasulullah ﷺ bersabda: \"Barangsiapa mengucapkan 'La ilaha illallah wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shai'in qadir' seratus kali sehari, pahalanya seperti memerdekakan sepuluh budak; seratus kebaikan akan ditulis; seratus dosa akan dihapus; dan menjadi perisai dari setan pada hari itu hingga malam. Tidak ada yang lebih baik kecuali yang berbuat lebih banyak.\" Sahih al-Bukhari (6403); Sahih Muslim (2691)."
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "language": "tr",
+  "items": [
+    {
+      "itemId": "itm-ayat-al-kursi-1",
+      "requiredRepeats": 1,
+      "title": "Ayetü'l-Kürsi",
+      "text": "Allāhu lā ilāha illā huwa al-ḥayyul-qayyūm... (Kur'an 2:255)",
+      "translation": "Allah! O'ndan başka ilah yoktur, her zaman diri, her şeyin ayakta durmasını sağlayan... (Kur'an 2:255).",
+      "referenceText": "Ebu Hureyre, zekat koruma hikayesini ve uyumadan önce koruma için Ayetü'l-Kürsi okumayı öğretildiğini anlattı; Peygamber ﷺ bunu doğruladı. Sahih al-Buhari (5010)."
+    },
+    {
+      "itemId": "itm-subhanallah-wabihamdihi-100",
+      "requiredRepeats": 100,
+      "title": "Tesbih (100x)",
+      "text": "Subḥānallāhi wa biḥamdih.",
+      "translation": "Allah'ı tenzih ederim ve O'na hamdederim.",
+      "referenceText": "Ebu Hureyre'den rivayet edildi: Allah'ın Elçisi ﷺ şöyle buyurdu: \"Kim günde yüz kere 'Süphan Allahi ve bihamdihi' derse, deniz köpüğü kadar çok olsa bile günahları bağışlanır.\" Sahih al-Buhari (6405)."
+    },
+    {
+      "itemId": "itm-tahlil-100",
+      "requiredRepeats": 100,
+      "title": "Tehlil (100x)",
+      "text": "Lā ilāha illā Allāhu waḥdahu lā sharīka lah, lahul-mulku wa lahul-ḥamdu, wa huwa ʿalā kulli shayʾin qadīr.",
+      "translation": "Allah'tan başka hiçbir ilah yoktur, O tektir, O'nun ortağı yoktur. Mülk O'nundur, hamd O'nundur ve O her şeye kâdirdir.",
+      "referenceText": "Ebu Hureyre'den rivayet edildi: Allah'ın Elçisi ﷺ şöyle buyurdu: \"Kim günde yüz kere 'La ilahe illallahu vahdehu la şerike leh, lehül mülkü ve lehül hamdü ve hüve ala külli şey'in kadir' derse, on köle azat etme sevabı alır; yüz iyilik yazılır; yüz günah silinir; o gün geceye kadar şeytandan kalkan olur. Daha fazlasını yapandan başkası daha iyi olamaz.\" Sahih al-Buhari (6403); Sahih Muslim (2691)."
+    }
+  ]
+}

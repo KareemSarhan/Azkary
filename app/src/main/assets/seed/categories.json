@@ -12,6 +12,15 @@
         },
         "en": {
           "name": "Morning Azkar"
+        },
+        "id": {
+          "name": "Dzikir Pagi"
+        },
+        "ur": {
+          "name": "صبح کے ذکر"
+        },
+        "tr": {
+          "name": "Sabah Zikirleri"
         }
       },
       "items": [
@@ -104,6 +113,15 @@
         },
         "en": {
           "name": "Evening Azkar"
+        },
+        "id": {
+          "name": "Dzikir Sore"
+        },
+        "ur": {
+          "name": "شام کے ذکر"
+        },
+        "tr": {
+          "name": "Akşam Zikirleri"
         }
       },
       "items": [
@@ -190,6 +208,15 @@
         },
         "en": {
           "name": "Sleep Azkar"
+        },
+        "id": {
+          "name": "Dzikir Tidur"
+        },
+        "ur": {
+          "name": "سونے کے ذکر"
+        },
+        "tr": {
+          "name": "Uyku Zikirleri"
         }
       },
       "items": [
