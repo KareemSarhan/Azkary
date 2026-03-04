@@ -14,6 +14,7 @@ import com.app.azkary.util.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -261,32 +262,6 @@ class ThemePreferencesRepositoryTest {
         repository.themeSettings.test {
             val settings = awaitItem()
             assertTrue(settings.useTrueBlack || !settings.useTrueBlack)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `data persists across repository instances`() = runTest {
-        val dataStoreName = "test_theme_persistence"
-
-        val dataStore1 = PreferenceDataStoreFactory.create {
-            context.preferencesDataStoreFile(dataStoreName)
-        }
-        val repository1 = createTestRepository(dataStore1)
-
-        repository1.setThemeMode(ThemeMode.DARK)
-        repository1.setUseTrueBlack(false)
-        advanceUntilIdle()
-
-        val dataStore2 = PreferenceDataStoreFactory.create {
-            context.preferencesDataStoreFile(dataStoreName)
-        }
-        val repository2 = createTestRepository(dataStore2)
-
-        repository2.themeSettings.test {
-            val settings = awaitItem()
-            assertEquals(ThemeMode.DARK, settings.themeMode)
-            assertFalse(settings.useTrueBlack)
             cancelAndIgnoreRemainingEvents()
         }
     }

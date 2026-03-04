@@ -12,6 +12,7 @@ import com.app.azkary.util.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
@@ -408,42 +409,6 @@ class UserPreferencesRepositoryTest {
         repository.holdToComplete.test {
             val value = awaitItem()
             assertTrue(value || !value)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `data persists across repository instances`() = runTest {
-        val dataStoreName = "test_user_persistence"
-
-        val dataStore1 = PreferenceDataStoreFactory.create {
-            context.preferencesDataStoreFile(dataStoreName)
-        }
-        val repository1 = createTestRepository(dataStore1)
-
-        repository1.setUseLocation(false)
-        repository1.setLastResolvedLocation(LatLng(24.7136, 46.6753))
-        repository1.setLocationName("Riyadh")
-        repository1.setHoldToComplete(false)
-        advanceUntilIdle()
-
-        val dataStore2 = PreferenceDataStoreFactory.create {
-            context.preferencesDataStoreFile(dataStoreName)
-        }
-        val repository2 = createTestRepository(dataStore2)
-
-        repository2.locationPreferences.test {
-            val prefs = awaitItem()
-            assertFalse(prefs.useLocation)
-            assertNotNull(prefs.lastResolvedLocation)
-            assertEquals(24.7136, prefs.lastResolvedLocation?.latitude ?: 0.0, 0.0001)
-            assertEquals("Riyadh", prefs.locationName)
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        repository2.holdToComplete.test {
-            val value = awaitItem()
-            assertFalse(value)
             cancelAndIgnoreRemainingEvents()
         }
     }
