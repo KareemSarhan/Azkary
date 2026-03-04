@@ -132,6 +132,12 @@ class CategoryItemDaoTest : DatabaseTest() {
         )
         azkarItemDao.upsertItems(items)
 
+        val texts = listOf(
+            AzkarTextEntity("item-1", "en", title = "Item 1"),
+            AzkarTextEntity("item-2", "en", title = "Item 2")
+        )
+        azkarTextDao.upsertTexts(texts)
+
         val crossRefs = listOf(
             CategoryItemCrossRefEntity(
                 categoryId = "cat-1",
@@ -145,7 +151,7 @@ class CategoryItemDaoTest : DatabaseTest() {
                 categoryId = "cat-1",
                 itemId = "item-2",
                 sortOrder = 2,
-                isEnabled = false, // Disabled
+                isEnabled = false,
                 requiredRepeats = 1,
                 isInfinite = false
             )
@@ -372,6 +378,13 @@ class CategoryItemDaoTest : DatabaseTest() {
         )
         azkarItemDao.upsertItems(items)
 
+        val texts = listOf(
+            AzkarTextEntity("item-c", "en", title = "Item C"),
+            AzkarTextEntity("item-a", "en", title = "Item A"),
+            AzkarTextEntity("item-b", "en", title = "Item B")
+        )
+        azkarTextDao.upsertTexts(texts)
+
         val crossRefs = listOf(
             CategoryItemCrossRefEntity("cat-1", "item-c", 3, true),
             CategoryItemCrossRefEntity("cat-1", "item-a", 1, true),
@@ -382,7 +395,6 @@ class CategoryItemDaoTest : DatabaseTest() {
         categoryItemDao.getEnabledItemsWithText("cat-1", "en").test {
             val result = awaitItem()
             assertEquals(3, result.size)
-            // Should be ordered by sortOrder: item-a, item-b, item-c
             assertEquals("item-a", result[0].item_itemId)
             assertEquals("item-b", result[1].item_itemId)
             assertEquals("item-c", result[2].item_itemId)
