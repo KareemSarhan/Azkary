@@ -98,6 +98,7 @@ class ReadingViewModelTest {
         // Default mock behaviors - use MutableStateFlow for stateIn compatibility
         every { localeManager.currentLangTagFlow } returns MutableStateFlow("en")
         every { userPreferencesRepository.holdToComplete } returns MutableStateFlow(true)
+        every { userPreferencesRepository.vibrationEnabled } returns MutableStateFlow(true)
         coEvery { islamicDateProvider.getCurrentDate() } returns testDate
         every { 
             repository.observeItemsForCategory(any(), any(), any()) 
@@ -398,5 +399,74 @@ class ReadingViewModelTest {
             assertEquals(null, items[0].transliteration)
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `vibrationEnabled should emit value from user preferences`() = runTest {
+        val vibrationEnabledFlow = MutableStateFlow(true)
+        every { userPreferencesRepository.vibrationEnabled } returns vibrationEnabledFlow
+
+        val newViewModel = ReadingViewModel(
+            repository = repository,
+            localeManager = localeManager,
+            islamicDateProvider = islamicDateProvider,
+            userPreferencesRepository = userPreferencesRepository,
+            context = context,
+            savedStateHandle = savedStateHandle
+        )
+
+        newViewModel.vibrationEnabled.test {
+            assertEquals(true, awaitItem())
+
+            vibrationEnabledFlow.value = false
+            assertEquals(false, awaitItem())
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `vibrationEnabled should have default value true`() = runTest {
+        viewModel.vibrationEnabled.test {
+            assertEquals(true, awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `toggleVibration should call setVibrationEnabled with inverted value when currently enabled`() = runTest {
+        every { userPreferencesRepository.vibrationEnabled } returns MutableStateFlow(true)
+        coEvery { userPreferencesRepository.setVibrationEnabled(any()) } just Runs
+
+        viewModel.toggleVibration()
+        advanceUntilIdle()
+
+        coVerify { userPreferencesRepository.setVibrationEnabled(false) }
+    }
+
+    @Test
+    fun `toggleVibration should call setVibrationEnabled with inverted value when currently disabled`() = runTest {
+        val vibrationEnabledFlow = MutableStateFlow(false)
+        every { userPreferencesRepository.vibrationEnabled } returns vibrationEnabledFlow
+        coEvery { userPreferencesRepository.setVibrationEnabled(any()) } just Runs
+
+        val newViewModel = ReadingViewModel(
+            repository = repository,
+            localeManager = localeManager,
+            islamicDateProvider = islamicDateProvider,
+            userPreferencesRepository = userPreferencesRepository,
+            context = context,
+            savedStateHandle = savedStateHandle
+        )
+
+        newViewModel.vibrationEnabled.test {
+            assertEquals(false, awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        newViewModel.toggleVibration()
+        advanceUntilIdle()
+
+        coVerify { userPreferencesRepository.setVibrationEnabled(true) }
     }
 }
