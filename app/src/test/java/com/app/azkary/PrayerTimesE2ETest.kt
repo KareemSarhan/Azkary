@@ -2,6 +2,8 @@ package com.app.azkary
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.app.azkary.data.local.AzkarDatabase
@@ -17,6 +19,8 @@ import com.app.azkary.data.repository.PrayerTimesRepositoryImpl
 import com.app.azkary.domain.AzkarWindowEngine
 import com.app.azkary.domain.model.AzkarWindow
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -45,7 +49,9 @@ import java.time.ZoneId
 @Config(sdk = [33], manifest = Config.NONE)
 class PrayerTimesE2ETest {
 
-    private lateinit var context: Context
+    private lateinit var realContext: Context
+    private lateinit var mockContext: Context
+    private lateinit var mockConnectivityManager: ConnectivityManager
     private lateinit var database: AzkarDatabase
     private lateinit var prayerMonthDao: PrayerMonthDao
     private lateinit var prayerDayDao: PrayerDayDao
@@ -61,9 +67,18 @@ class PrayerTimesE2ETest {
 
     @Before
     fun setup() {
-        context = ApplicationProvider.getApplicationContext()
+        realContext = ApplicationProvider.getApplicationContext()
         
-        database = Room.inMemoryDatabaseBuilder(context, AzkarDatabase::class.java)
+        // Create mock ConnectivityManager
+        mockConnectivityManager = mockk(relaxed = true)
+        
+        // Create mock context that returns mock ConnectivityManager
+        mockContext = mockk(relaxed = true)
+        every { mockContext.getSystemService(Context.CONNECTIVITY_SERVICE) } returns mockConnectivityManager
+        every { mockContext.applicationContext } returns mockContext
+        
+        // Create in-memory database using real context (needed for Room)
+        database = Room.inMemoryDatabaseBuilder(realContext, AzkarDatabase::class.java)
             .allowMainThreadQueries()
             .build()
         
@@ -84,20 +99,37 @@ class PrayerTimesE2ETest {
         
         windowEngine = AzkarWindowEngine()
         
+        // Use mock context for repository
         repository = PrayerTimesRepositoryImpl(
-            context = context,
+            context = mockContext,
             networkRepository = networkRepository,
             prayerMonthDao = prayerMonthDao,
             prayerDayDao = prayerDayDao,
             windowEngine = windowEngine,
             cacheRefreshInterval = Long.MAX_VALUE // Never auto-refresh for E2E tests
         )
+        
+        // Default: network available
+        setNetworkAvailable(true)
     }
 
     @After
     fun teardown() {
         database.close()
         server.shutdown()
+    }
+
+    private fun setNetworkAvailable(available: Boolean) {
+        if (available) {
+            val mockNetwork = mockk<Network>()
+            val mockCapabilities = mockk<NetworkCapabilities>()
+            
+            every { mockConnectivityManager.activeNetwork } returns mockNetwork
+            every { mockConnectivityManager.getNetworkCapabilities(mockNetwork) } returns mockCapabilities
+            every { mockCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
+        } else {
+            every { mockConnectivityManager.activeNetwork } returns null
+        }
     }
 
     //region User Flow: Initial App Launch

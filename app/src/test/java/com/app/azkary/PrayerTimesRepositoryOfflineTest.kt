@@ -2,6 +2,7 @@ package com.app.azkary
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.Network
 import android.net.NetworkCapabilities
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -18,6 +19,8 @@ import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.data.repository.PrayerTimesRepositoryImpl
 import com.app.azkary.domain.AzkarWindowEngine
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -30,9 +33,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows
 import org.robolectric.annotation.Config
-import org.robolectric.shadows.ShadowNetworkCapabilities
 import retrofit2.Retrofit
 import java.time.Instant
 import java.time.LocalDate
@@ -47,7 +48,9 @@ import java.time.LocalTime
 @Config(sdk = [33], manifest = Config.NONE)
 class PrayerTimesRepositoryOfflineTest {
 
-    private lateinit var context: Context
+    private lateinit var realContext: Context
+    private lateinit var mockContext: Context
+    private lateinit var mockConnectivityManager: ConnectivityManager
     private lateinit var database: AzkarDatabase
     private lateinit var prayerMonthDao: PrayerMonthDao
     private lateinit var prayerDayDao: PrayerDayDao
@@ -55,7 +58,6 @@ class PrayerTimesRepositoryOfflineTest {
     private lateinit var repository: PrayerTimesRepository
     private lateinit var networkRepository: PrayerTimesNetworkRepository
     private lateinit var windowEngine: AzkarWindowEngine
-    private lateinit var connectivityManager: ConnectivityManager
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -65,10 +67,18 @@ class PrayerTimesRepositoryOfflineTest {
 
     @Before
     fun setup() {
-        context = ApplicationProvider.getApplicationContext()
+        realContext = ApplicationProvider.getApplicationContext()
         
-        // Create in-memory database
-        database = Room.inMemoryDatabaseBuilder(context, AzkarDatabase::class.java)
+        // Create mock ConnectivityManager
+        mockConnectivityManager = mockk(relaxed = true)
+        
+        // Create mock context that returns mock ConnectivityManager
+        mockContext = mockk(relaxed = true)
+        every { mockContext.getSystemService(Context.CONNECTIVITY_SERVICE) } returns mockConnectivityManager
+        every { mockContext.applicationContext } returns mockContext
+        
+        // Create in-memory database using real context (needed for Room)
+        database = Room.inMemoryDatabaseBuilder(realContext, AzkarDatabase::class.java)
             .allowMainThreadQueries()
             .build()
         
@@ -90,9 +100,9 @@ class PrayerTimesRepositoryOfflineTest {
         
         windowEngine = AzkarWindowEngine()
         
-        // Create repository with short cache refresh interval for testing
+        // Create repository with mock context
         repository = PrayerTimesRepositoryImpl(
-            context = context,
+            context = mockContext,
             networkRepository = networkRepository,
             prayerMonthDao = prayerMonthDao,
             prayerDayDao = prayerDayDao,
@@ -100,7 +110,8 @@ class PrayerTimesRepositoryOfflineTest {
             cacheRefreshInterval = 1000L // 1 second for testing
         )
         
-        connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        // Default: network available
+        setNetworkAvailable(true)
     }
 
     @After
@@ -117,8 +128,7 @@ class PrayerTimesRepositoryOfflineTest {
         val monthId = insertCachedMonth(2026, 1, Instant.now())
         insertCachedDays(monthId, 2026, 1)
         
-        // Set network available but don't enqueue response
-        setNetworkAvailable(true)
+        // Don't enqueue response - should use cache
         
         // Act: Get prayer times
         val result = repository.getMonthlyPrayerTimes(2026, 1, 24.7136, 46.6753)
@@ -136,9 +146,8 @@ class PrayerTimesRepositoryOfflineTest {
         val monthId = insertCachedMonth(2026, 1, staleTime)
         insertCachedDays(monthId, 2026, 1)
         
-        // Enqueue network response
-        server.enqueue(MockResponse().setResponseCode(200).setBody(validCalendarResponse()))
-        setNetworkAvailable(true)
+        // Enqueue network response with full month data
+        server.enqueue(MockResponse().setResponseCode(200).setBody(validFullMonthResponse()))
         
         // Act
         val result = repository.getMonthlyPrayerTimes(2026, 1, 24.7136, 46.6753)
@@ -157,7 +166,6 @@ class PrayerTimesRepositoryOfflineTest {
         
         // Enqueue network error
         server.enqueue(MockResponse().setResponseCode(500))
-        setNetworkAvailable(true)
         
         // Act
         val result = repository.getMonthlyPrayerTimes(2026, 1, 24.7136, 46.6753)
@@ -245,8 +253,7 @@ class PrayerTimesRepositoryOfflineTest {
         // Don't insert any days - this simulates corruption
         
         // Enqueue network response
-        server.enqueue(MockResponse().setResponseCode(200).setBody(validCalendarResponse()))
-        setNetworkAvailable(true)
+        server.enqueue(MockResponse().setResponseCode(200).setBody(validFullMonthResponse()))
         
         // Act
         val result = repository.getMonthlyPrayerTimes(2026, 1, 24.7136, 46.6753)
@@ -280,8 +287,7 @@ class PrayerTimesRepositoryOfflineTest {
         insertCachedDays(monthId, 2026, 1)
         
         // Enqueue network response
-        server.enqueue(MockResponse().setResponseCode(200).setBody(validCalendarResponse()))
-        setNetworkAvailable(true)
+        server.enqueue(MockResponse().setResponseCode(200).setBody(validFullMonthResponse()))
         
         // Act
         val result = repository.refreshMonth(2026, 1, 24.7136, 46.6753)
@@ -306,9 +312,8 @@ class PrayerTimesRepositoryOfflineTest {
 
     @Test
     fun `caches network response for future use`() = runTest {
-        // Enqueue network response
-        server.enqueue(MockResponse().setResponseCode(200).setBody(validCalendarResponse()))
-        setNetworkAvailable(true)
+        // Enqueue network response with full month data
+        server.enqueue(MockResponse().setResponseCode(200).setBody(validFullMonthResponse()))
         
         // Act: First call fetches from network
         repository.getMonthlyPrayerTimes(2026, 1, 24.7136, 46.6753)
@@ -413,27 +418,15 @@ class PrayerTimesRepositoryOfflineTest {
     //region Helper Methods
 
     private fun setNetworkAvailable(available: Boolean) {
-        val shadowConnectivityManager = Shadows.shadowOf(connectivityManager)
-        
         if (available) {
-            // Create a network info that's connected
-            val networkInfo = android.net.NetworkInfo(
-                android.net.ConnectivityManager.TYPE_WIFI,
-                0, "WIFI", ""
-            )
-            val shadowNetworkInfo = Shadows.shadowOf(networkInfo)
-            shadowNetworkInfo.setConnectionStatus(android.net.NetworkInfo.State.CONNECTED)
-            shadowConnectivityManager.setActiveNetworkInfo(networkInfo)
+            val mockNetwork = mockk<Network>()
+            val mockCapabilities = mockk<NetworkCapabilities>()
             
-            // Also set up network capabilities
-            val networkCapabilities = ShadowNetworkCapabilities.newInstance()
-            Shadows.shadowOf(networkCapabilities).addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-            val activeNetwork = shadowConnectivityManager.activeNetwork
-            if (activeNetwork != null) {
-                shadowConnectivityManager.setNetworkCapabilities(activeNetwork, networkCapabilities)
-            }
+            every { mockConnectivityManager.activeNetwork } returns mockNetwork
+            every { mockConnectivityManager.getNetworkCapabilities(mockNetwork) } returns mockCapabilities
+            every { mockCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
         } else {
-            shadowConnectivityManager.setActiveNetworkInfo(null)
+            every { mockConnectivityManager.activeNetwork } returns null
         }
     }
 
@@ -470,12 +463,11 @@ class PrayerTimesRepositoryOfflineTest {
         prayerDayDao.upsertMonth(monthId, days)
     }
 
-    private fun validCalendarResponse(): String {
-        return """
-        {
-          "code": 200,
-          "status": "OK",
-          "data": [
+    private fun validFullMonthResponse(): String {
+        // Generate a response with 31 days for January
+        val days = (1..31).map { day ->
+            val dayStr = day.toString().padStart(2, '0')
+            """
             {
               "timings": {
                 "Fajr": "05:00",
@@ -491,15 +483,22 @@ class PrayerTimesRepositoryOfflineTest {
               },
               "date": { 
                 "gregorian": { 
-                  "date":"01-01-2026",
-                  "day":"01",
+                  "date":"$dayStr-01-2026",
+                  "day":"$dayStr",
                   "month":{"number":1,"en":"January"},
                   "year":"2026" 
                 } 
               },
               "meta": { "timezone":"Asia/Riyadh" }
             }
-          ]
+            """.trimIndent()
+        }
+        
+        return """
+        {
+          "code": 200,
+          "status": "OK",
+          "data": [${days.joinToString(",")}]
         }
         """.trimIndent()
     }
