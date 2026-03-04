@@ -299,7 +299,9 @@ class PrayerTimesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearOldCache(keepLastMonths: Int) = withContext(Dispatchers.IO) {
-        val cutoffDate = Instant.now().minus(keepLastMonths.toLong(), ChronoUnit.MONTHS)
+        val cutoffDate = Instant.now().atZone(java.time.ZoneId.systemDefault())
+            .minusMonths(keepLastMonths.toLong())
+            .toInstant()
         prayerMonthDao.deleteOldMonths(cutoffDate)
     }
 
