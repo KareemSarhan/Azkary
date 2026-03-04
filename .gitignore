@@ -9,4 +9,10 @@
 .cxx
 local.properties
 *.log
-/.kotlin/sessions/*
+
+# Release artifacts
+/app/release/
+
+# Kotlin
+/.kotlin/
+telemetry-id

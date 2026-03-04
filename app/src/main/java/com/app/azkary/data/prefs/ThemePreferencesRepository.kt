@@ -23,11 +23,11 @@ class ThemePreferencesRepository @Inject constructor(
     private val USE_TRUE_BLACK = booleanPreferencesKey("use_true_black")
 
     val themeSettings: Flow<ThemeSettings> = context.themeDataStore.data.map { preferences ->
-        val themeModeName = preferences[THEME_MODE] ?: ThemeMode.SYSTEM.name
+        val themeModeName = preferences[THEME_MODE] ?: ThemeMode.DARK.name
         val themeMode = try {
             ThemeMode.valueOf(themeModeName)
         } catch (e: IllegalArgumentException) {
-            ThemeMode.SYSTEM
+            ThemeMode.DARK
         }
         ThemeSettings(
             themeMode = themeMode,

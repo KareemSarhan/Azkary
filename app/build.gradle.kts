@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kover)
 }
 
 android {
@@ -14,28 +15,12 @@ android {
         applicationId = "com.app.azkary"
         minSdk = 33
         targetSdk = 36
-        versionCode = 10
-        versionName = "3.0.0"
+        versionCode = 18
+        versionName = "3.0.8"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.app.azkary.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
-        }
-    }
-
-    signingConfigs {
-        create("release") {
-            val keystorePath = System.getenv("KEYSTORE_PATH") ?: "keystore.jks"
-            val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
-            val keyAlias = System.getenv("KEY_ALIAS")
-            val keyPassword = System.getenv("KEY_PASSWORD")
-
-            if (keystorePassword != null && keyAlias != null && keyPassword != null) {
-                storeFile = file(keystorePath)
-                storePassword = keystorePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
-            }
         }
     }
 
@@ -45,21 +30,21 @@ android {
             isShrinkResources = true
 
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
 
             ndk {
                 debugSymbolLevel = "FULL"
             }
-
-            signingConfig = signingConfigs.getByName("release")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    //noinspection WrongGradleMethod
+
     androidComponents {
         onVariants(selector().all()) { variant ->
             afterEvaluate {
@@ -67,11 +52,9 @@ android {
                 val kspTask = tasks.findByName(kspTaskName) as? TaskProvider<*>
 
                 if (kspTask != null) {
-                    // Ensure kspOutputDir is a DirectoryProperty
                     val kspOutputDir = project.objects.directoryProperty()
                         .fileValue(file("${layout.buildDirectory.get()}/generated/ksp/${variant.name}/kotlin"))
 
-                    // Ensure that kspTask is a TaskProvider<Task>
                     variant.sources.java?.addGeneratedSourceDirectory(
                         kspTask
                     ) { kspOutputDir }
@@ -80,10 +63,10 @@ android {
         }
     }
 
-
     buildFeatures {
         compose = true
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -117,7 +100,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.play.services.location)
 
-    // Networking
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
@@ -128,6 +110,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
     testImplementation(libs.mockwebserver)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
