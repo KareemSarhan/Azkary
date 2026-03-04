@@ -155,8 +155,8 @@ class IslamicDateProviderTest {
     @Test
     fun `getCurrentDate handles negative coordinates`() = runTest {
         // Arrange - Test with coordinates in Western/Southern hemisphere
-        val mockLocation = mockk<com.app.azkary.data.prefs.LocationPreferences.Location> {
-            every { latitude } returns -33.8688  // Sydney
+        val mockLocation = mockk<LatLng> {
+            every { latitude } returns -33.8688
             every { longitude } returns 151.2093
         }
         val locationPrefs = mockk<com.app.azkary.data.prefs.LocationPreferences> {
@@ -179,7 +179,7 @@ class IslamicDateProviderTest {
     @Test
     fun `getCurrentDate handles edge case coordinates`() = runTest {
         // Arrange - Test with coordinates near 0,0
-        val mockLocation = mockk<com.app.azkary.data.prefs.LocationPreferences.Location> {
+        val mockLocation = mockk<LatLng> {
             every { latitude } returns 0.0
             every { longitude } returns 0.0
         }

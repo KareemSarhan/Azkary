@@ -121,7 +121,7 @@ class PrayerTimeParserTest {
     }
 
     @Test
-    fun `parseTimeString extracts only HH:mm from longer strings`() {
+    fun `parseTimeString extracts only hour and minute from longer strings`() {
         // Act
         val result = PrayerTimeParser.parseTimeString("06:06 (UTC) with extra text")
 

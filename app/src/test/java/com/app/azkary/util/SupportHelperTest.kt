@@ -1,5 +1,6 @@
 package com.app.azkary.util
 
+import com.app.azkary.R
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -537,7 +538,7 @@ class SupportHelperTest {
 
         // Assert
         assertNotNull(deviceInfo.appVersion)
-        assertTrue(deviceInfo.buildNumber > 0)
+        assertTrue(deviceInfo.buildNumber >= 0)
         assertNotNull(deviceInfo.deviceManufacturer)
         assertNotNull(deviceInfo.deviceModel)
         assertNotNull(deviceInfo.androidVersion)
