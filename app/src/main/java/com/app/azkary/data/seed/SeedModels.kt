@@ -4,36 +4,23 @@ import com.app.azkary.data.model.AzkarSource
 import com.app.azkary.data.model.SystemCategoryKey
 import kotlinx.serialization.Serializable
 
-/**
- * Manifest file that lists all seed files to load.
- * This enables splitting large seed data into multiple organized files.
- */
 @Serializable
 data class SeedManifest(
     val schemaVersion: Int,
     val generatedAt: String,
-    val files: List<String>
+    val categoriesFile: String = "categories.json",
+    val itemsFiles: Map<String, String>
 )
 
-/**
- * Individual seed file containing categories and items for a specific category type.
- */
 @Serializable
-data class SeedFile(
-    val categoryType: String,
-    val categories: List<SeedCategory>,
-    val items: List<SeedItem>
+data class SeedCategoriesFile(
+    val categories: List<SeedCategory>
 )
 
-/**
- * Legacy SeedPack for backward compatibility with single-file seeds.
- */
 @Serializable
-data class SeedPack(
-    val schemaVersion: Int,
-    val generatedAt: String,
-    val categories: List<SeedCategory>,
-    val items: List<SeedItem>
+data class SeedItemsFile(
+    val language: String,
+    val items: List<SeedItemLocalized>
 )
 
 @Serializable
@@ -59,6 +46,17 @@ data class SeedCategoryItemRef(
 )
 
 @Serializable
+data class SeedItemLocalized(
+    val itemId: String,
+    val requiredRepeats: Int,
+    val source: AzkarSource = AzkarSource.SEEDED,
+    val title: String? = null,
+    val text: String? = null,
+    val translation: String? = null,
+    val referenceText: String? = null
+)
+
+@Serializable
 data class SeedItem(
     val itemId: String,
     val requiredRepeats: Int,
@@ -69,7 +67,7 @@ data class SeedItem(
 @Serializable
 data class SeedItemText(
     val title: String? = null,
-    val text: String? = null, // Used for Arabic or Transliteration
+    val text: String? = null,
     val translation: String? = null,
     val referenceText: String? = null
 )

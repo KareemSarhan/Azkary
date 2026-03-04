@@ -1,9 +1,0 @@
-{
-  "schemaVersion": 8,
-  "generatedAt": "2026-02-16T00:00:00Z",
-  "files": [
-    "seed_morning.json",
-    "seed_evening.json",
-    "seed_sleep.json"
-  ]
-}
