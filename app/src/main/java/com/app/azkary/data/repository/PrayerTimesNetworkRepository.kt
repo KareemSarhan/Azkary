@@ -51,7 +51,14 @@ class PrayerTimesNetworkRepositoryImpl @Inject constructor(
                 handleHttpError(response)
             }
             
-            response.body() ?: throw ApiException("Empty response body")
+            val body = response.body() ?: throw ApiException("Empty response body")
+            
+            // Validate that data is not empty for monthly calendar
+            if (body.data.isEmpty()) {
+                throw ApiException("API returned empty data array")
+            }
+            
+            body
         } catch (e: Exception) {
             if (e is ApiException || e is RateLimitException) {
                 throw e

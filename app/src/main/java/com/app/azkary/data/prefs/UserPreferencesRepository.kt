@@ -36,6 +36,7 @@ class UserPreferencesRepository @Inject constructor(
     private val LAST_RESOLVED_LOCATION = stringPreferencesKey("last_resolved_location")
     private val LOCATION_NAME = stringPreferencesKey("location_name")
     private val HOLD_TO_COMPLETE = booleanPreferencesKey("hold_to_complete")
+    private val VIBRATION_ENABLED = booleanPreferencesKey("vibration_enabled")
     private val SHOW_WEEKLY_PROGRESS = booleanPreferencesKey("show_weekly_progress")
 
     val locationPreferences: Flow<LocationPreferences> = context.dataStore.data.map { preferences ->
@@ -50,6 +51,10 @@ class UserPreferencesRepository @Inject constructor(
 
     val holdToComplete: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[HOLD_TO_COMPLETE] ?: true
+    }
+
+    val vibrationEnabled: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[VIBRATION_ENABLED] ?: true
     }
 
     val showWeeklyProgress: Flow<Boolean> = context.dataStore.data.map { preferences ->
@@ -82,6 +87,10 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setHoldToComplete(enabled: Boolean) {
         context.dataStore.edit { it[HOLD_TO_COMPLETE] = enabled }
+    }
+
+    suspend fun setVibrationEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[VIBRATION_ENABLED] = enabled }
     }
 
     suspend fun setShowWeeklyProgress(enabled: Boolean) {

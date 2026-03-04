@@ -56,6 +56,10 @@
     <string name="settings_show_weekly_progress">Show weekly progress</string>
     <string name="settings_show_weekly_progress_description">Display weekly progress card on summary screen</string>
 
+    <!-- Vibration Toggle -->
+    <string name="vibration_enabled_content_description">Vibration enabled - tap to disable</string>
+    <string name="vibration_disabled_content_description">Vibration disabled - tap to enable</string>
+
     <!-- Long Press Feedback -->
     <string name="category_marked_complete">Category marked complete</string>
     <string name="category_marked_incomplete">Category marked incomplete</string>
@@ -82,6 +86,8 @@
     <string name="support_install_id_label">Install ID:</string>
     <string name="support_write_message_instruction">======= Please write your message below (any language) =======</string>
     <string name="support_no_app_found">No app found to complete this action.</string>
+    <string name="support_option_discord">Discord</string>
+    <string name="support_discord_description">Join our community server</string>
 
     <!-- Category Creation Screen -->
     <string name="category_create_title">Create Category</string>

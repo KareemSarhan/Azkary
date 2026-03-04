@@ -13,16 +13,13 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import java.util.Locale
 
-/**
- * Unit tests for BidiHelper
- *
- * Notes:
- * - This is JVM unit-test style mocking of Android classes. If you hit issues with
- *   android.* final classes on the JVM, run these as Robolectric tests OR refactor
- *   BidiHelper to accept Locale directly (recommended).
- */
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [34])
 class BidiHelperTest {
 
     private lateinit var mockContext: Context
