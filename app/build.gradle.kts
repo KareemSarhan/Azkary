@@ -77,7 +77,9 @@ dependencies {
     ksp(libs.room.compiler)
 
     implementation(libs.hilt.android)
+    implementation(libs.hilt.work)
     ksp(libs.hilt.compiler)
+    ksp(libs.hilt.work.compiler)
 
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
@@ -86,6 +88,9 @@ dependencies {
     implementation(libs.app.update.ktx)
     implementation(libs.play.review)
     implementation(libs.play.review.ktx)
+    testImplementation(libs.app.update)
+    testImplementation(libs.app.update.ktx)
+    implementation(libs.workmanager)
 
     implementation(libs.retrofit)
     implementation(libs.okhttp)
