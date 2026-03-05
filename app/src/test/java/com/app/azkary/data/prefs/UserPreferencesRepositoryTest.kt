@@ -481,6 +481,228 @@ class UserPreferencesRepositoryTest {
         assertTrue(job.isCancelled)
     }
 
+    @Test
+    fun `vibrationEnabled emits default value when no preference set`() = runTest {
+        val testDataStore = PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("test_vibration_defaults")
+        }
+
+        val repository = createTestRepository(testDataStore)
+
+        repository.vibrationEnabled.test {
+            val value = awaitItem()
+            assertEquals(true, value)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `setVibrationEnabled persists false value`() = runTest {
+        val repository = createTestRepository()
+
+        repository.setVibrationEnabled(false)
+        advanceUntilIdle()
+
+        repository.vibrationEnabled.test {
+            val value = awaitItem()
+            assertFalse(value)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `setVibrationEnabled persists true value`() = runTest {
+        val repository = createTestRepository()
+
+        repository.setVibrationEnabled(false)
+        advanceUntilIdle()
+
+        repository.setVibrationEnabled(true)
+        advanceUntilIdle()
+
+        repository.vibrationEnabled.test {
+            val value = awaitItem()
+            assertTrue(value)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `vibrationEnabled emits updates when value changes`() = runTest {
+        val repository = createTestRepository()
+
+        repository.vibrationEnabled.test {
+            val initial = awaitItem()
+            assertTrue(initial)
+
+            repository.setVibrationEnabled(false)
+            advanceUntilIdle()
+
+            val updated = awaitItem()
+            assertFalse(updated)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `showWeeklyProgress emits default value when no preference set`() = runTest {
+        val testDataStore = PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("test_weekly_progress_defaults")
+        }
+
+        val repository = createTestRepository(testDataStore)
+
+        repository.showWeeklyProgress.test {
+            val value = awaitItem()
+            assertEquals(true, value)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `setShowWeeklyProgress persists false value`() = runTest {
+        val repository = createTestRepository()
+
+        repository.setShowWeeklyProgress(false)
+        advanceUntilIdle()
+
+        repository.showWeeklyProgress.test {
+            val value = awaitItem()
+            assertFalse(value)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `setShowWeeklyProgress persists true value`() = runTest {
+        val repository = createTestRepository()
+
+        repository.setShowWeeklyProgress(false)
+        advanceUntilIdle()
+
+        repository.setShowWeeklyProgress(true)
+        advanceUntilIdle()
+
+        repository.showWeeklyProgress.test {
+            val value = awaitItem()
+            assertTrue(value)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `showWeeklyProgress emits updates when value changes`() = runTest {
+        val repository = createTestRepository()
+
+        repository.showWeeklyProgress.test {
+            val initial = awaitItem()
+            assertTrue(initial)
+
+            repository.setShowWeeklyProgress(false)
+            advanceUntilIdle()
+
+            val updated = awaitItem()
+            assertFalse(updated)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `vibrationEnabled toggles correctly`() = runTest {
+        val repository = createTestRepository()
+
+        repository.vibrationEnabled.test {
+            assertTrue(awaitItem())
+
+            repository.setVibrationEnabled(false)
+            advanceUntilIdle()
+            assertFalse(awaitItem())
+
+            repository.setVibrationEnabled(true)
+            advanceUntilIdle()
+            assertTrue(awaitItem())
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `showWeeklyProgress toggles correctly`() = runTest {
+        val repository = createTestRepository()
+
+        repository.showWeeklyProgress.test {
+            assertTrue(awaitItem())
+
+            repository.setShowWeeklyProgress(false)
+            advanceUntilIdle()
+            assertFalse(awaitItem())
+
+            repository.setShowWeeklyProgress(true)
+            advanceUntilIdle()
+            assertTrue(awaitItem())
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `all boolean preferences default to true`() = runTest {
+        val testDataStore = PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("test_all_defaults")
+        }
+
+        val repository = createTestRepository(testDataStore)
+
+        repository.holdToComplete.test {
+            assertTrue(awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        repository.vibrationEnabled.test {
+            assertTrue(awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        repository.showWeeklyProgress.test {
+            assertTrue(awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `multiple preferences can be set independently`() = runTest {
+        val repository = createTestRepository()
+
+        repository.setUseLocation(false)
+        repository.setHoldToComplete(false)
+        repository.setVibrationEnabled(false)
+        repository.setShowWeeklyProgress(false)
+        advanceUntilIdle()
+
+        repository.locationPreferences.test {
+            val locPrefs = awaitItem()
+            assertFalse(locPrefs.useLocation)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        repository.holdToComplete.test {
+            assertFalse(awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        repository.vibrationEnabled.test {
+            assertFalse(awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        repository.showWeeklyProgress.test {
+            assertFalse(awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     private fun createTestRepository(
         dataStore: DataStore<Preferences> = testDataStore
     ): TestUserPreferencesRepository {
@@ -495,6 +717,8 @@ class UserPreferencesRepositoryTest {
         private val LAST_RESOLVED_LOCATION = stringPreferencesKey("last_resolved_location")
         private val LOCATION_NAME = stringPreferencesKey("location_name")
         private val HOLD_TO_COMPLETE = booleanPreferencesKey("hold_to_complete")
+        private val VIBRATION_ENABLED = booleanPreferencesKey("vibration_enabled")
+        private val SHOW_WEEKLY_PROGRESS = booleanPreferencesKey("show_weekly_progress")
 
         val locationPreferences: Flow<LocationPreferences> = dataStore.data.map { preferences ->
             LocationPreferences(
@@ -508,6 +732,14 @@ class UserPreferencesRepositoryTest {
 
         val holdToComplete: Flow<Boolean> = dataStore.data.map { preferences ->
             preferences[HOLD_TO_COMPLETE] ?: true
+        }
+
+        val vibrationEnabled: Flow<Boolean> = dataStore.data.map { preferences ->
+            preferences[VIBRATION_ENABLED] ?: true
+        }
+
+        val showWeeklyProgress: Flow<Boolean> = dataStore.data.map { preferences ->
+            preferences[SHOW_WEEKLY_PROGRESS] ?: true
         }
 
         suspend fun setUseLocation(enabled: Boolean) {
@@ -536,6 +768,14 @@ class UserPreferencesRepositoryTest {
 
         suspend fun setHoldToComplete(enabled: Boolean) {
             dataStore.edit { it[HOLD_TO_COMPLETE] = enabled }
+        }
+
+        suspend fun setVibrationEnabled(enabled: Boolean) {
+            dataStore.edit { it[VIBRATION_ENABLED] = enabled }
+        }
+
+        suspend fun setShowWeeklyProgress(enabled: Boolean) {
+            dataStore.edit { it[SHOW_WEEKLY_PROGRESS] = enabled }
         }
     }
 }
