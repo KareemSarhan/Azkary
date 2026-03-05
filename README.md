@@ -99,9 +99,11 @@ Create personalized collections:
 <td align="center">Home</td>
 <td align="center">Reading</td>
 <td align="center">Settings</td>
-<td align="center">Categories</td>
+<td align="center">Category Creation*</td>
 </tr>
 </table>
+
+> *\*Category Creation screenshot is a placeholder and will be updated soon.*
 
 ## Quick Start
 
