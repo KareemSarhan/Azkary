@@ -10,20 +10,18 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppRatingManager @Inject constructor(
+class PlayAppRatingManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val preferencesRepository: UserPreferencesRepository
-) {
+) : AppRatingManager {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    suspend fun shouldShowRatingPrompt(): Boolean {
+    override suspend fun shouldShowRatingPrompt(): Boolean {
         return try {
             val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
             preferencesRepository.shouldShowRatingPrompt(versionName)
@@ -32,7 +30,7 @@ class AppRatingManager @Inject constructor(
         }
     }
 
-    fun requestReview(activity: Activity, onComplete: () -> Unit = {}) {
+    override fun requestReview(activity: Activity, onComplete: () -> Unit) {
         val reviewManager = ReviewManagerFactory.create(activity)
         val request = reviewManager.requestReviewFlow()
         
@@ -52,7 +50,7 @@ class AppRatingManager @Inject constructor(
         }
     }
 
-    fun requestManualReview(activity: Activity, onComplete: () -> Unit = {}) {
+    override fun requestManualReview(activity: Activity, onComplete: () -> Unit) {
         requestReview(activity, onComplete)
     }
 

@@ -24,6 +24,18 @@ android {
         }
     }
 
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("play") {
+            dimension = "distribution"
+            applicationIdSuffix = ""
+        }
+        create("fdroid") {
+            dimension = "distribution"
+            applicationIdSuffix = ".fdroid"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -82,13 +94,12 @@ dependencies {
 
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.play.services.location)
-    implementation(libs.app.update)
-    implementation(libs.app.update.ktx)
-    implementation(libs.play.review)
-    implementation(libs.play.review.ktx)
-    testImplementation(libs.app.update)
-    testImplementation(libs.app.update.ktx)
+
+    "playImplementation"(libs.play.services.location)
+    "playImplementation"(libs.app.update)
+    "playImplementation"(libs.app.update.ktx)
+    "playImplementation"(libs.play.review)
+    "playImplementation"(libs.play.review.ktx)
     implementation(libs.workmanager)
 
     implementation(libs.retrofit)
@@ -105,8 +116,6 @@ dependencies {
     testImplementation(libs.mockwebserver)
     testImplementation(libs.room.testing)
     testImplementation(libs.datastore.preferences.core)
-    testImplementation(libs.app.update)
-    testImplementation(libs.app.update.ktx)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
