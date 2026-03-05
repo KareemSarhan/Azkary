@@ -20,14 +20,12 @@ class AzkarNotificationManager @Inject constructor(
 
     companion object {
         const val CHANNEL_ID_MORNING = "azkar_morning_channel"
-        const val CHANNEL_ID_EVENING = "azkar_evening_channel"
         const val CHANNEL_ID_NIGHT = "azkar_night_channel"
         const val CHANNEL_ID_SLEEP = "azkar_sleep_channel"
 
         const val NOTIFICATION_ID_MORNING = 1001
-        const val NOTIFICATION_ID_EVENING = 1002
-        const val NOTIFICATION_ID_NIGHT = 1003
-        const val NOTIFICATION_ID_SLEEP = 1004
+        const val NOTIFICATION_ID_NIGHT = 1002
+        const val NOTIFICATION_ID_SLEEP = 1003
     }
 
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -47,16 +45,9 @@ class AzkarNotificationManager @Inject constructor(
                     description = context.getString(R.string.notification_channel_morning_desc)
                 },
                 NotificationChannel(
-                    CHANNEL_ID_EVENING,
-                    context.getString(R.string.notification_channel_evening),
-                    NotificationManager.IMPORTANCE_HIGH
-                ).apply {
-                    description = context.getString(R.string.notification_channel_evening_desc)
-                },
-                NotificationChannel(
                     CHANNEL_ID_NIGHT,
                     context.getString(R.string.notification_channel_night),
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_HIGH
                 ).apply {
                     description = context.getString(R.string.notification_channel_night_desc)
                 },
@@ -81,16 +72,6 @@ class AzkarNotificationManager @Inject constructor(
             notificationId = NOTIFICATION_ID_MORNING
         )
         notificationManager.notify(NOTIFICATION_ID_MORNING, notification)
-    }
-
-    fun showEveningNotification() {
-        val notification = buildNotification(
-            channelId = CHANNEL_ID_EVENING,
-            title = context.getString(R.string.notification_evening_title),
-            content = context.getString(R.string.notification_evening_content),
-            notificationId = NOTIFICATION_ID_EVENING
-        )
-        notificationManager.notify(NOTIFICATION_ID_EVENING, notification)
     }
 
     fun showNightNotification() {

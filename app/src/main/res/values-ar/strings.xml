@@ -181,36 +181,28 @@
 
     <!-- Notification Settings -->
     <string name="settings_section_notifications">الإشعارات</string>
-    <string name="settings_notifications_enable">تفعيل الإشعارات</string>
     <string name="settings_morning_azkar">أذكار الصباح</string>
     <string name="settings_morning_azkar_desc">ذكرني بعد الفجر</string>
-    <string name="settings_evening_azkar">أذكار المساء</string>
-    <string name="settings_evening_azkar_desc">ذكرني بعد العصر</string>
-    <string name="settings_night_azkar">أذكار الليل</string>
-    <string name="settings_night_azkar_desc">ذكرني بعد العشاء</string>
+    <string name="settings_night_azkar">أذكار المساء</string>
+    <string name="settings_night_azkar_desc">ذكرني بعد العصر</string>
     <string name="settings_sleep_azkar">أذكار النوم</string>
-    <string name="settings_sleep_azkar_desc">ذكرني قبل النوم</string>
-    <string name="settings_reminder_offset">تذكير بعد: %d دقيقة</string>
+    <string name="settings_sleep_azkar_desc">ذكرني بعد العشاء</string>
 
     <!-- Notification Channels -->
     <string name="notification_channel_morning">أذكار الصباح</string>
     <string name="notification_channel_morning_desc">تذكيرات لأذكار الصباح بعد الفجر</string>
-    <string name="notification_channel_evening">أذكار المساء</string>
-    <string name="notification_channel_evening_desc">تذكيرات لأذكار المساء بعد العصر</string>
-    <string name="notification_channel_night">أذكار الليل</string>
-    <string name="notification_channel_night_desc">تذكيرات لأذكار الليل بعد العشاء</string>
+    <string name="notification_channel_night">أذكار المساء</string>
+    <string name="notification_channel_night_desc">تذكيرات لأذكار المساء بعد العصر</string>
     <string name="notification_channel_sleep">أذكار النوم</string>
-    <string name="notification_channel_sleep_desc">تذكيرات لأذكار النوم قبل النوم</string>
+    <string name="notification_channel_sleep_desc">تذكيرات لأذكار النوم بعد العشاء</string>
 
     <!-- Notification Content -->
     <string name="notification_morning_title">☀️ أذكار الصباح</string>
     <string name="notification_morning_content">حان وقت أذكار الصباح. ابدأ يومك بذكر الله.</string>
-    <string name="notification_evening_title">🌅 أذكار المساء</string>
-    <string name="notification_evening_content">حان وقت أذكار المساء. احم نفسك قبل حلول الليل.</string>
-    <string name="notification_night_title">🌙 أذكار الليل</string>
-    <string name="notification_night_content">حان وقت أذكار الليل. أنهِ يومك بالشكر.</string>
-    <string name="notification_sleep_title">😴 أذكار النوم</string>
-    <string name="notification_sleep_content">حان وقت أذكار النوم. نم بحماية وسلام.</string>
+    <string name="notification_night_title">🌅 أذكار المساء</string>
+    <string name="notification_night_content">حان وقت أذكار المساء. احم نفسك قبل حلول الليل.</string>
+    <string name="notification_sleep_title">🌙 أذكار النوم</string>
+    <string name="notification_sleep_content">حان وقت أذكار النوم. أنهِ يومك بالشكر والسلام.</string>
 
     <!-- Notification Permission -->
     <string name="notification_permission_required">إذن الإشعارات مطلوب</string>

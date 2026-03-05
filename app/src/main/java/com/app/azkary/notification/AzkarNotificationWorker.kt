@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.app.azkary.data.model.SystemCategoryKey
 import com.app.azkary.data.prefs.UserPreferencesRepository
-import com.app.azkary.domain.model.AzkarWindow
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
@@ -20,31 +20,31 @@ class AzkarNotificationWorker @AssistedInject constructor(
 
     companion object {
         const val WORK_TAG = "azkar_notification_worker"
-        const val KEY_WINDOW_TYPE = "window_type"
+        const val KEY_CATEGORY_KEY = "category_key"
     }
 
     override suspend fun doWork(): Result {
-        val windowType = inputData.getString(KEY_WINDOW_TYPE) ?: return Result.failure()
+        val categoryKeyName = inputData.getString(KEY_CATEGORY_KEY) ?: return Result.failure()
+        val categoryKey = try {
+            SystemCategoryKey.valueOf(categoryKeyName)
+        } catch (e: IllegalArgumentException) {
+            return Result.failure()
+        }
 
         val notificationPrefs = userPreferencesRepository.notificationPreferences.first()
 
-        when (windowType) {
-            AzkarWindow.MORNING.name -> {
+        when (categoryKey) {
+            SystemCategoryKey.MORNING -> {
                 if (notificationPrefs.morningAzkarEnabled) {
                     notificationManager.showMorningNotification()
                 }
             }
-            AzkarWindow.NIGHT.name -> {
-                if (notificationPrefs.eveningAzkarEnabled) {
-                    notificationManager.showEveningNotification()
-                }
-            }
-            "NIGHT_AZKAR" -> {
+            SystemCategoryKey.NIGHT -> {
                 if (notificationPrefs.nightAzkarEnabled) {
                     notificationManager.showNightNotification()
                 }
             }
-            AzkarWindow.SLEEP.name -> {
+            SystemCategoryKey.SLEEP -> {
                 if (notificationPrefs.sleepAzkarEnabled) {
                     notificationManager.showSleepNotification()
                 }

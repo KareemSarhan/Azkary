@@ -7,8 +7,8 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.app.azkary.data.model.SystemCategoryKey
 import com.app.azkary.data.prefs.NotificationPreferences
-import com.app.azkary.domain.model.AzkarWindow
 import com.app.azkary.domain.model.DayPrayerTimes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Duration
@@ -27,97 +27,72 @@ class AzkarNotificationScheduler @Inject constructor(
     private val workManager = WorkManager.getInstance(context)
 
     companion object {
-        const val WORK_NAME_MORNING = "morning_azkar_notification"
-        const val WORK_NAME_EVENING = "evening_azkar_notification"
-        const val WORK_NAME_NIGHT = "night_azkar_notification"
-        const val WORK_NAME_SLEEP = "sleep_azkar_notification"
+        const val REMINDER_MINUTES = 30L
+
+        private const val WORK_NAME_MORNING = "morning_azkar_notification"
+        private const val WORK_NAME_NIGHT = "night_azkar_notification"
+        private const val WORK_NAME_SLEEP = "sleep_azkar_notification"
     }
 
-    /**
-     * Schedules all azkar notifications based on prayer times and user preferences
-     */
     fun scheduleNotifications(
         todayTimes: DayPrayerTimes,
         tomorrowTimes: DayPrayerTimes? = null,
         preferences: NotificationPreferences
     ) {
-        // Cancel existing notifications first
         cancelAllNotifications()
 
         val now = Instant.now()
         val zoneId = todayTimes.timezone
 
-        // Schedule morning azkar (at Fajr time + reminder offset)
         if (preferences.morningAzkarEnabled) {
             val morningTime = LocalDateTime.of(todayTimes.date, todayTimes.fajr)
                 .atZone(zoneId)
                 .toInstant()
-                .plus(Duration.ofMinutes(preferences.morningReminderMinutes.toLong()))
+                .plus(Duration.ofMinutes(REMINDER_MINUTES))
 
             if (morningTime.isAfter(now)) {
                 scheduleNotification(
                     workName = WORK_NAME_MORNING,
-                    windowType = AzkarWindow.MORNING.name,
+                    categoryKey = SystemCategoryKey.MORNING,
                     triggerTime = morningTime
                 )
             }
         }
 
-        // Schedule evening azkar (at Asr time + reminder offset)
-        if (preferences.eveningAzkarEnabled) {
-            val eveningTime = LocalDateTime.of(todayTimes.date, todayTimes.asr)
-                .atZone(zoneId)
-                .toInstant()
-                .plus(Duration.ofMinutes(preferences.eveningReminderMinutes.toLong()))
-
-            if (eveningTime.isAfter(now)) {
-                scheduleNotification(
-                    workName = WORK_NAME_EVENING,
-                    windowType = AzkarWindow.NIGHT.name,
-                    triggerTime = eveningTime
-                )
-            }
-        }
-
-        // Schedule night azkar (at Isha time + reminder offset)
         if (preferences.nightAzkarEnabled) {
-            val nightTime = LocalDateTime.of(todayTimes.date, todayTimes.isha)
+            val nightTime = LocalDateTime.of(todayTimes.date, todayTimes.asr)
                 .atZone(zoneId)
                 .toInstant()
-                .plus(Duration.ofMinutes(preferences.nightReminderMinutes.toLong()))
+                .plus(Duration.ofMinutes(REMINDER_MINUTES))
 
             if (nightTime.isAfter(now)) {
                 scheduleNotification(
                     workName = WORK_NAME_NIGHT,
-                    windowType = "NIGHT_AZKAR",
+                    categoryKey = SystemCategoryKey.NIGHT,
                     triggerTime = nightTime
                 )
             }
         }
 
-        // Schedule sleep azkar (at Isha time + 1 hour)
         if (preferences.sleepAzkarEnabled) {
             val sleepTime = LocalDateTime.of(todayTimes.date, todayTimes.isha)
                 .atZone(zoneId)
                 .toInstant()
-                .plus(Duration.ofHours(1))
+                .plus(Duration.ofMinutes(REMINDER_MINUTES))
 
             if (sleepTime.isAfter(now)) {
                 scheduleNotification(
                     workName = WORK_NAME_SLEEP,
-                    windowType = AzkarWindow.SLEEP.name,
+                    categoryKey = SystemCategoryKey.SLEEP,
                     triggerTime = sleepTime
                 )
             }
         }
     }
 
-    /**
-     * Schedules a single notification using WorkManager
-     */
     private fun scheduleNotification(
         workName: String,
-        windowType: String,
+        categoryKey: SystemCategoryKey,
         triggerTime: Instant
     ) {
         val delay = Duration.between(Instant.now(), triggerTime)
@@ -129,7 +104,7 @@ class AzkarNotificationScheduler @Inject constructor(
         val workRequest = OneTimeWorkRequestBuilder<AzkarNotificationWorker>()
             .setInitialDelay(delay.toMillis(), TimeUnit.MILLISECONDS)
             .setConstraints(constraints)
-            .setInputData(workDataOf(AzkarNotificationWorker.KEY_WINDOW_TYPE to windowType))
+            .setInputData(workDataOf(AzkarNotificationWorker.KEY_CATEGORY_KEY to categoryKey.name))
             .addTag(AzkarNotificationWorker.WORK_TAG)
             .build()
 
@@ -140,19 +115,12 @@ class AzkarNotificationScheduler @Inject constructor(
         )
     }
 
-    /**
-     * Cancels all scheduled azkar notifications
-     */
     fun cancelAllNotifications() {
         workManager.cancelUniqueWork(WORK_NAME_MORNING)
-        workManager.cancelUniqueWork(WORK_NAME_EVENING)
         workManager.cancelUniqueWork(WORK_NAME_NIGHT)
         workManager.cancelUniqueWork(WORK_NAME_SLEEP)
     }
 
-    /**
-     * Cancels and reschedules all notifications with new prayer times
-     */
     fun rescheduleNotifications(
         todayTimes: DayPrayerTimes,
         tomorrowTimes: DayPrayerTimes? = null,
