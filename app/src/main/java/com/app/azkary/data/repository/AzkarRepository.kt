@@ -168,8 +168,8 @@ class AzkarRepository @Inject constructor(
         )
     }
 
-    fun getWeightedProgress(categoryId: String, date: String, langTag: String): Flow<Float> {
-        return categoryItemDao.getEnabledItemsWithText(categoryId, langTag).flatMapLatest { projections ->
+    fun getWeightedProgress(categoryId: String, date: String, @Suppress("UNUSED_PARAMETER") langTag: String): Flow<Float> {
+        return categoryItemDao.getWeightsForCategory(categoryId).flatMapLatest { projections ->
             if (projections.isEmpty()) return@flatMapLatest flowOf(0f)
             
             progressDao.observeProgressForCategoryDate(categoryId, date).map { progressList ->
@@ -179,10 +179,10 @@ class AzkarRepository @Inject constructor(
                 
                 projections.forEach { projection ->
                     if (projection.isInfinite) return@forEach
-                    val weightPerOne = ArabicNormalizer.normalize(projection.text_text).length
+                    val weightPerOne = ArabicNormalizer.normalize(projection.arabicText).length
                     totalWeight += weightPerOne.toLong() * projection.requiredRepeats
                     
-                    val progress = progressMap[projection.item_itemId]
+                    val progress = progressMap[projection.itemId]
                     val doneRepeats = progress?.currentRepeats?.coerceAtMost(projection.requiredRepeats) ?: 0
                     completedWeight += weightPerOne.toLong() * doneRepeats
                 }
@@ -459,6 +459,7 @@ class AzkarRepository @Inject constructor(
                         title = bestText?.title,
                         arabicText = arabicText,
                         transliteration = if (langTag != "ar") bestText?.text else null,
+                        translation = bestText?.translation,
                         requiredRepeats = item.requiredRepeats,
                         source = item.source
                     )

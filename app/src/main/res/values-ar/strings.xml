@@ -56,6 +56,10 @@
     <string name="settings_show_weekly_progress">إظهار التقدم الأسبوعي</string>
     <string name="settings_show_weekly_progress_description">عرض بطاقة التقدم الأسبوعي في شاشة الملخص</string>
 
+    <!-- Vibration Toggle -->
+    <string name="vibration_enabled_content_description">الاهتزاز مفعّل - اضغط للتعطيل</string>
+    <string name="vibration_disabled_content_description">الاهتزاز معطّل - اضغط للتفعيل</string>
+
     <!-- Long Press Feedback -->
     <string name="category_marked_complete">تم وضع علامة اكتمال على الفئة</string>
     <string name="category_marked_incomplete">تم وضع علامة عدم اكتمال على الفئة</string>
@@ -69,7 +73,13 @@
     <!-- Support / Feedback -->
     <string name="settings_support_feedback">الدعم / الملاحظات</string>
     <string name="settings_version">الإصدار %s</string>
+    <string name="settings_rate_us">قيّمنا</string>
+    <string name="settings_rate_subtitle">هل تستمتع بأذكاري؟ قيمنا على متجر بلاي</string>
+    <string name="rate_prompt_title">هل تستمتع بأذكاري؟</string>
+    <string name="rate_prompt_message">ملاحظاتك تساعدنا على التحسين. هل تريد تقييمنا على متجر بلاي؟</string>
     <string name="support_option_email">البريد الإلكتروني</string>
+    <string name="support_option_discord">ديسكورد</string>
+    <string name="support_discord_description">انضم إلى خادمنا</string>
     <string name="support_email_address">azkary@hearo.support</string>
     <string name="support_email_subject">ملاحظات التطبيق / الدعم</string>
     <string name="support_useful_info_label">[معلومات مفيدة]</string>
@@ -164,4 +174,46 @@
     <string name="weekly_progress_day_thursday">الخميس</string>
     <string name="weekly_progress_day_friday">الجمعة</string>
     <string name="weekly_progress_day_saturday">السبت</string>
+
+    <!-- In-App Update -->
+    <string name="update_ready_message">تم تحميل تحديث جديد.</string>
+    <string name="update_restart">إعادة التشغيل</string>
+
+    <!-- Notification Settings -->
+    <string name="settings_section_notifications">الإشعارات</string>
+    <string name="settings_notifications_enable">تفعيل الإشعارات</string>
+    <string name="settings_morning_azkar">أذكار الصباح</string>
+    <string name="settings_morning_azkar_desc">ذكرني بعد الفجر</string>
+    <string name="settings_evening_azkar">أذكار المساء</string>
+    <string name="settings_evening_azkar_desc">ذكرني بعد العصر</string>
+    <string name="settings_night_azkar">أذكار الليل</string>
+    <string name="settings_night_azkar_desc">ذكرني بعد العشاء</string>
+    <string name="settings_sleep_azkar">أذكار النوم</string>
+    <string name="settings_sleep_azkar_desc">ذكرني قبل النوم</string>
+    <string name="settings_reminder_offset">تذكير بعد: %d دقيقة</string>
+
+    <!-- Notification Channels -->
+    <string name="notification_channel_morning">أذكار الصباح</string>
+    <string name="notification_channel_morning_desc">تذكيرات لأذكار الصباح بعد الفجر</string>
+    <string name="notification_channel_evening">أذكار المساء</string>
+    <string name="notification_channel_evening_desc">تذكيرات لأذكار المساء بعد العصر</string>
+    <string name="notification_channel_night">أذكار الليل</string>
+    <string name="notification_channel_night_desc">تذكيرات لأذكار الليل بعد العشاء</string>
+    <string name="notification_channel_sleep">أذكار النوم</string>
+    <string name="notification_channel_sleep_desc">تذكيرات لأذكار النوم قبل النوم</string>
+
+    <!-- Notification Content -->
+    <string name="notification_morning_title">☀️ أذكار الصباح</string>
+    <string name="notification_morning_content">حان وقت أذكار الصباح. ابدأ يومك بذكر الله.</string>
+    <string name="notification_evening_title">🌅 أذكار المساء</string>
+    <string name="notification_evening_content">حان وقت أذكار المساء. احم نفسك قبل حلول الليل.</string>
+    <string name="notification_night_title">🌙 أذكار الليل</string>
+    <string name="notification_night_content">حان وقت أذكار الليل. أنهِ يومك بالشكر.</string>
+    <string name="notification_sleep_title">😴 أذكار النوم</string>
+    <string name="notification_sleep_content">حان وقت أذكار النوم. نم بحماية وسلام.</string>
+
+    <!-- Notification Permission -->
+    <string name="notification_permission_required">إذن الإشعارات مطلوب</string>
+    <string name="notification_permission_rationale">يرجى تفعيل الإشعارات لتلقي تذكيرات الأذكار</string>
+    <string name="notification_permission_denied">الإشعارات معطلة. قم بتفعيلها من الإعدادات لتلقي التذكيرات.</string>
 </resources>

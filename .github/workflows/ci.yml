@@ -14,10 +14,12 @@ jobs:
   build:
     name: Build and Lint
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
@@ -26,7 +28,7 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
 
       - name: Cache Gradle dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
@@ -39,17 +41,17 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assemblePlayDebug
 
       - name: Run Lint
-        run: ./gradlew lintDebug
+        run: ./gradlew lintPlayDebug
 
       - name: Upload Lint Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lint-report
-          path: app/build/reports/lint-results-debug.html
+          path: app/build/reports/lint-results-playDebug.html
 
   # TODO: Fix tests and re-enable
   # test:
@@ -58,7 +60,7 @@ jobs:
   #   
   #   steps:
   #     - name: Checkout code
-  #       uses: actions/checkout@v4
+  #       uses: actions/checkout@v6
   #
   #     - name: Set up JDK ${{ env.JAVA_VERSION }}
   #       uses: actions/setup-java@v4
@@ -67,7 +69,7 @@ jobs:
   #         distribution: ${{ env.JAVA_DISTRIBUTION }}
   #
   #     - name: Cache Gradle dependencies
-  #       uses: actions/cache@v4
+  #       uses: actions/cache@v5
   #       with:
   #         path: |
   #           ~/.gradle/caches
@@ -84,7 +86,7 @@ jobs:
   #
   #     - name: Upload Test Results
   #       if: always()
-  #       uses: actions/upload-artifact@v4
+  #       uses: actions/upload-artifact@v7
   #       with:
   #         name: test-results
   #         path: app/build/reports/tests/

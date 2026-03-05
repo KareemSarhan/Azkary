@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kover)
 }
 
 android {
@@ -12,14 +13,26 @@ android {
 
     defaultConfig {
         applicationId = "com.app.azkary"
-        minSdk = 33
+        minSdk = 24
         targetSdk = 36
-        versionCode = 11
-        versionName = "3.0.1"
+        versionCode = 18
+        versionName = "3.0.8"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.app.azkary.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+    }
+
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("play") {
+            dimension = "distribution"
+            applicationIdSuffix = ""
+        }
+        create("fdroid") {
+            dimension = "distribution"
+            applicationIdSuffix = ".fdroid"
         }
     }
 
@@ -42,24 +55,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    androidComponents {
-        onVariants(selector().all()) { variant ->
-            afterEvaluate {
-                val kspTaskName = "ksp${variant.name.replaceFirstChar { it.uppercase() }}Kotlin"
-                val kspTask = tasks.findByName(kspTaskName) as? TaskProvider<*>
-
-                if (kspTask != null) {
-                    val kspOutputDir = project.objects.directoryProperty()
-                        .fileValue(file("${layout.buildDirectory.get()}/generated/ksp/${variant.name}/kotlin"))
-
-                    variant.sources.java?.addGeneratedSourceDirectory(
-                        kspTask
-                    ) { kspOutputDir }
-                }
-            }
-        }
+        isCoreLibraryDesugaringEnabled = true
     }
 
     buildFeatures {
@@ -97,11 +93,19 @@ dependencies {
     ksp(libs.room.compiler)
 
     implementation(libs.hilt.android)
+    implementation(libs.hilt.work)
     ksp(libs.hilt.compiler)
+    ksp(libs.hilt.work.compiler)
 
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.play.services.location)
+
+    "playImplementation"(libs.play.services.location)
+    "playImplementation"(libs.app.update)
+    "playImplementation"(libs.app.update.ktx)
+    "playImplementation"(libs.play.review)
+    "playImplementation"(libs.play.review.ktx)
+    implementation(libs.workmanager)
 
     implementation(libs.retrofit)
     implementation(libs.okhttp)
@@ -113,11 +117,15 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
     testImplementation(libs.mockwebserver)
+    testImplementation(libs.room.testing)
+    testImplementation(libs.datastore.preferences.core)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    coreLibraryDesugaring(libs.desugaring)
 }

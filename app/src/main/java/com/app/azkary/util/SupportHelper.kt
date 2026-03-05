@@ -29,6 +29,7 @@ class SupportHelper @Inject constructor(
 
     companion object {
         private const val SUPPORT_EMAIL = "azkary@hearo.support"
+        private const val DISCORD_INVITE_URL = "https://discord.gg/2Kb7scp48C"
     }
 
     /**
@@ -53,10 +54,17 @@ class SupportHelper @Inject constructor(
         val currentLocale = localeManager.getCurrentLocale(context)
         val currentTimezone = TimeZone.getDefault().id
 
+        // Use longVersionCode on API 28+, fallback to versionCode for older versions
+        val buildNumber = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.longVersionCode.toInt()
+        } else {
+            @Suppress("DEPRECATION")
+            packageInfo.versionCode
+        }
+
         return DeviceInfo(
             appVersion = packageInfo.versionName ?: "unknown",
-            buildNumber =
-                packageInfo.longVersionCode.toInt(),
+            buildNumber = buildNumber,
             deviceManufacturer = Build.MANUFACTURER,
             deviceModel = Build.MODEL,
             androidVersion = Build.VERSION.RELEASE,
@@ -131,6 +139,16 @@ class SupportHelper @Inject constructor(
             // Instruction line
             append(context.getString(R.string.support_write_message_instruction))
             append("\n\n")
+        }
+    }
+
+    /**
+     * Build Discord invite intent
+     * Opens Discord app if installed, otherwise opens browser
+     */
+    fun buildDiscordIntent(): Intent {
+        return Intent(Intent.ACTION_VIEW, DISCORD_INVITE_URL.toUri()).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }
 

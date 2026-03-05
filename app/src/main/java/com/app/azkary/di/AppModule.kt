@@ -12,12 +12,8 @@ import com.app.azkary.data.local.dao.CategoryTextDao
 import com.app.azkary.data.local.dao.PrayerDayDao
 import com.app.azkary.data.local.dao.PrayerMonthDao
 import com.app.azkary.data.local.dao.ProgressDao
-import com.app.azkary.data.repository.LocationRepository
-import com.app.azkary.data.repository.LocationRepositoryImpl
 import com.app.azkary.util.LocaleManager
 import com.app.azkary.util.SupportHelper
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,10 +26,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
-    @Binds
-    @Singleton
-    abstract fun bindLocationRepository(impl: LocationRepositoryImpl): LocationRepository
-
     @Binds
     @Singleton
     abstract fun bindGeocodingRepository(impl: com.app.azkary.data.repository.GeocodingRepositoryImpl): com.app.azkary.data.repository.GeocodingRepository
@@ -90,12 +82,6 @@ object AppModule {
         ignoreUnknownKeys = true
         coerceInputValues = true
         isLenient = true
-    }
-
-    @Provides
-    @Singleton
-    fun provideFusedLocationProviderClient(@ApplicationContext context: Context): FusedLocationProviderClient {
-        return LocationServices.getFusedLocationProviderClient(context)
     }
 
     @Provides

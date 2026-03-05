@@ -1,9 +1,11 @@
 package com.app.azkary
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +14,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.navigation.compose.NavHost
@@ -20,11 +25,14 @@ import androidx.navigation.compose.rememberNavController
 import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
 import com.app.azkary.data.repository.AzkarRepository
+import com.app.azkary.domain.AppRatingManager
 import com.app.azkary.ui.reading.ReadingScreen
 import com.app.azkary.ui.settings.SettingsScreen
 import com.app.azkary.ui.summary.SummaryScreen
 import com.app.azkary.ui.theme.AzkaryTheme
 import com.app.azkary.ui.category.CategoryCreationScreen
+import com.app.azkary.util.AppUpdateManager
+import com.app.azkary.util.AppUpdateManagerFactory
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -37,16 +45,24 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var themePreferencesRepository: ThemePreferencesRepository
     @Inject lateinit var localeManager: LocaleManager
+    @Inject lateinit var appRatingManager: AppRatingManager
+    @Inject lateinit var appUpdateManagerFactory: AppUpdateManagerFactory
+
+    private lateinit var appUpdateManager: AppUpdateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        enableEdgeToEdge()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            enableEdgeToEdge()
+        }
+
+        appUpdateManager = appUpdateManagerFactory.create(this, this)
+        appUpdateManager.checkForUpdate()
 
         setContent {
             val themeSettings by themePreferencesRepository.themeSettings.collectAsState(initial = ThemeSettings())
 
-            // Get layout direction from LocaleManager based on system locale
             val layoutDirection = if (localeManager.isCurrentLocaleRtl(this)) {
                 ComposeLayoutDirection.Rtl
             } else {
@@ -55,15 +71,27 @@ class MainActivity : ComponentActivity() {
 
             CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
                 AzkaryTheme(themeSettings = themeSettings) {
+                    var showRatingPrompt by remember { mutableStateOf(false) }
+                    
                     LaunchedEffect(Unit) {
                         repository.seedDatabase()
+                        showRatingPrompt = appRatingManager.shouldShowRatingPrompt()
+                    }
+
+                    if (showRatingPrompt) {
+                        LaunchedEffect(Unit) {
+                            appRatingManager.requestReview(this@MainActivity) {
+                                showRatingPrompt = false
+                            }
+                        }
                     }
 
                     val navController = rememberNavController()
 
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
-                        containerColor = MaterialTheme.colorScheme.background
+                        containerColor = MaterialTheme.colorScheme.background,
+                        contentWindowInsets = WindowInsets(0, 0, 0, 0)
                     ) { paddingValues ->
                         NavHost(
                             navController = navController,
@@ -117,13 +145,25 @@ class MainActivity : ComponentActivity() {
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
-        // Notify LocaleManager that configuration (and potentially locale) has changed
         localeManager.notifyLocaleChanged()
     }
 
     override fun onResume() {
         super.onResume()
-        // Check for language changes when returning from settings
+        appUpdateManager.onResume()
         localeManager.notifyLocaleChanged()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        appUpdateManager.onDestroy()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AppUpdateManager.UPDATE_REQUEST_CODE) {
+            appUpdateManager.onActivityResult(requestCode, resultCode)
+        }
     }
 }

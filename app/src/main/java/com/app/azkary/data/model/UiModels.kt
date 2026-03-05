@@ -28,6 +28,7 @@ data class AvailableZikr(
     val title: String?,
     val arabicText: String?,
     val transliteration: String?,
+    val translation: String?,
     val requiredRepeats: Int,
     val source: AzkarSource
 )
