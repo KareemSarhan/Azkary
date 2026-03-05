@@ -6,7 +6,7 @@ import com.app.azkary.data.local.dao.AzkarTextDao
 import com.app.azkary.data.local.dao.CategoryDao
 import com.app.azkary.data.local.dao.CategoryItemDao
 import com.app.azkary.data.local.dao.CategoryTextDao
-import com.app.azkary.data.local.dao.ItemWithTextProjection
+import com.app.azkary.data.local.dao.ItemWeightProjection
 import com.app.azkary.data.local.dao.ProgressDao
 import com.app.azkary.data.local.entities.AzkarItemEntity
 import com.app.azkary.data.local.entities.AzkarTextEntity
@@ -110,7 +110,7 @@ class AzkarRepositoryTest {
 
         every { categoryDao.getActiveCategoriesOrdered() } returns flowOf(categories)
         every { categoryTextDao.getCategoryTexts("cat1") } returns flowOf(categoryTexts)
-        every { categoryItemDao.getEnabledItemsWithText("cat1", "en") } returns flowOf(emptyList())
+        every { categoryItemDao.getWeightsForCategory("cat1") } returns flowOf(emptyList())
         every { progressDao.observeProgressForCategoryDate("cat1", "2026-01-01") } returns flowOf(emptyList())
 
         // When
@@ -142,7 +142,7 @@ class AzkarRepositoryTest {
 
         every { categoryDao.getActiveCategoriesOrdered() } returns flowOf(categories)
         every { categoryTextDao.getCategoryTexts("cat1") } returns flowOf(categoryTexts)
-        every { categoryItemDao.getEnabledItemsWithText("cat1", "de") } returns flowOf(emptyList())
+        every { categoryItemDao.getWeightsForCategory("cat1") } returns flowOf(emptyList())
         every { progressDao.observeProgressForCategoryDate("cat1", "2026-01-01") } returns flowOf(emptyList())
 
         // When - request German but only French is available
@@ -595,94 +595,58 @@ class AzkarRepositoryTest {
 
     @Test
     fun `getWeightedProgress calculates progress based on text length`() = runTest {
-        // Given
         val projections = listOf(
-            ItemWithTextProjection(
-                item_itemId = "item1",
-                item_source = AzkarSource.SEEDED,
-                item_createdAt = 0,
-                item_updatedAt = 0,
-                text_itemId = "item1",
-                text_langTag = "ar",
-                text_title = null,
-                text_text = "سبحان", // 5 chars
-                text_translation = null,
-                text_referenceText = null,
-                sortOrder = 0,
+            ItemWeightProjection(
+                itemId = "item1",
                 requiredRepeats = 3,
-                isInfinite = false
+                isInfinite = false,
+                arabicText = "سبحان"
             )
         )
         val progress = listOf(
-            UserProgressEntity("cat1", "item1", "2026-01-01", 1, false) // 1 out of 3 done
+            UserProgressEntity("cat1", "item1", "2026-01-01", 1, false)
         )
 
-        every { categoryItemDao.getEnabledItemsWithText("cat1", "ar") } returns flowOf(projections)
+        every { categoryItemDao.getWeightsForCategory("cat1") } returns flowOf(projections)
         every { progressDao.observeProgressForCategoryDate("cat1", "2026-01-01") } returns flowOf(progress)
 
-        // When
         val result = repository.getWeightedProgress("cat1", "2026-01-01", "ar").first()
 
-        // Then - 1/3 = 33.3%
         assertEquals(0.33f, result, 0.01f)
     }
 
     @Test
     fun `getWeightedProgress returns 0 when no items`() = runTest {
-        // Given
-        every { categoryItemDao.getEnabledItemsWithText("cat1", "en") } returns flowOf(emptyList())
+        every { categoryItemDao.getWeightsForCategory("cat1") } returns flowOf(emptyList())
 
-        // When
         val result = repository.getWeightedProgress("cat1", "2026-01-01", "en").first()
 
-        // Then
         assertEquals(0f, result, 0.01f)
     }
 
     @Test
     fun `getWeightedProgress skips infinite items`() = runTest {
-        // Given
         val projections = listOf(
-            ItemWithTextProjection(
-                item_itemId = "item1",
-                item_source = AzkarSource.SEEDED,
-                item_createdAt = 0,
-                item_updatedAt = 0,
-                text_itemId = "item1",
-                text_langTag = "ar",
-                text_title = null,
-                text_text = "text",
-                text_translation = null,
-                text_referenceText = null,
-                sortOrder = 0,
+            ItemWeightProjection(
+                itemId = "item1",
                 requiredRepeats = 0,
-                isInfinite = true
+                isInfinite = true,
+                arabicText = "text"
             ),
-            ItemWithTextProjection(
-                item_itemId = "item2",
-                item_source = AzkarSource.SEEDED,
-                item_createdAt = 0,
-                item_updatedAt = 0,
-                text_itemId = "item2",
-                text_langTag = "ar",
-                text_title = null,
-                text_text = "text",
-                text_translation = null,
-                text_referenceText = null,
-                sortOrder = 1,
+            ItemWeightProjection(
+                itemId = "item2",
                 requiredRepeats = 2,
-                isInfinite = false
+                isInfinite = false,
+                arabicText = "text"
             )
         )
         val progress = emptyList<UserProgressEntity>()
 
-        every { categoryItemDao.getEnabledItemsWithText("cat1", "ar") } returns flowOf(projections)
+        every { categoryItemDao.getWeightsForCategory("cat1") } returns flowOf(projections)
         every { progressDao.observeProgressForCategoryDate("cat1", "2026-01-01") } returns flowOf(progress)
 
-        // When
         val result = repository.getWeightedProgress("cat1", "2026-01-01", "ar").first()
 
-        // Then - infinite item skipped, 0/2 for finite = 0%
         assertEquals(0f, result, 0.01f)
     }
 }
