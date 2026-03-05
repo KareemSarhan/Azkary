@@ -74,15 +74,15 @@ class PlayUpdateManagerWrapperImpl(private val activity: ComponentActivity) : Pl
     }
 }
 
-class InAppUpdateManager(
+class PlayAppUpdateManager(
     private val activity: ComponentActivity,
     private val lifecycleOwner: LifecycleOwner,
     private val playUpdateManager: PlayUpdateManagerWrapper = PlayUpdateManagerWrapperImpl(activity)
-) {
+) : AppUpdateManager {
     private var listener: InstallStateUpdatedListener? = null
     private var updateType: Int = AppUpdateType.FLEXIBLE
 
-    fun checkForUpdate() {
+    override fun checkForUpdate() {
         if (!lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
             return
         }
@@ -122,14 +122,14 @@ class InAppUpdateManager(
         listener?.let { playUpdateManager.registerListener(it) }
 
         playUpdateManager.startUpdateFlowForResult(
-            UPDATE_REQUEST_CODE,
+            AppUpdateManager.UPDATE_REQUEST_CODE,
             AppUpdateType.FLEXIBLE
         )
     }
 
     private fun startImmediateUpdate() {
         playUpdateManager.startUpdateFlowForResult(
-            UPDATE_REQUEST_CODE,
+            AppUpdateManager.UPDATE_REQUEST_CODE,
             AppUpdateType.IMMEDIATE
         )
     }
@@ -145,20 +145,20 @@ class InAppUpdateManager(
         }.show()
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int) {
-        if (requestCode == UPDATE_REQUEST_CODE && resultCode != Activity.RESULT_OK) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int) {
+        if (requestCode == AppUpdateManager.UPDATE_REQUEST_CODE && resultCode != Activity.RESULT_OK) {
             Log.w(TAG, "Update flow failed. Result code: $resultCode")
         }
     }
 
-    fun onResume() {
+    override fun onResume() {
         playUpdateManager.getAppUpdateInfo(
             onSuccess = { info ->
                 if (info.installStatus == InstallStatus.DOWNLOADED) {
                     showUpdateReadySnackbar()
                 } else if (info.updateAvailability == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
                     playUpdateManager.startUpdateFlowForResult(
-                        UPDATE_REQUEST_CODE,
+                        AppUpdateManager.UPDATE_REQUEST_CODE,
                         updateType
                     )
                 }
@@ -169,13 +169,12 @@ class InAppUpdateManager(
         )
     }
 
-    fun onDestroy() {
+    override fun onDestroy() {
         listener?.let { playUpdateManager.unregisterListener(it) }
         listener = null
     }
 
     companion object {
-        private const val TAG = "InAppUpdateManager"
-        const val UPDATE_REQUEST_CODE = 1001
+        private const val TAG = "PlayAppUpdateManager"
     }
 }
