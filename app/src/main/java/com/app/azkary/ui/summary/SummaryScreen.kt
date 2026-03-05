@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -287,18 +288,18 @@ fun CategoryItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .combinedClickable(
-                onClick = {
-                    if (isEditMode && category.type == com.app.azkary.data.model.CategoryType.USER) {
-                        onEdit()
-                    } else {
-                        onClick()
-                    }
-                },
-                onLongClick = {
-                    if (holdToComplete && !isEditMode) {
-                        onHoldComplete()
-                    }
+            .then(
+                if (isEditMode && category.type == com.app.azkary.data.model.CategoryType.DEFAULT) {
+                    Modifier
+                } else {
+                    Modifier.combinedClickable(
+                        onClick = {
+                            if (isEditMode) onEdit() else onClick()
+                        },
+                        onLongClick = {
+                            if (!isEditMode && holdToComplete) onHoldComplete()
+                        }
+                    )
                 }
             )
     ) {
@@ -336,20 +337,12 @@ fun CategoryItem(
                         }
                     }
                     com.app.azkary.data.model.CategoryType.DEFAULT -> {
-                        Row {
-                            IconButton(
-                                onClick = onMoveUp,
-                                enabled = index > 0
-                            ) {
-                                Icon(Icons.Default.KeyboardArrowUp, contentDescription = null)
-                            }
-                            IconButton(
-                                onClick = onMoveDown,
-                                enabled = index < totalCount - 1
-                            ) {
-                                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null)
-                            }
-                        }
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = "System category - read only",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
                 }
             } else {
