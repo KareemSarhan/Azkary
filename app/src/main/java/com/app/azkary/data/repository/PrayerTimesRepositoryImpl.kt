@@ -31,7 +31,7 @@ import javax.inject.Singleton
 
 @Singleton
 class PrayerTimesRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val networkRepository: PrayerTimesNetworkRepository,
     private val prayerMonthDao: PrayerMonthDao,
     private val prayerDayDao: PrayerDayDao,

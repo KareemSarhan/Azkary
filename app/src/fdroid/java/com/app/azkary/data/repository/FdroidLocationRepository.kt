@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FdroidLocationRepository @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : LocationRepository {
 
     private val locationManager: LocationManager by lazy {

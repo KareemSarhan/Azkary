@@ -55,7 +55,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.app.azkary.R
 import com.app.azkary.util.BidiHelper
 import kotlinx.coroutines.delay
@@ -153,7 +153,7 @@ fun ReadingScreen(
             Column(modifier = Modifier.background(colors.surface)) {
 
                 CenterAlignedTopAppBar(
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = colors.surface,
                         titleContentColor = colors.onSurface,
                         navigationIconContentColor = colors.onSurface,

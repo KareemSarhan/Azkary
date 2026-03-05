@@ -42,7 +42,7 @@ class SummaryViewModel @Inject constructor(
     private val prayerTimesRepository: PrayerTimesRepository,
     private val islamicDateProvider: IslamicDateProvider,
     private val localeManager: LocaleManager,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     val categories: Flow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
