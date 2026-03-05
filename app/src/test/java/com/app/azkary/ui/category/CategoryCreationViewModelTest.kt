@@ -51,6 +51,7 @@ class CategoryCreationViewModelTest {
             title = "Morning Zikr",
             arabicText = "السلام عليكم",
             transliteration = "As-salamu alaykum",
+            translation = "Peace be upon you",
             requiredRepeats = 3,
             source = AzkarSource.SEEDED
         ),
@@ -59,6 +60,7 @@ class CategoryCreationViewModelTest {
             title = "Evening Zikr",
             arabicText = "الحمد لله",
             transliteration = "Alhamdulillah",
+            translation = "Praise be to Allah",
             requiredRepeats = 33,
             source = AzkarSource.SEEDED
         ),
@@ -67,6 +69,7 @@ class CategoryCreationViewModelTest {
             title = "Custom Zikr",
             arabicText = "سبحان الله",
             transliteration = "SubhanAllah",
+            translation = "Glory be to Allah",
             requiredRepeats = 100,
             source = AzkarSource.USER
         )
@@ -103,6 +106,7 @@ class CategoryCreationViewModelTest {
             assertFalse(state.isStockCategory)
             assertEquals(0, state.from)
             assertEquals(8, state.to)
+            assertEquals("en", state.currentLangTag)
             cancelAndIgnoreRemainingEvents()
         }
     }
