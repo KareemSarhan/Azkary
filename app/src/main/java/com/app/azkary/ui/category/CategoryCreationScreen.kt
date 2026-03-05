@@ -275,7 +275,18 @@ fun CategoryCreationScreen(
             }
             
              item {
-                SectionHeader(text = stringResource(R.string.category_choose_zikr))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionHeader(text = stringResource(R.string.category_choose_zikr))
+                    Spacer(modifier = Modifier.weight(1f))
+                    if (!uiState.isStockCategory) {
+                        IconButton(onClick = { showCustomZikrDialog = true }) {
+                            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.category_add_custom_zikr))
+                        }
+                    }
+                }
             }
             
             if (availableItems.isEmpty()) {
@@ -332,20 +343,6 @@ items(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
-                }
-            }
-            
-            if (!uiState.isStockCategory) {
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { showCustomZikrDialog = true },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(R.string.category_add_custom_zikr))
                     }
                 }
             }
