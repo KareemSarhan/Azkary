@@ -13,14 +13,14 @@ AutoName: Azkary
 Summary: Islamic remembrance app with prayer times and progress tracking
 Description: |-
     A beautiful, privacy-focused Islamic remembrance (Azkar) app that helps Muslims
-    maintain their daily dhikr routine with prayer times and intelligent progress tracking.
+    maintain their daily zikr routine with prayer times and intelligent progress tracking.
 
     <b>Key Features:</b>
     * Three Azkar Categories: Morning (Fajr-Asr), Evening (Asr-Isha), and Sleep (Isha-Fajr)
     * Authentic Content: Each dhikr includes Arabic text, transliteration, translation, and hadith references
     * Prayer Times: Automatic calculation based on your location with offline support
     * Progress Tracking: Visual indicators and daily completion statistics
-    * Custom Categories: Create and organize your own dhikr collections
+    * Custom Categories: Create and organize your own zikr collections
     * Beautiful UI: Material Design 3 with dark mode and OLED support
     * Multi-Language: Full English and Arabic interface support
 
