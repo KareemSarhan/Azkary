@@ -493,7 +493,7 @@ class ReadingViewModelTest {
     }
 
     @Test
-    fun `weightedProgress should update when locale changes`() = runTest {
+    fun `weightedProgress should remain stable when locale changes`() = runTest {
         val langFlow = MutableStateFlow("en")
         every { localeManager.currentLangTagFlow } returns langFlow
 
@@ -507,11 +507,12 @@ class ReadingViewModelTest {
         )
 
         newViewModel.weightedProgress.test {
-            awaitItem()
+            val firstValue = awaitItem()
 
             langFlow.value = "ar"
-            awaitItem()
+            val secondValue = awaitItem()
 
+            assertEquals(firstValue, secondValue, 0.0f)
             cancelAndIgnoreRemainingEvents()
         }
     }
