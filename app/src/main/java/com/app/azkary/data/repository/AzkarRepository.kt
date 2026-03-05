@@ -459,6 +459,7 @@ class AzkarRepository @Inject constructor(
                         title = bestText?.title,
                         arabicText = arabicText,
                         transliteration = if (langTag != "ar") bestText?.text else null,
+                        translation = bestText?.translation,
                         requiredRepeats = item.requiredRepeats,
                         source = item.source
                     )
