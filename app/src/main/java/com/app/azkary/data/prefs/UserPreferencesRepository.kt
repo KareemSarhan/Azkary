@@ -30,6 +30,16 @@ data class ReadingPreferences(
     val holdToComplete: Boolean = true
 )
 
+data class NotificationPreferences(
+    val morningAzkarEnabled: Boolean = true,
+    val eveningAzkarEnabled: Boolean = true,
+    val nightAzkarEnabled: Boolean = true,
+    val sleepAzkarEnabled: Boolean = false,
+    val morningReminderMinutes: Int = 15,
+    val eveningReminderMinutes: Int = 15,
+    val nightReminderMinutes: Int = 15
+)
+
 @Singleton
 class UserPreferencesRepository @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -44,6 +54,15 @@ class UserPreferencesRepository @Inject constructor(
     private val APP_OPEN_COUNT = intPreferencesKey("app_open_count")
     private val FIRST_INSTALL_DATE = longPreferencesKey("first_install_date")
     private val LAST_PROMPT_VERSION = stringPreferencesKey("last_prompt_version")
+
+    // Notification preferences keys
+    private val MORNING_AZKAR_ENABLED = booleanPreferencesKey("morning_azkar_enabled")
+    private val EVENING_AZKAR_ENABLED = booleanPreferencesKey("evening_azkar_enabled")
+    private val NIGHT_AZKAR_ENABLED = booleanPreferencesKey("night_azkar_enabled")
+    private val SLEEP_AZKAR_ENABLED = booleanPreferencesKey("sleep_azkar_enabled")
+    private val MORNING_REMINDER_MINUTES = intPreferencesKey("morning_reminder_minutes")
+    private val EVENING_REMINDER_MINUTES = intPreferencesKey("evening_reminder_minutes")
+    private val NIGHT_REMINDER_MINUTES = intPreferencesKey("night_reminder_minutes")
 
     val locationPreferences: Flow<LocationPreferences> = context.dataStore.data.map { preferences ->
         LocationPreferences(
@@ -65,6 +84,18 @@ class UserPreferencesRepository @Inject constructor(
 
     val showWeeklyProgress: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[SHOW_WEEKLY_PROGRESS] ?: true
+    }
+
+    val notificationPreferences: Flow<NotificationPreferences> = context.dataStore.data.map { preferences ->
+        NotificationPreferences(
+            morningAzkarEnabled = preferences[MORNING_AZKAR_ENABLED] ?: true,
+            eveningAzkarEnabled = preferences[EVENING_AZKAR_ENABLED] ?: true,
+            nightAzkarEnabled = preferences[NIGHT_AZKAR_ENABLED] ?: true,
+            sleepAzkarEnabled = preferences[SLEEP_AZKAR_ENABLED] ?: false,
+            morningReminderMinutes = preferences[MORNING_REMINDER_MINUTES] ?: 15,
+            eveningReminderMinutes = preferences[EVENING_REMINDER_MINUTES] ?: 15,
+            nightReminderMinutes = preferences[NIGHT_REMINDER_MINUTES] ?: 15
+        )
     }
 
     suspend fun setUseLocation(enabled: Boolean) {
@@ -145,5 +176,34 @@ class UserPreferencesRepository @Inject constructor(
         return openCount >= 5 && 
                daysSinceInstall >= 3 && 
                lastPrompt != currentVersion
+    }
+
+    // Notification preferences setters
+    suspend fun setMorningAzkarEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[MORNING_AZKAR_ENABLED] = enabled }
+    }
+
+    suspend fun setEveningAzkarEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[EVENING_AZKAR_ENABLED] = enabled }
+    }
+
+    suspend fun setNightAzkarEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[NIGHT_AZKAR_ENABLED] = enabled }
+    }
+
+    suspend fun setSleepAzkarEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[SLEEP_AZKAR_ENABLED] = enabled }
+    }
+
+    suspend fun setMorningReminderMinutes(minutes: Int) {
+        context.dataStore.edit { it[MORNING_REMINDER_MINUTES] = minutes }
+    }
+
+    suspend fun setEveningReminderMinutes(minutes: Int) {
+        context.dataStore.edit { it[EVENING_REMINDER_MINUTES] = minutes }
+    }
+
+    suspend fun setNightReminderMinutes(minutes: Int) {
+        context.dataStore.edit { it[NIGHT_REMINDER_MINUTES] = minutes }
     }
 }

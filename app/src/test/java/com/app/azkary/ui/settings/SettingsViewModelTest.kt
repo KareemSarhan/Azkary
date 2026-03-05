@@ -12,6 +12,7 @@ import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.GeocodingRepository
 import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
+import com.app.azkary.notification.AzkarNotificationScheduler
 import com.app.azkary.domain.model.AzkarSchedule
 import com.app.azkary.domain.model.AzkarWindow
 import com.app.azkary.domain.model.DayPrayerTimes
@@ -55,6 +56,7 @@ class SettingsViewModelTest {
     private lateinit var locationRepository: LocationRepository
     private lateinit var geocodingRepository: GeocodingRepository
     private lateinit var prayerTimesRepository: PrayerTimesRepository
+    private lateinit var notificationScheduler: AzkarNotificationScheduler
     private lateinit var localeManager: LocaleManager
     private lateinit var context: Context
 
@@ -68,6 +70,7 @@ class SettingsViewModelTest {
         locationRepository = mockk(relaxed = true)
         geocodingRepository = mockk(relaxed = true)
         prayerTimesRepository = mockk(relaxed = true)
+        notificationScheduler = mockk(relaxed = true)
         localeManager = mockk(relaxed = true)
         context = mockk(relaxed = true)
 
@@ -84,6 +87,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
         )
@@ -111,6 +115,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
         )
@@ -289,6 +294,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
         )
@@ -320,6 +326,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
         )
@@ -361,6 +368,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
         )
@@ -392,6 +400,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
         )
@@ -427,6 +436,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
         )
@@ -484,6 +494,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
         )
