@@ -1,0 +1,47 @@
+Categories:
+  - Internet
+  - Sports & Health
+License: GPL-3.0-only
+AuthorName: Kareem Sarhan
+AuthorWebSite: https://github.com/KareemSarhan
+SourceCode: https://github.com/KareemSarhan/Azkary
+IssueTracker: https://github.com/KareemSarhan/Azkary/issues
+Changelog: https://github.com/KareemSarhan/Azkary/releases
+Donate: https://github.com/sponsors/KareemSarhan
+
+AutoName: Azkary
+Summary: Islamic remembrance app with prayer times and progress tracking
+Description: |-
+    A beautiful, privacy-focused Islamic remembrance (Azkar) app that helps Muslims
+    maintain their daily dhikr routine with prayer times and intelligent progress tracking.
+
+    <b>Key Features:</b>
+    * Three Azkar Categories: Morning (Fajr-Asr), Evening (Asr-Isha), and Sleep (Isha-Fajr)
+    * Authentic Content: Each dhikr includes Arabic text, transliteration, translation, and hadith references
+    * Prayer Times: Automatic calculation based on your location with offline support
+    * Progress Tracking: Visual indicators and daily completion statistics
+    * Custom Categories: Create and organize your own dhikr collections
+    * Beautiful UI: Material Design 3 with dark mode and OLED support
+    * Multi-Language: Full English and Arabic interface support
+
+    <b>Privacy First:</b>
+    * No data collection or tracking
+    * No advertisements
+    * No internet required after initial setup
+    * All data stored locally on your device
+
+RepoType: git
+Repo: https://github.com/KareemSarhan/Azkary
+
+Builds:
+  - versionName: 3.0.8
+    versionCode: 18
+    commit: v3.0.8
+    subdir: app
+    gradle:
+      - fdroid
+
+AutoUpdateMode: Version v%v
+UpdateCheckMode: Tags
+CurrentVersion: 3.0.8
+CurrentVersionCode: 18
