@@ -469,4 +469,138 @@ class ReadingViewModelTest {
 
         coVerify { userPreferencesRepository.setVibrationEnabled(true) }
     }
+
+    @Test
+    fun `vibrationEnabledInternal should sync with user preferences`() = runTest {
+        val vibrationEnabledFlow = MutableStateFlow(true)
+        every { userPreferencesRepository.vibrationEnabled } returns vibrationEnabledFlow
+
+        val newViewModel = ReadingViewModel(
+            repository = repository,
+            localeManager = localeManager,
+            islamicDateProvider = islamicDateProvider,
+            userPreferencesRepository = userPreferencesRepository,
+            context = context,
+            savedStateHandle = savedStateHandle
+        )
+
+        advanceUntilIdle()
+
+        newViewModel.vibrationEnabledInternal.test {
+            assertEquals(true, awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `weightedProgress should update when locale changes`() = runTest {
+        val langFlow = MutableStateFlow("en")
+        every { localeManager.currentLangTagFlow } returns langFlow
+
+        val newViewModel = ReadingViewModel(
+            repository = repository,
+            localeManager = localeManager,
+            islamicDateProvider = islamicDateProvider,
+            userPreferencesRepository = userPreferencesRepository,
+            context = context,
+            savedStateHandle = savedStateHandle
+        )
+
+        newViewModel.weightedProgress.test {
+            awaitItem()
+
+            langFlow.value = "ar"
+            awaitItem()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `multiple incrementRepeat calls should all be processed`() = runTest {
+        coEvery { repository.incrementRepeat(any(), any(), any()) } just Runs
+
+        viewModel.incrementRepeat("item1")
+        viewModel.incrementRepeat("item2")
+        viewModel.incrementRepeat("item3")
+        advanceUntilIdle()
+
+        coVerify(exactly = 3) { repository.incrementRepeat(any(), any(), any()) }
+    }
+
+    @Test
+    fun `markItemComplete should work with infinite items`() = runTest {
+        coEvery { repository.markItemComplete(any(), any(), any()) } just Runs
+
+        viewModel.markItemComplete("item3")
+        advanceUntilIdle()
+
+        coVerify { repository.markItemComplete(testCategoryId, "item3", testDate.toString()) }
+    }
+
+    @Test
+    fun `holdToComplete should have default value true`() = runTest {
+        viewModel.holdToComplete.test {
+            assertEquals(true, awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `items should handle empty list from repository`() = runTest {
+        every { repository.observeItemsForCategory(any(), any(), any()) } returns flowOf(emptyList())
+
+        val newViewModel = ReadingViewModel(
+            repository = repository,
+            localeManager = localeManager,
+            islamicDateProvider = islamicDateProvider,
+            userPreferencesRepository = userPreferencesRepository,
+            context = context,
+            savedStateHandle = savedStateHandle
+        )
+
+        newViewModel.items.test {
+            val items = awaitItem()
+            assertTrue(items.isEmpty())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `weightedProgress should handle zero progress`() = runTest {
+        every { repository.getWeightedProgress(any(), any(), any()) } returns flowOf(0f)
+
+        val newViewModel = ReadingViewModel(
+            repository = repository,
+            localeManager = localeManager,
+            islamicDateProvider = islamicDateProvider,
+            userPreferencesRepository = userPreferencesRepository,
+            context = context,
+            savedStateHandle = savedStateHandle
+        )
+
+        newViewModel.weightedProgress.test {
+            assertEquals(0f, awaitItem(), 0.01f)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `weightedProgress should handle full progress`() = runTest {
+        every { repository.getWeightedProgress(any(), any(), any()) } returns flowOf(1f)
+
+        val newViewModel = ReadingViewModel(
+            repository = repository,
+            localeManager = localeManager,
+            islamicDateProvider = islamicDateProvider,
+            userPreferencesRepository = userPreferencesRepository,
+            context = context,
+            savedStateHandle = savedStateHandle
+        )
+
+        newViewModel.weightedProgress.test {
+            assertEquals(1f, awaitItem(), 0.01f)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 }
