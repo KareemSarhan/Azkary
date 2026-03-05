@@ -1,0 +1,247 @@
+{
+  "categories": [
+    {
+      "categoryId": "cat-morning",
+      "from": 0,
+      "to": 3,
+      "systemKey": "MORNING",
+      "sortOrder": 0,
+      "texts": {
+        "ar": {
+          "name": "أذكار الصباح"
+        },
+        "en": {
+          "name": "Morning Azkar"
+        }
+      },
+      "items": [
+        {
+          "itemId": "itm-hamd-salah-001"
+        },
+        {
+          "itemId": "itm-ayat-al-kursi-1"
+        },
+        {
+          "itemId": "itm-asbahna-mulk-1"
+        },
+        {
+          "itemId": "itm-allahumma-bika-001"
+        },
+        {
+          "itemId": "itm-sayyidul-istighfar-1"
+        },
+        {
+          "itemId": "itm-ushhiduka-004"
+        },
+        {
+          "itemId": "itm-niamah-shukr-001"
+        },
+        {
+          "itemId": "itm-afini-body-hearing-sight-3"
+        },
+        {
+          "itemId": "itm-hasbiyallahu-7"
+        },
+        {
+          "itemId": "itm-afiyah-1"
+        },
+        {
+          "itemId": "itm-alimal-ghayb-001"
+        },
+        {
+          "itemId": "itm-bismillah-3"
+        },
+        {
+          "itemId": "itm-raditu-billahi-3"
+        },
+        {
+          "itemId": "itm-ya-hayyu-ya-qayyum-1"
+        },
+        {
+          "itemId": "itm-asbahnal-mulk-001"
+        },
+        {
+          "itemId": "itm-fitrah-islam-001"
+        },
+        {
+          "itemId": "itm-subhanallah-wabihamdihi-100"
+        },
+        {
+          "itemId": "itm-tahlil-100"
+        },
+        {
+          "itemId": "itm-subhan-bihamdih-003"
+        },
+        {
+          "itemId": "itm-ilman-rizqan-001"
+        },
+        {
+          "itemId": "itm-istighfar-tawbah-100"
+        },
+        {
+          "itemId": "itm-salah-nabi-010"
+        },
+        {
+          "itemId": "itm-ikhlas-003"
+        },
+        {
+          "itemId": "itm-falaq-003"
+        },
+        {
+          "itemId": "itm-nas-003"
+        }
+      ]
+    },
+    {
+      "categoryId": "cat-night",
+      "from": 3,
+      "to": 5,
+      "systemKey": "NIGHT",
+      "sortOrder": 1,
+      "texts": {
+        "ar": {
+          "name": "أذكار المساء"
+        },
+        "en": {
+          "name": "Evening Azkar"
+        }
+      },
+      "items": [
+        {
+          "itemId": "itm-ayat-al-kursi-1"
+        },
+        {
+          "itemId": "itm-amsayna-mulk-1"
+        },
+        {
+          "itemId": "itm-evening-allahumma-bika-amsayna-1"
+        },
+        {
+          "itemId": "itm-sayyidul-istighfar-1"
+        },
+        {
+          "itemId": "itm-evening-ushhiduka-4"
+        },
+        {
+          "itemId": "itm-niamah-shukr-001"
+        },
+        {
+          "itemId": "itm-afini-body-hearing-sight-3"
+        },
+        {
+          "itemId": "itm-hasbiyallahu-7"
+        },
+        {
+          "itemId": "itm-afiyah-1"
+        },
+        {
+          "itemId": "itm-alimal-ghayb-001"
+        },
+        {
+          "itemId": "itm-bismillah-3"
+        },
+        {
+          "itemId": "itm-raditu-billahi-3"
+        },
+        {
+          "itemId": "itm-ya-hayyu-ya-qayyum-1"
+        },
+        {
+          "itemId": "itm-evening-khayr-hadhihi-allaylah-1"
+        },
+        {
+          "itemId": "itm-evening-ala-fitrati-alislam-1"
+        },
+        {
+          "itemId": "itm-subhanallah-wabihamdihi-100"
+        },
+        {
+          "itemId": "itm-istighfar-tawbah-100"
+        },
+        {
+          "itemId": "itm-evening-audhu-bikalimatillah-3"
+        },
+        {
+          "itemId": "itm-tahlil-100"
+        },
+        {
+          "itemId": "itm-salah-nabi-010"
+        },
+        {
+          "itemId": "itm-ikhlas-003"
+        },
+        {
+          "itemId": "itm-falaq-003"
+        },
+        {
+          "itemId": "itm-nas-003"
+        }
+      ]
+    },
+    {
+      "categoryId": "cat-sleep",
+      "from": 5,
+      "to": 0,
+      "systemKey": "SLEEP",
+      "sortOrder": 2,
+      "texts": {
+        "ar": {
+          "name": "أذكار النوم"
+        },
+        "en": {
+          "name": "Sleep Azkar"
+        }
+      },
+      "items": [
+        {
+          "itemId": "itm-ayat-al-kursi-1"
+        },
+        {
+          "itemId": "itm-ayatain-albaqarah-sleep-001"
+        },
+        {
+          "itemId": "itm-bismika-rabbi-wadaatu-janbi-sleep-001"
+        },
+        {
+          "itemId": "itm-allahumma-innaka-khalaqta-nafsi-sleep-001"
+        },
+        {
+          "itemId": "itm-allahumma-qini-adhabaka-sleep-003"
+        },
+        {
+          "itemId": "itm-bismika-amootu-ahya-sleep-001"
+        },
+        {
+          "itemId": "itm-allahumma-rabbas-samawat-sleep-001"
+        },
+        {
+          "itemId": "itm-alhamdulillah-atamana-sleep-001"
+        },
+        {
+          "itemId": "itm-recitation-sajdah-mulk-sleep-001"
+        },
+        {
+          "itemId": "itm-allahumma-aslamtu-nafsi-sleep-001"
+        },
+        {
+          "itemId": "itm-subhanallah-sleep-033"
+        },
+        {
+          "itemId": "itm-alhamdulillah-sleep-033"
+        },
+        {
+          "itemId": "itm-allahu-akbar-sleep-034"
+        },
+        {
+          "itemId": "itm-ikhlas-003"
+        },
+        {
+          "itemId": "itm-falaq-003"
+        },
+        {
+          "itemId": "itm-nas-003"
+        }
+      ]
+    }
+  ]
+}

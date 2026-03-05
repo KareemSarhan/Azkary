@@ -7,7 +7,6 @@
 [![Android](https://img.shields.io/badge/Android-13+-3DDC84)](https://developer.android.com/about/versions/13)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0+-7F52FF)](https://kotlinlang.org/)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25_Offline-FF6B6B)](https://github.com/KareemSarhan/Azkary)
-[![F-Droid](https://img.shields.io/f-droid/v/com.app.azkary?color=1976d2)](https://f-droid.org/packages/com.app.azkary/)
 [![GitHub release](https://img.shields.io/github/v/release/KareemSarhan/Azkary)](https://github.com/KareemSarhan/Azkary/releases)
 [![GitHub last commit](https://img.shields.io/github/last-commit/KareemSarhan/Azkary)](https://github.com/KareemSarhan/Azkary/commits)
 
@@ -19,7 +18,7 @@ A beautiful, privacy-focused Islamic remembrance (Azkar) app with prayer times, 
 
 **Star us on GitHub — it helps the project grow!**
 
-[![Share](https://img.shields.io/badge/share-000000?logo=x&logoColor=white)](https://x.com/intent/tweet?text=Check%20out%20Azkary%20-%20Beautiful%20Islamic%20remembrance%20app%20with%20prayer%20times:%20https://github.com/KareemSarhan/Azkary%20%23IslamicApp%20%23Azkar%20%23F-Droid)
+[![Share](https://img.shields.io/badge/share-000000?logo=x&logoColor=white)](https://x.com/intent/tweet?text=Check%20out%20Azkary%20-%20Beautiful%20Islamic%20remembrance%20app%20with%20prayer%20times:%20https://github.com/KareemSarhan/Azkary%20%23IslamicApp%20%23Azkar)
 [![Share](https://img.shields.io/badge/share-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/sharing/share-offsite/?url=https://github.com/KareemSarhan/Azkary)
 [![Share](https://img.shields.io/badge/share-FF4500?logo=reddit&logoColor=white)](https://www.reddit.com/submit?title=Azkary%20-%20Privacy-focused%20Islamic%20remembrance%20app&url=https://github.com/KareemSarhan/Azkary)
 [![Share](https://img.shields.io/badge/share-0088CC?logo=telegram&logoColor=white)](https://t.me/share/url?url=https://github.com/KareemSarhan/Azkary&text=Check%20out%20Azkary%20-%20Islamic%20remembrance%20app)
@@ -28,7 +27,7 @@ A beautiful, privacy-focused Islamic remembrance (Azkar) app with prayer times, 
 
 For Muslims worldwide who want to maintain their daily dhikr routine with authentic remembrances, prayer time integration, and beautiful progress tracking — all while keeping their data completely private.
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.app.azkary)
+[<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=com.app.azkary)
 [<img src="https://img.shields.io/badge/GET_IT_ON-GitHub%20Releases-181717?style=for-the-badge&logo=github&logoColor=white" alt="Get it on GitHub" />](https://github.com/KareemSarhan/Azkary/releases)
 
 ### How it works
@@ -100,9 +99,11 @@ Create personalized collections:
 <td align="center">Home</td>
 <td align="center">Reading</td>
 <td align="center">Settings</td>
-<td align="center">Categories</td>
+<td align="center">Category Creation*</td>
 </tr>
 </table>
+
+> *\*Category Creation screenshot is a placeholder and will be updated soon.*
 
 ## Quick Start
 
@@ -203,14 +204,28 @@ Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
 
 ## Roadmap
 
-- [ ] Push notifications for prayer times
+### In Progress
+- [ ] Push notifications for prayer times ([#18](https://github.com/KareemSarhan/Azkary/issues/18))
+- [ ] In-app update notifications ([#58](https://github.com/KareemSarhan/Azkary/issues/58))
+- [ ] Rate the app functionality ([#57](https://github.com/KareemSarhan/Azkary/issues/57))
+- [ ] Light theme ([#15](https://github.com/KareemSarhan/Azkary/issues/15))
+- [ ] More languages support ([#13](https://github.com/KareemSarhan/Azkary/issues/13))
+- [ ] Interactive azkar animations ([#14](https://github.com/KareemSarhan/Azkary/issues/14))
+- [ ] Dynamic day cycle card images ([#22](https://github.com/KareemSarhan/Azkary/issues/22))
+- [ ] Pause vibration option ([#16](https://github.com/KareemSarhan/Azkary/issues/16))
+
+### Planned
 - [ ] Widget for home screen
 - [ ] Backup/restore functionality
-- [ ] Additional calculation methods for prayer times
-- [ ] More languages (Urdu, French, Turkish)
+- [ ] Additional prayer time calculation methods
 - [ ] iOS version
 
-See [open issues](https://github.com/KareemSarhan/Azkary/issues) for proposed features and known issues.
+### Technical Improvements
+- [ ] Testing infrastructure and CI/CD pipeline ([#30](https://github.com/KareemSarhan/Azkary/issues/30))
+- [ ] Fix compiler warnings and deprecated APIs ([#59](https://github.com/KareemSarhan/Azkary/issues/59))
+- [ ] Backward compatibility with older Android versions ([#17](https://github.com/KareemSarhan/Azkary/issues/17))
+
+See [open issues](https://github.com/KareemSarhan/Azkary/issues) for all proposed features and known issues.
 
 ## Contributors
 
@@ -238,7 +253,10 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Support
 
-For support, email [azkary@hearo.support](mailto:azkary@hearo.support) or open an [issue](https://github.com/KareemSarhan/Azkary/issues).
+For support:
+- Email: [azkary@hearo.support](mailto:azkary@hearo.support)
+- Discord: [Join our community](https://discord.gg/2Kb7scp48C)
+- GitHub: [Open an issue](https://github.com/KareemSarhan/Azkary/issues)
 
 ## License
 

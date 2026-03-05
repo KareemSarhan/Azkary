@@ -82,6 +82,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.app.azkary.R
+import com.app.azkary.util.ArabicNormalizer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -128,11 +129,10 @@ fun CategoryCreationScreen(
     val filteredItems = if (uiState.searchQuery.isBlank()) {
         availableItems
     } else {
-        val query = uiState.searchQuery.lowercase()
         availableItems.filter { item ->
-            (item.arabicText?.lowercase()?.contains(query) == true) ||
-            (item.title?.lowercase()?.contains(query) == true) ||
-            (item.transliteration?.lowercase()?.contains(query) == true)
+            ArabicNormalizer.fuzzyMatch(uiState.searchQuery, item.arabicText) ||
+            ArabicNormalizer.fuzzyMatch(uiState.searchQuery, item.title) ||
+            ArabicNormalizer.fuzzyMatch(uiState.searchQuery, item.transliteration)
         }
     }
     
@@ -263,6 +263,7 @@ fun CategoryCreationScreen(
                             index = index,
                             totalCount = uiState.selectedItems.size,
                             isStockCategory = uiState.isStockCategory,
+                            currentLangTag = uiState.currentLangTag,
                             onRemove = { viewModel.onItemRemove(config.itemId) },
                             onCountChange = { count -> viewModel.onItemCountChange(config.itemId, count) },
                             onInfiniteToggle = { viewModel.onItemInfiniteToggle(config.itemId) },
@@ -275,7 +276,18 @@ fun CategoryCreationScreen(
             }
             
              item {
-                SectionHeader(text = stringResource(R.string.category_choose_zikr))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionHeader(text = stringResource(R.string.category_choose_zikr))
+                    Spacer(modifier = Modifier.weight(1f))
+                    if (!uiState.isStockCategory) {
+                        IconButton(onClick = { showCustomZikrDialog = true }) {
+                            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.category_add_custom_zikr))
+                        }
+                    }
+                }
             }
             
             if (availableItems.isEmpty()) {
@@ -313,6 +325,7 @@ items(
                     AvailableZikrCard(
                         item = item,
                         isSelected = isSelected,
+                        currentLangTag = uiState.currentLangTag,
                         onSelect = { viewModel.onItemSelect(item) },
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -332,20 +345,6 @@ items(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
-                }
-            }
-            
-            if (!uiState.isStockCategory) {
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = { showCustomZikrDialog = true },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(R.string.category_add_custom_zikr))
                     }
                 }
             }
@@ -453,9 +452,12 @@ private fun SectionHeader(
 private fun AvailableZikrCard(
     item: AvailableZikr,
     isSelected: Boolean,
+    currentLangTag: String,
     onSelect: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isArabic = currentLangTag == "ar"
+    
     Card(
         onClick = { if (!isSelected) onSelect() },
         modifier = modifier,
@@ -479,33 +481,66 @@ private fun AvailableZikrCard(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                item.arabicText?.let { arabic ->
-                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                if (isArabic) {
+                    item.arabicText?.let { arabic ->
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                            Text(
+                                text = arabic.take(50) + if (arabic.length > 50) "..." else "",
+                                style = MaterialTheme.typography.titleMedium.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    item.title?.let { title ->
                         Text(
-                            text = arabic.take(50) + if (arabic.length > 50) "..." else "",
-                            style = MaterialTheme.typography.titleMedium.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                            text = title,
+                            style = MaterialTheme.typography.bodySmall,
                             color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                }
-                item.title?.let { title ->
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                item.transliteration?.let { transliteration ->
-                    Text(
-                        text = transliteration.take(60) + if (transliteration.length > 60) "..." else "",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                    )
+                    item.transliteration?.let { transliteration ->
+                        Text(
+                            text = transliteration.take(60) + if (transliteration.length > 60) "..." else "",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                        )
+                    }
+                } else {
+                    item.title?.let { title ->
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    item.transliteration?.let { transliteration ->
+                        Text(
+                            text = transliteration.take(60) + if (transliteration.length > 60) "..." else "",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f)
+                        )
+                    }
+                    item.translation?.let { translation ->
+                        Text(
+                            text = translation.take(80) + if (translation.length > 80) "..." else "",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                        )
+                    }
+                    item.arabicText?.let { arabic ->
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                            Text(
+                                text = arabic.take(40) + if (arabic.length > 40) "..." else "",
+                                style = MaterialTheme.typography.bodySmall.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                            )
+                        }
+                    }
                 }
             }
             
             if (isSelected) {
-                // Show remove button to unselect
                 Button(
                     onClick = onSelect,
                     shape = CircleShape,
@@ -549,6 +584,7 @@ private fun SelectedItemCard(
     index: Int = 0,
     totalCount: Int = 1,
     isStockCategory: Boolean = false,
+    currentLangTag: String = "en",
     onRemove: () -> Unit,
     onCountChange: (Int) -> Unit,
     onInfiniteToggle: () -> Unit,
@@ -556,6 +592,8 @@ private fun SelectedItemCard(
     onMoveDown: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val isArabic = currentLangTag == "ar"
+    
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
@@ -614,21 +652,48 @@ private fun SelectedItemCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                item.title?.let { title ->
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                }
-                item.arabicText?.let { arabic ->
-                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                if (isArabic) {
+                    item.arabicText?.let { arabic ->
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                            Text(
+                                text = arabic.take(40) + if (arabic.length > 40) "..." else "",
+                                style = MaterialTheme.typography.titleSmall.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
+                    }
+                    item.title?.let { title ->
                         Text(
-                            text = arabic.take(40) + if (arabic.length > 40) "..." else "",
-                            style = MaterialTheme.typography.bodySmall.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                            text = title,
+                            style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                         )
+                    }
+                } else {
+                    item.title?.let { title ->
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+                    item.transliteration?.let { transliteration ->
+                        Text(
+                            text = transliteration.take(50) + if (transliteration.length > 50) "..." else "",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                        )
+                    }
+                    item.arabicText?.let { arabic ->
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                            Text(
+                                text = arabic.take(30) + if (arabic.length > 30) "..." else "",
+                                style = MaterialTheme.typography.bodySmall.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
+                            )
+                        }
                     }
                 }
             }

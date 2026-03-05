@@ -56,6 +56,10 @@
     <string name="settings_show_weekly_progress">Show weekly progress</string>
     <string name="settings_show_weekly_progress_description">Display weekly progress card on summary screen</string>
 
+    <!-- Vibration Toggle -->
+    <string name="vibration_enabled_content_description">Vibration enabled - tap to disable</string>
+    <string name="vibration_disabled_content_description">Vibration disabled - tap to enable</string>
+
     <!-- Long Press Feedback -->
     <string name="category_marked_complete">Category marked complete</string>
     <string name="category_marked_incomplete">Category marked incomplete</string>
@@ -69,6 +73,10 @@
     <!-- Support / Feedback -->
     <string name="settings_support_feedback">Support / Feedback</string>
     <string name="settings_version">Version %s</string>
+    <string name="settings_rate_us">Rate Us</string>
+    <string name="settings_rate_subtitle">Enjoying Azkary? Rate us on Play Store</string>
+    <string name="rate_prompt_title">Enjoying Azkary?</string>
+    <string name="rate_prompt_message">Your feedback helps us improve. Would you like to rate us on the Play Store?</string>
     <string name="support_option_email">Email</string>
     <string name="support_email_address" translatable="false">azkary@hearo.support</string>
     <string name="support_email_subject">App Feedback / Support</string>
@@ -82,6 +90,8 @@
     <string name="support_install_id_label">Install ID:</string>
     <string name="support_write_message_instruction">======= Please write your message below (any language) =======</string>
     <string name="support_no_app_found">No app found to complete this action.</string>
+    <string name="support_option_discord">Discord</string>
+    <string name="support_discord_description">Join our community server</string>
 
     <!-- Category Creation Screen -->
     <string name="category_create_title">Create Category</string>
@@ -164,4 +174,46 @@
     <string name="weekly_progress_day_thursday">Thu</string>
     <string name="weekly_progress_day_friday">Fri</string>
     <string name="weekly_progress_day_saturday">Sat</string>
+
+    <!-- In-App Update -->
+    <string name="update_ready_message">An update has just been downloaded.</string>
+    <string name="update_restart">Restart</string>
+
+    <!-- Notification Settings -->
+    <string name="settings_section_notifications">NOTIFICATIONS</string>
+    <string name="settings_notifications_enable">Enable notifications</string>
+    <string name="settings_morning_azkar">Morning Azkar</string>
+    <string name="settings_morning_azkar_desc">Remind me after Fajr</string>
+    <string name="settings_evening_azkar">Evening Azkar</string>
+    <string name="settings_evening_azkar_desc">Remind me after Asr</string>
+    <string name="settings_night_azkar">Night Azkar</string>
+    <string name="settings_night_azkar_desc">Remind me after Isha</string>
+    <string name="settings_sleep_azkar">Sleep Azkar</string>
+    <string name="settings_sleep_azkar_desc">Remind me before sleeping</string>
+    <string name="settings_reminder_offset">Reminder offset: %d minutes</string>
+
+    <!-- Notification Channels -->
+    <string name="notification_channel_morning">Morning Azkar</string>
+    <string name="notification_channel_morning_desc">Reminders for morning azkar after Fajr</string>
+    <string name="notification_channel_evening">Evening Azkar</string>
+    <string name="notification_channel_evening_desc">Reminders for evening azkar after Asr</string>
+    <string name="notification_channel_night">Night Azkar</string>
+    <string name="notification_channel_night_desc">Reminders for night azkar after Isha</string>
+    <string name="notification_channel_sleep">Sleep Azkar</string>
+    <string name="notification_channel_sleep_desc">Reminders for sleep azkar before bed</string>
+
+    <!-- Notification Content -->
+    <string name="notification_morning_title">☀️ Morning Azkar</string>
+    <string name="notification_morning_content">It\'s time for your morning azkar. Start your day with remembrance of Allah.</string>
+    <string name="notification_evening_title">🌅 Evening Azkar</string>
+    <string name="notification_evening_content">It\'s time for your evening azkar. Protect yourself before night falls.</string>
+    <string name="notification_night_title">🌙 Night Azkar</string>
+    <string name="notification_night_content">It\'s time for your night azkar. End your day with gratitude.</string>
+    <string name="notification_sleep_title">😴 Sleep Azkar</string>
+    <string name="notification_sleep_content">It\'s time for sleep azkar. Sleep with protection and peace.</string>
+
+    <!-- Notification Permission -->
+    <string name="notification_permission_required">Notification permission required</string>
+    <string name="notification_permission_rationale">Please enable notifications to receive azkar reminders</string>
+    <string name="notification_permission_denied">Notifications are disabled. Enable in settings to receive reminders.</string>
 </resources>

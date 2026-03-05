@@ -1,6 +1,7 @@
 package com.app.azkary.ui.theme
 
 import android.app.Activity
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -35,12 +36,12 @@ fun AzkaryTheme(
 ) {
     val darkTheme = true // Force dark theme always
 
+    val context = LocalContext.current
     val colorScheme = when {
-        darkTheme && themeSettings.useTrueBlack -> TrueBlackColorScheme
-        dynamicColor -> {
-            val context = LocalContext.current
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
+        darkTheme && themeSettings.useTrueBlack -> TrueBlackColorScheme
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

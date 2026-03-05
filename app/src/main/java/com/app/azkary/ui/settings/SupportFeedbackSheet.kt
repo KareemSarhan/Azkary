@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,18 +29,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.azkary.R
+import com.app.azkary.domain.AppRatingManager
 import com.app.azkary.util.SupportHelper
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 
-/**
- * SupportFeedbackSheet - Bottom sheet for Support/Feedback options
- *
- * Shows two options:
- * - Email: Opens email client with pre-filled support message
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SupportFeedbackSheet(
@@ -51,8 +47,8 @@ fun SupportFeedbackSheet(
         skipPartiallyExpanded = true
     )
 
-    // Get SupportHelper through Hilt entry point
     val supportHelper = rememberSupportHelper(context)
+    val appRatingManager = rememberAppRatingManager(context)
 
     val surfaceColor = androidx.compose.material3.MaterialTheme.colorScheme.surface
     val onSurfaceColor = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
@@ -70,7 +66,6 @@ fun SupportFeedbackSheet(
                 .padding(horizontal = 16.dp)
                 .padding(bottom = 32.dp)
         ) {
-            // Header
             Text(
                 text = stringResource(R.string.settings_support_feedback),
                 fontSize = 20.sp,
@@ -81,7 +76,28 @@ fun SupportFeedbackSheet(
 
             Spacer(Modifier.height(8.dp))
 
-            // Email Option
+            SupportOptionItem(
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = stringResource(R.string.settings_rate_us),
+                        tint = primaryColor,
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
+                title = stringResource(R.string.settings_rate_us),
+                subtitle = stringResource(R.string.settings_rate_subtitle),
+                onClick = {
+                    appRatingManager.requestManualReview(context as android.app.Activity) {
+                        onDismiss()
+                    }
+                },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
             SupportOptionItem(
                 icon = {
                     Icon(
@@ -105,13 +121,36 @@ fun SupportFeedbackSheet(
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor
             )
+
+            Spacer(Modifier.height(8.dp))
+
+            SupportOptionItem(
+                icon = {
+                    Icon(
+                        painter = androidx.compose.ui.res.painterResource(R.drawable.ic_discord),
+                        contentDescription = stringResource(R.string.support_option_discord),
+                        tint = androidx.compose.ui.graphics.Color.Unspecified,
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
+                title = stringResource(R.string.support_option_discord),
+                subtitle = stringResource(R.string.support_discord_description),
+                onClick = {
+                    val intent = supportHelper.buildDiscordIntent()
+                    val launched = supportHelper.launchIntentSafely(intent)
+                    if (launched) {
+                        onDismiss()
+                    } else {
+                        onShowToast(supportHelper.getString(R.string.support_no_app_found))
+                    }
+                },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor
+            )
         }
     }
 }
 
-/**
- * SupportOptionItem - Individual option item in the support sheet
- */
 @Composable
 private fun SupportOptionItem(
     icon: @Composable () -> Unit,
@@ -158,9 +197,6 @@ private fun SupportOptionItem(
     }
 }
 
-/**
- * Helper function to get SupportHelper via Hilt entry point
- */
 @Composable
 private fun rememberSupportHelper(context: android.content.Context): SupportHelper {
     return androidx.compose.runtime.remember {
@@ -172,11 +208,20 @@ private fun rememberSupportHelper(context: android.content.Context): SupportHelp
     }
 }
 
-/**
- * Hilt entry point for accessing SupportHelper in Compose
- */
+@Composable
+private fun rememberAppRatingManager(context: android.content.Context): AppRatingManager {
+    return androidx.compose.runtime.remember {
+        val entryPoint = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            SupportHelperEntryPoint::class.java
+        )
+        entryPoint.appRatingManager()
+    }
+}
+
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface SupportHelperEntryPoint {
     fun supportHelper(): SupportHelper
+    fun appRatingManager(): AppRatingManager
 }
