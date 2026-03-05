@@ -48,7 +48,7 @@ class CategoryCreationViewModel @Inject constructor(
     )
     
     init {
-        // Load existing category data if editing
+        _uiState.value = _uiState.value.copy(currentLangTag = localeManager.getCurrentLanguageTag(context))
         categoryId?.let { loadCategoryData(it) }
     }
     
@@ -250,5 +250,6 @@ data class CategoryCreationUiState(
     val error: String? = null,
     val isStockCategory: Boolean = false,
     val from: Int = 0,
-    val to: Int = 8
+    val to: Int = 8,
+    val currentLangTag: String = "en"
 )

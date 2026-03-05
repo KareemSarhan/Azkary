@@ -390,6 +390,7 @@ class AccessibilityTest {
                 title = "Test",
                 arabicText = "الحمد لله",
                 transliteration = "Alhamdulillah",
+                translation = "Praise be to Allah",
                 requiredRepeats = 3,
                 source = AzkarSource.SEEDED
             )

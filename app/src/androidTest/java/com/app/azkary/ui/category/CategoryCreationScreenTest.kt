@@ -38,6 +38,7 @@ class CategoryCreationScreenTest {
             title = "Morning Dhikr",
             arabicText = "الحمد لله",
             transliteration = "Alhamdulillah",
+            translation = "Praise be to Allah",
             requiredRepeats = 3,
             source = AzkarSource.SEEDED
         ),
@@ -46,6 +47,7 @@ class CategoryCreationScreenTest {
             title = "Tasbih",
             arabicText = "سبحان الله",
             transliteration = "Subhanallah",
+            translation = "Glory be to Allah",
             requiredRepeats = 33,
             source = AzkarSource.SEEDED
         ),
@@ -54,6 +56,7 @@ class CategoryCreationScreenTest {
             title = "Takbir",
             arabicText = "الله أكبر",
             transliteration = "Allahu Akbar",
+            translation = "Allah is the Greatest",
             requiredRepeats = 1,
             source = AzkarSource.USER
         )

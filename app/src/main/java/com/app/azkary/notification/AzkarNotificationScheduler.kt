@@ -14,6 +14,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -100,7 +102,7 @@ class AzkarNotificationScheduler @Inject constructor(
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<AzkarNotificationWorker>()
-            .setInitialDelay(delay)
+            .setInitialDelay(delay.toMillis(), TimeUnit.MILLISECONDS)
             .setConstraints(constraints)
             .setInputData(workDataOf(AzkarNotificationWorker.KEY_CATEGORY_KEY to categoryKey.name))
             .addTag(AzkarNotificationWorker.WORK_TAG)
