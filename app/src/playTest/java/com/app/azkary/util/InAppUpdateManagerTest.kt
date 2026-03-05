@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class InAppUpdateManagerTest {
+class PlayAppUpdateManagerTest {
 
     private lateinit var mockActivity: ComponentActivity
     private lateinit var mockLifecycleOwner: LifecycleOwner
@@ -34,7 +34,7 @@ class InAppUpdateManagerTest {
     private lateinit var mockWindow: Window
     private lateinit var mockRootView: View
 
-    private lateinit var inAppUpdateManager: InAppUpdateManager
+    private lateinit var playAppUpdateManager: PlayAppUpdateManager
 
     @Before
     fun setup() {
@@ -56,7 +56,7 @@ class InAppUpdateManagerTest {
         every { Snackbar.make(any<View>(), any<String>(), any<Int>()) } returns mockSnackbar
         every { mockSnackbar.setAction(any<String>(), any()) } returns mockSnackbar
 
-        inAppUpdateManager = InAppUpdateManager(
+        playAppUpdateManager = PlayAppUpdateManager(
             activity = mockActivity,
             lifecycleOwner = mockLifecycleOwner,
             playUpdateManager = mockPlayUpdateManager
@@ -74,7 +74,7 @@ class InAppUpdateManagerTest {
     fun `checkForUpdate does nothing when lifecycle is not RESUMED`() {
         every { mockLifecycle.currentState } returns Lifecycle.State.CREATED
 
-        inAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
 
         verify(exactly = 0) { mockPlayUpdateManager.getAppUpdateInfo(any(), any()) }
     }
@@ -83,7 +83,7 @@ class InAppUpdateManagerTest {
     fun `checkForUpdate calls getAppUpdateInfo when lifecycle is RESUMED`() {
         every { mockLifecycle.currentState } returns Lifecycle.State.RESUMED
 
-        inAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
 
         verify { mockPlayUpdateManager.getAppUpdateInfo(any(), any()) }
     }
@@ -92,7 +92,7 @@ class InAppUpdateManagerTest {
     fun `checkForUpdate does nothing when lifecycle is STARTED (not RESUMED)`() {
         every { mockLifecycle.currentState } returns Lifecycle.State.STARTED
 
-        inAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
 
         verify(exactly = 0) { mockPlayUpdateManager.getAppUpdateInfo(any(), any()) }
     }
@@ -113,7 +113,7 @@ class InAppUpdateManagerTest {
             successSlot.captured.invoke(info)
         }
 
-        inAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
 
         verify(exactly = 0) { mockPlayUpdateManager.startUpdateFlowForResult(any(), any()) }
     }
@@ -133,10 +133,10 @@ class InAppUpdateManagerTest {
         }
         every { mockPlayUpdateManager.startUpdateFlowForResult(any(), any()) } returns true
 
-        inAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
 
         verify { mockPlayUpdateManager.registerListener(any()) }
-        verify { mockPlayUpdateManager.startUpdateFlowForResult(InAppUpdateManager.UPDATE_REQUEST_CODE, AppUpdateType.FLEXIBLE) }
+        verify { mockPlayUpdateManager.startUpdateFlowForResult(AppUpdateManager.UPDATE_REQUEST_CODE, AppUpdateType.FLEXIBLE) }
     }
 
     @Test
@@ -154,9 +154,9 @@ class InAppUpdateManagerTest {
         }
         every { mockPlayUpdateManager.startUpdateFlowForResult(any(), any()) } returns true
 
-        inAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
 
-        verify { mockPlayUpdateManager.startUpdateFlowForResult(InAppUpdateManager.UPDATE_REQUEST_CODE, AppUpdateType.IMMEDIATE) }
+        verify { mockPlayUpdateManager.startUpdateFlowForResult(AppUpdateManager.UPDATE_REQUEST_CODE, AppUpdateType.IMMEDIATE) }
     }
 
     @Test
@@ -173,7 +173,7 @@ class InAppUpdateManagerTest {
             successSlot.captured.invoke(info)
         }
 
-        inAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
 
         verify(exactly = 0) { mockPlayUpdateManager.startUpdateFlowForResult(any(), any()) }
     }
@@ -188,7 +188,7 @@ class InAppUpdateManagerTest {
             failureSlot.captured.invoke(Exception("Test error"))
         }
 
-        inAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
 
         verify { mockPlayUpdateManager.getAppUpdateInfo(any(), any()) }
     }
@@ -197,24 +197,24 @@ class InAppUpdateManagerTest {
 
     @Test
     fun `onActivityResult handles UPDATE_REQUEST_CODE with RESULT_OK`() {
-        inAppUpdateManager.onActivityResult(InAppUpdateManager.UPDATE_REQUEST_CODE, Activity.RESULT_OK)
+        playAppUpdateManager.onActivityResult(AppUpdateManager.UPDATE_REQUEST_CODE, Activity.RESULT_OK)
     }
 
     @Test
     fun `onActivityResult handles UPDATE_REQUEST_CODE with RESULT_CANCELED`() {
-        inAppUpdateManager.onActivityResult(InAppUpdateManager.UPDATE_REQUEST_CODE, Activity.RESULT_CANCELED)
+        playAppUpdateManager.onActivityResult(AppUpdateManager.UPDATE_REQUEST_CODE, Activity.RESULT_CANCELED)
     }
 
     @Test
     fun `onActivityResult ignores other request codes`() {
-        inAppUpdateManager.onActivityResult(9999, Activity.RESULT_OK)
+        playAppUpdateManager.onActivityResult(9999, Activity.RESULT_OK)
     }
 
     // ==================== onResume Tests ====================
 
     @Test
     fun `onResume checks appUpdateInfo`() {
-        inAppUpdateManager.onResume()
+        playAppUpdateManager.onResume()
 
         verify { mockPlayUpdateManager.getAppUpdateInfo(any(), any()) }
     }
@@ -232,7 +232,7 @@ class InAppUpdateManagerTest {
             successSlot.captured.invoke(info)
         }
 
-        inAppUpdateManager.onResume()
+        playAppUpdateManager.onResume()
 
         verify { mockPlayUpdateManager.getAppUpdateInfo(any(), any()) }
     }
@@ -251,7 +251,7 @@ class InAppUpdateManagerTest {
         }
         every { mockPlayUpdateManager.startUpdateFlowForResult(any(), any()) } returns true
 
-        inAppUpdateManager.onResume()
+        playAppUpdateManager.onResume()
 
         verify { mockPlayUpdateManager.startUpdateFlowForResult(any(), any()) }
     }
@@ -269,7 +269,7 @@ class InAppUpdateManagerTest {
             successSlot.captured.invoke(info)
         }
 
-        inAppUpdateManager.onResume()
+        playAppUpdateManager.onResume()
 
         verify(exactly = 0) { mockPlayUpdateManager.completeUpdate() }
     }
@@ -291,29 +291,29 @@ class InAppUpdateManagerTest {
         }
         every { mockPlayUpdateManager.startUpdateFlowForResult(any(), any()) } returns true
 
-        inAppUpdateManager.checkForUpdate()
-        inAppUpdateManager.onDestroy()
+        playAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.onDestroy()
 
         verify { mockPlayUpdateManager.unregisterListener(any()) }
     }
 
     @Test
     fun `onDestroy handles no listener registered gracefully`() {
-        inAppUpdateManager.onDestroy()
+        playAppUpdateManager.onDestroy()
     }
 
     @Test
     fun `onDestroy called multiple times does not crash`() {
-        inAppUpdateManager.onDestroy()
-        inAppUpdateManager.onDestroy()
-        inAppUpdateManager.onDestroy()
+        playAppUpdateManager.onDestroy()
+        playAppUpdateManager.onDestroy()
+        playAppUpdateManager.onDestroy()
     }
 
     // ==================== Constants Tests ====================
 
     @Test
     fun `UPDATE_REQUEST_CODE is correct`() {
-        assertEquals(1001, InAppUpdateManager.UPDATE_REQUEST_CODE)
+        assertEquals(1001, AppUpdateManager.UPDATE_REQUEST_CODE)
     }
 
     // ==================== Edge Cases ====================
@@ -332,7 +332,7 @@ class InAppUpdateManagerTest {
             successSlot.captured.invoke(info)
         }
 
-        inAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
 
         verify(exactly = 0) { mockPlayUpdateManager.startUpdateFlowForResult(any(), any()) }
     }
@@ -341,18 +341,18 @@ class InAppUpdateManagerTest {
     fun `checkForUpdate can be called multiple times`() {
         every { mockLifecycle.currentState } returns Lifecycle.State.RESUMED
 
-        inAppUpdateManager.checkForUpdate()
-        inAppUpdateManager.checkForUpdate()
-        inAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
+        playAppUpdateManager.checkForUpdate()
 
         verify(exactly = 3) { mockPlayUpdateManager.getAppUpdateInfo(any(), any()) }
     }
 
     @Test
     fun `onResume can be called multiple times`() {
-        inAppUpdateManager.onResume()
-        inAppUpdateManager.onResume()
-        inAppUpdateManager.onResume()
+        playAppUpdateManager.onResume()
+        playAppUpdateManager.onResume()
+        playAppUpdateManager.onResume()
 
         verify(exactly = 3) { mockPlayUpdateManager.getAppUpdateInfo(any(), any()) }
     }

@@ -31,8 +31,8 @@ import com.app.azkary.ui.settings.SettingsScreen
 import com.app.azkary.ui.summary.SummaryScreen
 import com.app.azkary.ui.theme.AzkaryTheme
 import com.app.azkary.ui.category.CategoryCreationScreen
-import com.app.azkary.util.InAppUpdateManager
-import com.app.azkary.util.InAppUpdateManager.Companion.UPDATE_REQUEST_CODE
+import com.app.azkary.util.AppUpdateManager
+import com.app.azkary.util.AppUpdateManagerFactory
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -46,8 +46,9 @@ class MainActivity : ComponentActivity() {
     lateinit var themePreferencesRepository: ThemePreferencesRepository
     @Inject lateinit var localeManager: LocaleManager
     @Inject lateinit var appRatingManager: AppRatingManager
+    @Inject lateinit var appUpdateManagerFactory: AppUpdateManagerFactory
 
-    private lateinit var inAppUpdateManager: InAppUpdateManager
+    private lateinit var appUpdateManager: AppUpdateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,8 +57,8 @@ class MainActivity : ComponentActivity() {
             enableEdgeToEdge()
         }
 
-        inAppUpdateManager = InAppUpdateManager(this, this)
-        inAppUpdateManager.checkForUpdate()
+        appUpdateManager = appUpdateManagerFactory.create(this, this)
+        appUpdateManager.checkForUpdate()
 
         setContent {
             val themeSettings by themePreferencesRepository.themeSettings.collectAsState(initial = ThemeSettings())
@@ -149,20 +150,20 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        inAppUpdateManager.onResume()
+        appUpdateManager.onResume()
         localeManager.notifyLocaleChanged()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        inAppUpdateManager.onDestroy()
+        appUpdateManager.onDestroy()
     }
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == UPDATE_REQUEST_CODE) {
-            inAppUpdateManager.onActivityResult(requestCode, resultCode)
+        if (requestCode == AppUpdateManager.UPDATE_REQUEST_CODE) {
+            appUpdateManager.onActivityResult(requestCode, resultCode)
         }
     }
 }

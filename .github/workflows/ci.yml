@@ -41,17 +41,17 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assemblePlayDebug
 
       - name: Run Lint
-        run: ./gradlew lintDebug
+        run: ./gradlew lintPlayDebug
 
       - name: Upload Lint Report
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: lint-report
-          path: app/build/reports/lint-results-debug.html
+          path: app/build/reports/lint-results-playDebug.html
 
   # TODO: Fix tests and re-enable
   # test:
