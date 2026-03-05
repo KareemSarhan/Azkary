@@ -296,23 +296,6 @@ fun SettingsScreen(
             Spacer(Modifier.height(8.dp))
 
             SettingsToggleItem(
-                title = stringResource(R.string.settings_evening_azkar),
-                subtitle = stringResource(R.string.settings_evening_azkar_desc),
-                isEnabled = notificationPrefs.eveningAzkarEnabled,
-                onToggle = { enabled ->
-                    if (enabled) {
-                        notificationPermissionLauncher.requestNotificationPermission()
-                    }
-                    viewModel.setEveningAzkarEnabled(enabled)
-                },
-                surfaceColor = surfaceColor,
-                onSurfaceColor = onSurfaceColor,
-                onSurfaceVariantColor = onSurfaceVariantColor
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            SettingsToggleItem(
                 title = stringResource(R.string.settings_night_azkar),
                 subtitle = stringResource(R.string.settings_night_azkar_desc),
                 isEnabled = notificationPrefs.nightAzkarEnabled,

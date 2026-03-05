@@ -61,7 +61,7 @@ class CategoryDaoTest : DatabaseTest() {
             CategoryEntity(
                 categoryId = "cat-2",
                 type = CategoryType.DEFAULT,
-                systemKey = SystemCategoryKey.EVENING,
+                systemKey = SystemCategoryKey.NIGHT,
                 sortOrder = 2,
                 isArchived = false,
                 from = 18,

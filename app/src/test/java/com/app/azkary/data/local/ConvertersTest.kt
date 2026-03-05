@@ -99,12 +99,6 @@ class ConvertersTest {
     }
 
     @Test
-    fun `fromSystemCategoryKey returns EVENING name`() {
-        val result = converters.fromSystemCategoryKey(SystemCategoryKey.EVENING)
-        assertEquals("EVENING", result)
-    }
-
-    @Test
     fun `fromSystemCategoryKey returns NIGHT name`() {
         val result = converters.fromSystemCategoryKey(SystemCategoryKey.NIGHT)
         assertEquals("NIGHT", result)
@@ -126,12 +120,6 @@ class ConvertersTest {
     fun `toSystemCategoryKey returns MORNING for MORNING string`() {
         val result = converters.toSystemCategoryKey("MORNING")
         assertEquals(SystemCategoryKey.MORNING, result)
-    }
-
-    @Test
-    fun `toSystemCategoryKey returns EVENING for EVENING string`() {
-        val result = converters.toSystemCategoryKey("EVENING")
-        assertEquals(SystemCategoryKey.EVENING, result)
     }
 
     @Test

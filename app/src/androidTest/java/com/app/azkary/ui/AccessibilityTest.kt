@@ -50,9 +50,9 @@ class AccessibilityTest {
         ),
         CategoryUi(
             id = "2",
-            name = "Evening Azkar",
+            name = "Night Azkar",
             type = CategoryType.DEFAULT,
-            systemKey = SystemCategoryKey.EVENING,
+            systemKey = SystemCategoryKey.NIGHT,
             progress = 0.0f,
             from = 4,
             to = 5

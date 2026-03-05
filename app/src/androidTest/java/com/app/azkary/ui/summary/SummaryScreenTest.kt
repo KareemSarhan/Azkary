@@ -40,9 +40,9 @@ class SummaryScreenTest {
         ),
         CategoryUi(
             id = "2",
-            name = "Evening Azkar",
+            name = "Night Azkar",
             type = CategoryType.DEFAULT,
-            systemKey = SystemCategoryKey.EVENING,
+            systemKey = SystemCategoryKey.NIGHT,
             progress = 0.0f,
             from = 4,
             to = 5
@@ -84,7 +84,7 @@ class SummaryScreenTest {
         
         // Verify categories are displayed
         composeTestRule.onNodeWithText("Morning Azkar").assertExists()
-        composeTestRule.onNodeWithText("Evening Azkar").assertExists()
+        composeTestRule.onNodeWithText("Night Azkar").assertExists()
         composeTestRule.onNodeWithText("Custom Category").assertExists()
     }
 

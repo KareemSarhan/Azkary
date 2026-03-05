@@ -176,13 +176,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setEveningAzkarEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.setEveningAzkarEnabled(enabled)
-            updateNotificationSchedule()
-        }
-    }
-
     fun setNightAzkarEnabled(enabled: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.setNightAzkarEnabled(enabled)
