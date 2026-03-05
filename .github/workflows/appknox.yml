@@ -29,6 +29,9 @@ on:
 jobs:
   appknox:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
