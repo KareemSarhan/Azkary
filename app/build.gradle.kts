@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.app.azkary"
-        minSdk = 33
+        minSdk = 24
         targetSdk = 36
         versionCode = 18
         versionName = "3.0.8"
@@ -55,6 +55,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
 
     buildFeatures {
@@ -122,4 +123,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    coreLibraryDesugaring(libs.desugaring)
 }

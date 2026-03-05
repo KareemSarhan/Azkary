@@ -34,6 +34,7 @@ playServicesLocation = "21.3.0"
 appUpdate = "2.1.0"
 playReview = "2.0.1"
 workmanager = "2.10.0"
+desugaring = "2.1.4"
 
 [libraries]
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
@@ -82,6 +83,7 @@ app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", v
 play-review = { group = "com.google.android.play", name = "review", version.ref = "playReview" }
 play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "playReview" }
 workmanager = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workmanager" }
+desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugaring" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

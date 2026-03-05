@@ -54,10 +54,17 @@ class SupportHelper @Inject constructor(
         val currentLocale = localeManager.getCurrentLocale(context)
         val currentTimezone = TimeZone.getDefault().id
 
+        // Use longVersionCode on API 28+, fallback to versionCode for older versions
+        val buildNumber = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.longVersionCode.toInt()
+        } else {
+            @Suppress("DEPRECATION")
+            packageInfo.versionCode
+        }
+
         return DeviceInfo(
             appVersion = packageInfo.versionName ?: "unknown",
-            buildNumber =
-                packageInfo.longVersionCode.toInt(),
+            buildNumber = buildNumber,
             deviceManufacturer = Build.MANUFACTURER,
             deviceModel = Build.MODEL,
             androidVersion = Build.VERSION.RELEASE,
