@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- Notification permission for Android 13+ -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Schedule exact alarms for precise notification timing -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
-    <!-- Wake lock to ensure notifications are shown -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".AzkaryApp"
@@ -43,13 +35,6 @@
                 android:name="autoStoreLocales"
                 android:value="true" />
         </service>
-
-        <!-- WorkManager configuration - uses HiltWorkerFactory from AzkaryApp -->
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="remove" />
     </application>
 
 </manifest>

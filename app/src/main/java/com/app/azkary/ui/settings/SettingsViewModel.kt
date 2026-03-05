@@ -14,8 +14,6 @@ import com.app.azkary.domain.model.DayPrayerTimes
 import android.util.Log
 import com.app.azkary.R
 import com.app.azkary.domain.model.WindowCalculationResult
-import com.app.azkary.data.prefs.NotificationPreferences
-import com.app.azkary.notification.AzkarNotificationScheduler
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,7 +33,6 @@ class SettingsViewModel @Inject constructor(
     private val locationRepository: LocationRepository,
     private val geocodingRepository: com.app.azkary.data.repository.GeocodingRepository,
     private val prayerTimesRepository: PrayerTimesRepository,
-    private val notificationScheduler: AzkarNotificationScheduler,
     private val localeManager: LocaleManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -66,13 +63,6 @@ class SettingsViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = true
-        )
-
-    val notificationPreferences: StateFlow<NotificationPreferences> = userPreferencesRepository.notificationPreferences
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = NotificationPreferences()
         )
 
     private val _isRefreshingLocation = MutableStateFlow(false)
@@ -168,69 +158,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    // Notification settings methods
-    fun setMorningAzkarEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.setMorningAzkarEnabled(enabled)
-            updateNotificationSchedule()
-        }
-    }
-
-    fun setEveningAzkarEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.setEveningAzkarEnabled(enabled)
-            updateNotificationSchedule()
-        }
-    }
-
-    fun setNightAzkarEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.setNightAzkarEnabled(enabled)
-            updateNotificationSchedule()
-        }
-    }
-
-    fun setSleepAzkarEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.setSleepAzkarEnabled(enabled)
-            updateNotificationSchedule()
-        }
-    }
-
-    private fun updateNotificationSchedule() {
-        viewModelScope.launch {
-            val locationPrefs = locationPreferences.value
-            val notificationPrefs = notificationPreferences.value
-
-            if (locationPrefs.useLocation && locationPrefs.lastResolvedLocation != null) {
-                try {
-                    val location = locationPrefs.lastResolvedLocation
-                    val todayTimes = prayerTimesRepository.getDayPrayerTimes(
-                        date = LocalDate.now(),
-                        latitude = location.latitude,
-                        longitude = location.longitude
-                    )
-
-                    val tomorrowTimes = prayerTimesRepository.getDayPrayerTimes(
-                        date = LocalDate.now().plusDays(1),
-                        latitude = location.latitude,
-                        longitude = location.longitude
-                    )
-
-                    if (todayTimes != null) {
-                        notificationScheduler.scheduleNotifications(
-                            todayTimes = todayTimes,
-                            tomorrowTimes = tomorrowTimes,
-                            preferences = notificationPrefs
-                        )
-                    }
-                } catch (e: Exception) {
-                    Log.e("SettingsViewModel", "Failed to schedule notifications", e)
-                }
-            }
-        }
-    }
-
     // Prayer times methods
     fun refreshPrayerTimes() {
         viewModelScope.launch {
@@ -268,28 +195,17 @@ class SettingsViewModel @Inject constructor(
                  }
                  
                  // Calculate current windows
-                  if (todayTimes != null) {
-                      val windows = prayerTimesRepository.getCurrentWindows(
-                          latitude = location.latitude,
-                          longitude = location.longitude
-                      )
-                      _currentWindows.value = windows
-                      // Log windows
-                      Log.d("PrayerTimes", "Current window: ${windows.currentWindow?.window}, Next: ${windows.nextWindow?.window}")
+                 if (todayTimes != null) {
+                     val windows = prayerTimesRepository.getCurrentWindows(
+                         latitude = location.latitude,
+                         longitude = location.longitude
+                     )
+                     _currentWindows.value = windows
+                     // Log windows
+                     Log.d("PrayerTimes", "Current window: ${windows.currentWindow?.window}, Next: ${windows.nextWindow?.window}")
+                 }
 
-                      // Schedule notifications with new prayer times
-                      val notificationPrefs = notificationPreferences.value
-                      val tomorrowTimes = prayerTimesRepository.getDayPrayerTimes(
-                          date = LocalDate.now().plusDays(1),
-                          latitude = location.latitude,
-                          longitude = location.longitude
-                      )
-                      notificationScheduler.scheduleNotifications(
-                          todayTimes = todayTimes,
-                          tomorrowTimes = tomorrowTimes,
-                          preferences = notificationPrefs
-                      )
-                  }
+
 
             } catch (e: Exception) {
                 _prayerTimesError.value = "${context.getString(R.string.error_prayer_times)}: ${e.message}"
