@@ -381,4 +381,102 @@ class SummaryViewModelTest {
             tomorrowTimes = null
         )
     }
+
+    @Test
+    fun `sessionEndTime should be null initially`() {
+        assertNull(viewModel.sessionEndTime.value)
+    }
+
+    @Test
+    fun `categories should update when locale changes`() = runTest {
+        val langFlow = MutableStateFlow("en")
+        every { localeManager.currentLangTagFlow } returns langFlow
+
+        every { 
+            repository.observeCategoriesWithDisplayName(any(), any()) 
+        } returns flowOf(testCategories)
+
+        
+        val testViewModel = SummaryViewModel(
+            repository = repository,
+            userPreferencesRepository = userPreferencesRepository,
+            prayerTimesRepository = prayerTimesRepository,
+            islamicDateProvider = islamicDateProvider,
+            localeManager = localeManager,
+            context = context
+        )
+
+        testViewModel.categories.test {
+            awaitItem()
+
+            langFlow.value = "ar"
+
+            awaitItem()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `weeklyProgress should emit correct day progress`() = runTest {
+        val dateProgressMap = mapOf(
+            LocalDate.now().toString() to 0.5f,
+            LocalDate.now().minusDays(1).toString() to 0.3f,
+            LocalDate.now().minusDays(2).toString() to 0.0f,
+            LocalDate.now().minusDays(3).toString() to 0.7f,
+            LocalDate.now().minusDays(4).toString() to 0.0f,
+            LocalDate.now().minusDays(5).toString() to 0.0f,
+            LocalDate.now().minusDays(6).toString() to 0.1f
+        )
+        every { repository.getWeeklyProgress(any()) } returns flowOf(dateProgressMap)
+
+        val testViewModel = SummaryViewModel(
+            repository = repository,
+            userPreferencesRepository = userPreferencesRepository,
+            prayerTimesRepository = prayerTimesRepository,
+            islamicDateProvider = islamicDateProvider,
+            localeManager = localeManager,
+            context = context
+        )
+
+        testViewModel.weeklyProgress.test {
+            val progress = awaitItem()
+            assertEquals(7, progress.size)
+            assertTrue(progress.any { it.isToday })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `weeklyProgress should mark today correctly`() = runTest {
+        val today = LocalDate.now()
+        val dateProgressMap = mapOf(
+            today.toString() to 1.0f,
+            today.minusDays(1).toString() to 0.5f,
+            today.minusDays(2).toString() to 0.3f,
+            today.minusDays(3).toString() to 0.0f,
+            today.minusDays(4).toString() to 0.0f,
+            today.minusDays(5).toString() to 0.1f,
+            today.minusDays(6).toString() to 0.0f
+        )
+        every { repository.getWeeklyProgress(any()) } returns flowOf(dateProgressMap)
+
+        val testViewModel = SummaryViewModel(
+            repository = repository,
+            userPreferencesRepository = userPreferencesRepository,
+            prayerTimesRepository = prayerTimesRepository,
+            islamicDateProvider = islamicDateProvider,
+            localeManager = localeManager,
+            context = context
+        )
+
+        testViewModel.weeklyProgress.test {
+            val progress = awaitItem()
+            val todayItem = progress.find { it.isToday }
+            assertTrue(todayItem != null)
+            assertEquals(today.toString(), todayItem?.date)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
 }
