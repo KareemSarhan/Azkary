@@ -590,3 +590,59 @@ fun CustomIosToggle(
         )
     }
 }
+
+@Composable
+private fun ThemeSettingItem(
+    themeMode: ThemeMode,
+    onThemeModeChange: (ThemeMode) -> Unit,
+    surfaceColor: Color,
+    onSurfaceColor: Color,
+    onSurfaceVariantColor: Color,
+    primaryColor: Color
+) {
+    Column {
+        ThemeMode.values().forEach { mode ->
+            val isSelected = themeMode == mode
+            val label = when (mode) {
+                ThemeMode.SYSTEM -> stringResource(R.string.theme_system)
+                ThemeMode.LIGHT -> stringResource(R.string.theme_light)
+                ThemeMode.DARK -> stringResource(R.string.theme_dark)
+            }
+            
+            Surface(
+                color = surfaceColor,
+                shape = RoundedCornerShape(16.dp),
+                tonalElevation = 2.dp,
+                shadowElevation = 2.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable { onThemeModeChange(mode) }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = label,
+                        color = if (isSelected) primaryColor else onSurfaceColor,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                        modifier = Modifier.weight(1f)
+                    )
+                    if (isSelected) {
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .background(primaryColor, CircleShape)
+                        )
+                    }
+                }
+            }
+            if (mode != ThemeMode.values().last()) {
+                Spacer(Modifier.height(8.dp))
+            }
+        }
+    }
+}
