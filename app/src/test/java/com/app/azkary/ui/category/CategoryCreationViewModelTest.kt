@@ -745,4 +745,192 @@ class CategoryCreationViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun `saveCategory should fail when category name is whitespace only`() {
+        viewModel.onCategoryNameChange("   ")
+        viewModel.onItemSelect(testAvailableItems[0])
+
+        every { context.getString(R.string.error_category_name_required) } returns "Category name required"
+
+        var onErrorCalled = false
+
+        viewModel.saveCategory(
+            onSuccess = { throw AssertionError("Should not succeed") },
+            onError = { onErrorCalled = true }
+        )
+
+        assertTrue(onErrorCalled)
+    }
+
+    @Test
+    fun `saveCategory should trim category name before saving`() = runTest {
+        viewModel.onCategoryNameChange("  My Category  ")
+        viewModel.onItemSelect(testAvailableItems[0])
+
+        coEvery { 
+            repository.createCustomCategory(any(), any(), any(), any(), any()) 
+        } returns "new-id"
+
+        viewModel.saveCategory(onSuccess = {}, onError = {})
+        advanceUntilIdle()
+
+        coVerify { 
+            repository.createCustomCategory(
+                name = "My Category",
+                langTag = any(),
+                itemConfigs = any(),
+                from = any(),
+                to = any()
+            )
+        }
+    }
+
+    @Test
+    fun `onItemRemove should do nothing for non-existent item`() = runTest {
+        viewModel.onItemSelect(testAvailableItems[0])
+        viewModel.onItemSelect(testAvailableItems[1])
+        
+        val initialCount = viewModel.uiState.value.selectedItems.size
+        
+        viewModel.onItemRemove("non-existent-item")
+        
+        assertEquals(initialCount, viewModel.uiState.value.selectedItems.size)
+    }
+
+    @Test
+    fun `moveSelectedItem should do nothing with single item`() = runTest {
+        viewModel.onItemSelect(testAvailableItems[0])
+        
+        val initialItemId = viewModel.uiState.value.selectedItems[0].itemId
+        
+        viewModel.moveSelectedItem(0, 0)
+        
+        assertEquals(initialItemId, viewModel.uiState.value.selectedItems[0].itemId)
+    }
+
+    @Test
+    fun `onItemCountChange should only affect specified item`() = runTest {
+        viewModel.onItemSelect(testAvailableItems[0])
+        viewModel.onItemSelect(testAvailableItems[1])
+        
+        viewModel.onItemCountChange("zikr1", 50)
+        
+        val state = viewModel.uiState.value
+        assertEquals(50, state.selectedItems.find { it.itemId == "zikr1" }?.requiredRepeats)
+        assertEquals(testAvailableItems[1].requiredRepeats, state.selectedItems.find { it.itemId == "zikr2" }?.requiredRepeats)
+    }
+
+    @Test
+    fun `onItemInfiniteToggle should only affect specified item`() = runTest {
+        viewModel.onItemSelect(testAvailableItems[0])
+        viewModel.onItemSelect(testAvailableItems[1])
+        
+        viewModel.onItemInfiniteToggle("zikr1")
+        
+        val state = viewModel.uiState.value
+        assertTrue(state.selectedItems.find { it.itemId == "zikr1" }?.isInfinite == true)
+        assertFalse(state.selectedItems.find { it.itemId == "zikr2" }?.isInfinite == true)
+    }
+
+    @Test
+    fun `multiple items can be selected and removed correctly`() = runTest {
+        viewModel.onItemSelect(testAvailableItems[0])
+        viewModel.onItemSelect(testAvailableItems[1])
+        viewModel.onItemSelect(testAvailableItems[2])
+        
+        assertEquals(3, viewModel.uiState.value.selectedItems.size)
+        
+        viewModel.onItemRemove("zikr2")
+        
+        val state = viewModel.uiState.value
+        assertEquals(2, state.selectedItems.size)
+        assertEquals(listOf("zikr3", "zikr1"), state.selectedItems.map { it.itemId })
+    }
+
+    @Test
+    fun `loadCategoryData should handle infinite items correctly`() = runTest {
+        val existingCategory = CategoryUi(
+            id = "existing-cat",
+            name = "Existing Category",
+            type = CategoryType.USER,
+            systemKey = null,
+            progress = 0.0f,
+            from = 0,
+            to = 8
+        )
+
+        val categoryItems = listOf(
+            com.app.azkary.data.model.AzkarItemUi(
+                id = "infinite-item",
+                title = "Infinite Zikr",
+                arabicText = "test",
+                transliteration = "test",
+                translation = "test",
+                reference = null,
+                requiredRepeats = 100,
+                currentRepeats = 0,
+                isCompleted = false,
+                isInfinite = true
+            )
+        )
+
+        every { repository.observeCategoriesWithDisplayName(any(), any()) } returns flowOf(listOf(existingCategory))
+        every { repository.observeItemsForCategory(any(), any(), any()) } returns flowOf(categoryItems)
+
+        val savedStateHandle = SavedStateHandle().apply {
+            set("categoryId", "existing-cat")
+        }
+
+        val editViewModel = CategoryCreationViewModel(
+            repository = repository,
+            localeManager = localeManager,
+            context = context,
+            savedStateHandle = savedStateHandle
+        )
+
+        advanceUntilIdle()
+
+        editViewModel.uiState.test {
+            val state = awaitItem()
+            assertEquals(1, state.selectedItems.size)
+            assertEquals(0, state.selectedItems[0].requiredRepeats)
+            assertTrue(state.selectedItems[0].isInfinite)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `from and to values can be set to same value`() = runTest {
+        viewModel.onFromChange(6)
+        viewModel.onToChange(6)
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertEquals(6, state.from)
+            assertEquals(6, state.to)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `category name can be changed multiple times`() = runTest {
+        viewModel.onCategoryNameChange("First Name")
+        assertEquals("First Name", viewModel.uiState.value.categoryName)
+        
+        viewModel.onCategoryNameChange("Second Name")
+        assertEquals("Second Name", viewModel.uiState.value.categoryName)
+        
+        viewModel.onCategoryNameChange("")
+        assertEquals("", viewModel.uiState.value.categoryName)
+    }
+
+    @Test
+    fun `search query can be cleared`() = runTest {
+        viewModel.onSearchQueryChange("morning")
+        assertEquals("morning", viewModel.uiState.value.searchQuery)
+        
+        viewModel.onSearchQueryChange("")
+        assertEquals("", viewModel.uiState.value.searchQuery)
+    }
 }

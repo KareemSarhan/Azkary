@@ -298,6 +298,148 @@ class ThemePreferencesRepositoryTest {
         assertTrue(job.isCancelled)
     }
 
+    @Test
+    fun `preferences persist across repository instances`() = runTest {
+        val sharedDataStore = PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("test_theme_persistence_shared")
+        }
+
+        val firstRepository = createTestRepository(sharedDataStore)
+        firstRepository.setThemeMode(ThemeMode.LIGHT)
+        firstRepository.setUseTrueBlack(false)
+        advanceUntilIdle()
+
+        val secondRepository = createTestRepository(sharedDataStore)
+
+        secondRepository.themeSettings.test {
+            val settings = awaitItem()
+            assertEquals(ThemeMode.LIGHT, settings.themeMode)
+            assertFalse(settings.useTrueBlack)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `theme mode toggles through all modes`() = runTest {
+        val repository = createTestRepository()
+
+        repository.themeSettings.test {
+            assertEquals(ThemeMode.SYSTEM, awaitItem().themeMode)
+
+            repository.setThemeMode(ThemeMode.LIGHT)
+            advanceUntilIdle()
+            assertEquals(ThemeMode.LIGHT, awaitItem().themeMode)
+
+            repository.setThemeMode(ThemeMode.DARK)
+            advanceUntilIdle()
+            assertEquals(ThemeMode.DARK, awaitItem().themeMode)
+
+            repository.setThemeMode(ThemeMode.SYSTEM)
+            advanceUntilIdle()
+            assertEquals(ThemeMode.SYSTEM, awaitItem().themeMode)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `useTrueBlack toggles correctly`() = runTest {
+        val repository = createTestRepository()
+
+        repository.themeSettings.test {
+            assertTrue(awaitItem().useTrueBlack)
+
+            repository.setUseTrueBlack(false)
+            advanceUntilIdle()
+            assertFalse(awaitItem().useTrueBlack)
+
+            repository.setUseTrueBlack(true)
+            advanceUntilIdle()
+            assertTrue(awaitItem().useTrueBlack)
+
+            repository.setUseTrueBlack(false)
+            advanceUntilIdle()
+            assertFalse(awaitItem().useTrueBlack)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `themeSettings handles empty string theme mode`() = runTest {
+        val testDataStore = PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("test_theme_empty_string")
+        }
+
+        testDataStore.edit { preferences ->
+            preferences[stringPreferencesKey("theme_mode")] = ""
+        }
+        advanceUntilIdle()
+
+        val repository = createTestRepository(testDataStore)
+
+        repository.themeSettings.test {
+            val settings = awaitItem()
+            assertEquals(ThemeMode.SYSTEM, settings.themeMode)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `themeSettings handles lowercase theme mode`() = runTest {
+        val testDataStore = PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("test_theme_lowercase")
+        }
+
+        testDataStore.edit { preferences ->
+            preferences[stringPreferencesKey("theme_mode")] = "dark"
+        }
+        advanceUntilIdle()
+
+        val repository = createTestRepository(testDataStore)
+
+        repository.themeSettings.test {
+            val settings = awaitItem()
+            assertEquals(ThemeMode.SYSTEM, settings.themeMode)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `both settings can be changed simultaneously`() = runTest {
+        val repository = createTestRepository()
+
+        repository.setThemeMode(ThemeMode.LIGHT)
+        repository.setUseTrueBlack(false)
+        advanceUntilIdle()
+
+        repository.setThemeMode(ThemeMode.DARK)
+        repository.setUseTrueBlack(true)
+        advanceUntilIdle()
+
+        repository.themeSettings.test {
+            val settings = awaitItem()
+            assertEquals(ThemeMode.DARK, settings.themeMode)
+            assertTrue(settings.useTrueBlack)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `themeSettings default useTrueBlack is true`() = runTest {
+        val testDataStore = PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("test_default_true_black")
+        }
+
+        val repository = createTestRepository(testDataStore)
+
+        repository.themeSettings.test {
+            val settings = awaitItem()
+            assertTrue(settings.useTrueBlack)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     private fun createTestRepository(
         dataStore: DataStore<Preferences> = testDataStore
     ): TestThemePreferencesRepository {
