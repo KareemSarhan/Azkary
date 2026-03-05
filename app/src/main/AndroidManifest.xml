@@ -14,6 +14,10 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <!-- Wake lock to ensure notifications are shown -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Reschedule notifications after device reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Receive boot completed to reschedule notifications -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".AzkaryApp"
@@ -51,6 +55,16 @@
             android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="remove" />
+
+        <!-- Reschedule notifications after device reboot -->
+        <receiver
+            android:name=".notification.NotificationBootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

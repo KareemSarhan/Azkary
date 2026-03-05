@@ -22,10 +22,12 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.app.azkary.data.model.SystemCategoryKey
 import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.domain.AppRatingManager
+import com.app.azkary.notification.AzkarNotificationManager
 import com.app.azkary.ui.reading.ReadingScreen
 import com.app.azkary.ui.settings.SettingsScreen
 import com.app.azkary.ui.summary.SummaryScreen
@@ -35,6 +37,7 @@ import com.app.azkary.util.AppUpdateManager
 import com.app.azkary.util.AppUpdateManagerFactory
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import androidx.compose.ui.unit.LayoutDirection as ComposeLayoutDirection
 
@@ -60,6 +63,10 @@ class MainActivity : ComponentActivity() {
         appUpdateManager = appUpdateManagerFactory.create(this, this)
         appUpdateManager.checkForUpdate()
 
+        val initialCategoryKey = intent?.getStringExtra(AzkarNotificationManager.EXTRA_CATEGORY_KEY)?.let {
+            try { SystemCategoryKey.valueOf(it) } catch (e: Exception) { null }
+        }
+
         setContent {
             val themeSettings by themePreferencesRepository.themeSettings.collectAsState(initial = ThemeSettings())
 
@@ -72,6 +79,7 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
                 AzkaryTheme(themeSettings = themeSettings) {
                     var showRatingPrompt by remember { mutableStateOf(false) }
+                    var pendingNavigation by remember { mutableStateOf<String?>(initialCategoryKey?.let { "pending_${it.name}" }) }
                     
                     LaunchedEffect(Unit) {
                         repository.seedDatabase()
@@ -87,6 +95,26 @@ class MainActivity : ComponentActivity() {
                     }
 
                     val navController = rememberNavController()
+
+                    LaunchedEffect(pendingNavigation) {
+                        if (pendingNavigation != null && pendingNavigation!!.startsWith("pending_")) {
+                            val categoryKeyName = pendingNavigation!!.removePrefix("pending_")
+                            val categoryKey = try { 
+                                SystemCategoryKey.valueOf(categoryKeyName) 
+                            } catch (e: Exception) { 
+                                null 
+                            }
+                            
+                            if (categoryKey != null) {
+                                val categories = repository.getAllCategories().first()
+                                val category = categories.find { it.systemKey == categoryKey }
+                                if (category != null) {
+                                    navController.navigate("reading/${category.id}")
+                                }
+                            }
+                            pendingNavigation = null
+                        }
+                    }
 
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
@@ -141,6 +169,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
     }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {

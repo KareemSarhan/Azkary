@@ -1,32 +1,32 @@
-package com.app.azkary.notification
+ companion object {
+    const val CHANNELId: String,
+        const val title: String
+        const val content: String,
+        const val notificationId: Int,
+        val categoryKey: SystemCategoryKey
+    ): android.app.Notification {
+        val notification = buildNotification(
+            channelId = channelId,
+            title = title
+            content = content
+            notificationId = notificationId
+            categoryKey = categoryKey
+        )
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.os.Build
-import androidx.core.app.NotificationCompat
-import com.app.azkary.MainActivity
-import com.app.azkary.R
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            notificationId,
+            categoryKey
+        )
 
-@Singleton
-class AzkarNotificationManager @Inject constructor(
-    @ApplicationContext private val context: Context
-) {
-
-    companion object {
-        const val CHANNEL_ID_MORNING = "azkar_morning_channel"
-        const val CHANNEL_ID_NIGHT = "azkar_night_channel"
-        const val CHANNEL_ID_SLEEP = "azkar_sleep_channel"
-
-        const val NOTIFICATION_ID_MORNING = 1001
-        const val NOTIFICATION_ID_NIGHT = 1002
-        const val NOTIFICATION_ID_SLEEP = 1003
+        return NotificationCompat.Builder(context)
+            .setSmallIcon(R.drawable.icon)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .build()
     }
+}
 
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -69,7 +69,8 @@ class AzkarNotificationManager @Inject constructor(
             channelId = CHANNEL_ID_MORNING,
             title = context.getString(R.string.notification_morning_title),
             content = context.getString(R.string.notification_morning_content),
-            notificationId = NOTIFICATION_ID_MORNING
+            notificationId = NOTIFICATION_ID_MORNING,
+            categoryKey = SystemCategoryKey.MORNING
         )
         notificationManager.notify(NOTIFICATION_ID_MORNING, notification)
     }
@@ -79,7 +80,8 @@ class AzkarNotificationManager @Inject constructor(
             channelId = CHANNEL_ID_NIGHT,
             title = context.getString(R.string.notification_night_title),
             content = context.getString(R.string.notification_night_content),
-            notificationId = NOTIFICATION_ID_NIGHT
+            notificationId = NOTIFICATION_ID_NIGHT,
+            categoryKey = SystemCategoryKey.NIGHT
         )
         notificationManager.notify(NOTIFICATION_ID_NIGHT, notification)
     }
@@ -89,7 +91,8 @@ class AzkarNotificationManager @Inject constructor(
             channelId = CHANNEL_ID_SLEEP,
             title = context.getString(R.string.notification_sleep_title),
             content = context.getString(R.string.notification_sleep_content),
-            notificationId = NOTIFICATION_ID_SLEEP
+            notificationId = NOTIFICATION_ID_SLEEP,
+            categoryKey = SystemCategoryKey.SLEEP
         )
         notificationManager.notify(NOTIFICATION_ID_SLEEP, notification)
     }
@@ -98,11 +101,12 @@ class AzkarNotificationManager @Inject constructor(
         channelId: String,
         title: String,
         content: String,
-        notificationId: Int
+        notificationId: Int,
+        categoryKey: SystemCategoryKey
     ): android.app.Notification {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra("notification_id", notificationId)
+            putExtra(EXTRA_CATEGORY_KEY, categoryKey.name)
         }
 
         val pendingIntent = PendingIntent.getActivity(
