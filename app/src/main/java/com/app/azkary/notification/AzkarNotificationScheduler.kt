@@ -15,6 +15,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -126,7 +127,7 @@ class AzkarNotificationScheduler @Inject constructor(
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<AzkarNotificationWorker>()
-            .setInitialDelay(delay)
+            .setInitialDelay(delay.toMillis(), TimeUnit.MILLISECONDS)
             .setConstraints(constraints)
             .setInputData(workDataOf(AzkarNotificationWorker.KEY_WINDOW_TYPE to windowType))
             .addTag(AzkarNotificationWorker.WORK_TAG)
