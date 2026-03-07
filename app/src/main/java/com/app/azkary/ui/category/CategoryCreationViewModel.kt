@@ -66,7 +66,8 @@ class CategoryCreationViewModel @Inject constructor(
                         categoryName = category.name,
                         isStockCategory = category.type == com.app.azkary.data.model.CategoryType.DEFAULT,
                         from = category.from,
-                        to = category.to
+                        to = category.to,
+                        notificationEnabled = category.notificationEnabled
                     )
                 }
                 
@@ -153,6 +154,10 @@ class CategoryCreationViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(to = to)
     }
     
+    fun onNotificationToggle(enabled: Boolean) {
+        _uiState.value = _uiState.value.copy(notificationEnabled = enabled)
+    }
+    
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
@@ -183,15 +188,17 @@ class CategoryCreationViewModel @Inject constructor(
                                 from = state.from,
                                 to = state.to
                             )
+                            repository.setCategoryNotificationEnabled(categoryId, state.notificationEnabled)
                         } else {
                             // Create new category
-                            repository.createCustomCategory(
+                            val newCategoryId = repository.createCustomCategory(
                                 name = state.categoryName.trim(),
                                 langTag = localeManager.getCurrentLanguageTag(context),
                                 itemConfigs = state.selectedItems,
                                 from = state.from,
                                 to = state.to
                             )
+                            repository.setCategoryNotificationEnabled(newCategoryId, state.notificationEnabled)
                         }
                         _uiState.value = CategoryCreationUiState()
                         onSuccess()
@@ -251,5 +258,6 @@ data class CategoryCreationUiState(
     val isStockCategory: Boolean = false,
     val from: Int = 0,
     val to: Int = 8,
+    val notificationEnabled: Boolean = false,
     val currentLangTag: String = "en"
 )

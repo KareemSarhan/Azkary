@@ -181,6 +181,8 @@
 
     <!-- Notification Settings -->
     <string name="settings_section_notifications">الإشعارات</string>
+    <string name="notification_enabled">التذكير</string>
+    <string name="notification_time_after">بعد %s بـ 30 دقيقة</string>
     <string name="settings_morning_azkar">أذكار الصباح</string>
     <string name="settings_morning_azkar_desc">ذكرني بعد الفجر</string>
     <string name="settings_night_azkar">أذكار المساء</string>
@@ -200,7 +202,6 @@
 
     <!-- Notification Content -->
     <string name="notification_reminder_content">حان وقت أذكارك.</string>
-    <string name="notification_time_after">بعد %s بـ 30 دقيقة</string>
     <string name="notification_morning_title">☀️ أذكار الصباح</string>
     <string name="notification_morning_content">حان وقت أذكار الصباح. ابدأ يومك بذكر الله.</string>
     <string name="notification_night_title">🌅 أذكار المساء</string>

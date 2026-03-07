@@ -181,6 +181,7 @@
 
     <!-- Notification Settings -->
     <string name="settings_section_notifications">NOTIFICATIONS</string>
+    <string name="notification_enabled">Reminder</string>
     <string name="notification_time_after">30 min after %s</string>
     <string name="settings_morning_azkar">Morning Azkar</string>
     <string name="settings_morning_azkar_desc">Remind me after Fajr</string>
