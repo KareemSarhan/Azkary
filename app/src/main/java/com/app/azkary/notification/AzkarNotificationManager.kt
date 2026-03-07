@@ -9,7 +9,6 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.app.azkary.MainActivity
 import com.app.azkary.R
-import com.app.azkary.data.model.SystemCategoryKey
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,15 +19,8 @@ class AzkarNotificationManager @Inject constructor(
 ) {
 
     companion object {
-        const val CHANNEL_ID_MORNING = "azkar_morning_channel"
-        const val CHANNEL_ID_NIGHT = "azkar_night_channel"
-        const val CHANNEL_ID_SLEEP = "azkar_sleep_channel"
-
-        const val NOTIFICATION_ID_MORNING = 1001
-        const val NOTIFICATION_ID_NIGHT = 1002
-        const val NOTIFICATION_ID_SLEEP = 1003
-
-        const val EXTRA_CATEGORY_KEY = "category_key"
+        const val CHANNEL_ID_GENERAL = "azkar_general_channel"
+        const val EXTRA_CATEGORY_ID = "category_id"
     }
 
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -39,77 +31,41 @@ class AzkarNotificationManager @Inject constructor(
 
     private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channels = listOf(
-                NotificationChannel(
-                    CHANNEL_ID_MORNING,
-                    context.getString(R.string.notification_channel_morning),
-                    NotificationManager.IMPORTANCE_HIGH
-                ).apply {
-                    description = context.getString(R.string.notification_channel_morning_desc)
-                },
-                NotificationChannel(
-                    CHANNEL_ID_NIGHT,
-                    context.getString(R.string.notification_channel_night),
-                    NotificationManager.IMPORTANCE_HIGH
-                ).apply {
-                    description = context.getString(R.string.notification_channel_night_desc)
-                },
-                NotificationChannel(
-                    CHANNEL_ID_SLEEP,
-                    context.getString(R.string.notification_channel_sleep),
-                    NotificationManager.IMPORTANCE_DEFAULT
-                ).apply {
-                    description = context.getString(R.string.notification_channel_sleep_desc)
-                }
-            )
+            val channel = NotificationChannel(
+                CHANNEL_ID_GENERAL,
+                context.getString(R.string.notification_channel_general),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = context.getString(R.string.notification_channel_general_desc)
+            }
 
-            notificationManager.createNotificationChannels(channels)
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
-    fun showMorningNotification() {
+    fun showCategoryNotification(
+        categoryId: String,
+        categoryName: String,
+        notificationId: Int
+    ) {
         val notification = buildNotification(
-            channelId = CHANNEL_ID_MORNING,
-            title = context.getString(R.string.notification_morning_title),
-            content = context.getString(R.string.notification_morning_content),
-            notificationId = NOTIFICATION_ID_MORNING,
-            categoryKey = SystemCategoryKey.MORNING
+            title = categoryName,
+            content = context.getString(R.string.notification_reminder_content),
+            notificationId = notificationId,
+            categoryId = categoryId
         )
-        notificationManager.notify(NOTIFICATION_ID_MORNING, notification)
-    }
-
-    fun showNightNotification() {
-        val notification = buildNotification(
-            channelId = CHANNEL_ID_NIGHT,
-            title = context.getString(R.string.notification_night_title),
-            content = context.getString(R.string.notification_night_content),
-            notificationId = NOTIFICATION_ID_NIGHT,
-            categoryKey = SystemCategoryKey.NIGHT
-        )
-        notificationManager.notify(NOTIFICATION_ID_NIGHT, notification)
-    }
-
-    fun showSleepNotification() {
-        val notification = buildNotification(
-            channelId = CHANNEL_ID_SLEEP,
-            title = context.getString(R.string.notification_sleep_title),
-            content = context.getString(R.string.notification_sleep_content),
-            notificationId = NOTIFICATION_ID_SLEEP,
-            categoryKey = SystemCategoryKey.SLEEP
-        )
-        notificationManager.notify(NOTIFICATION_ID_SLEEP, notification)
+        notificationManager.notify(notificationId, notification)
     }
 
     private fun buildNotification(
-        channelId: String,
         title: String,
         content: String,
         notificationId: Int,
-        categoryKey: SystemCategoryKey
+        categoryId: String
     ): android.app.Notification {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(EXTRA_CATEGORY_KEY, categoryKey.name)
+            putExtra(EXTRA_CATEGORY_ID, categoryId)
         }
 
         val pendingIntent = PendingIntent.getActivity(
@@ -119,7 +75,7 @@ class AzkarNotificationManager @Inject constructor(
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        return NotificationCompat.Builder(context, channelId)
+        return NotificationCompat.Builder(context, CHANNEL_ID_GENERAL)
             .setSmallIcon(R.drawable.icon)
             .setContentTitle(title)
             .setContentText(content)

@@ -43,6 +43,12 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
     }
 }
 
+val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE categories ADD COLUMN notificationEnabled INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
 @Database(
     entities = [
         CategoryEntity::class,
@@ -54,7 +60,7 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
         PrayerMonthEntity::class,
         PrayerDayEntity::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

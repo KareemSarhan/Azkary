@@ -62,9 +62,7 @@ class MainActivity : ComponentActivity() {
         appUpdateManager = appUpdateManagerFactory.create(this, this)
         appUpdateManager.checkForUpdate()
 
-        val initialCategoryKey = intent?.getStringExtra(AzkarNotificationManager.EXTRA_CATEGORY_KEY)?.let {
-            try { SystemCategoryKey.valueOf(it) } catch (e: Exception) { null }
-        }
+        val initialCategoryId = intent?.getStringExtra(AzkarNotificationManager.EXTRA_CATEGORY_ID)
 
         setContent {
             val themeSettings by themePreferencesRepository.themeSettings.collectAsState(initial = ThemeSettings())
@@ -78,7 +76,7 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
                 AzkaryTheme(themeSettings = themeSettings) {
                     var showRatingPrompt by remember { mutableStateOf(false) }
-                    var pendingNavigation by remember { mutableStateOf<String?>(initialCategoryKey?.let { "pending_${it.name}" }) }
+                    var pendingNavigation by remember { mutableStateOf<String?>(initialCategoryId?.let { "pending_$it" }) }
                     
                     LaunchedEffect(Unit) {
                         repository.seedDatabase()
@@ -97,19 +95,8 @@ class MainActivity : ComponentActivity() {
 
                     LaunchedEffect(pendingNavigation) {
                         if (pendingNavigation != null && pendingNavigation!!.startsWith("pending_")) {
-                            val categoryKeyName = pendingNavigation!!.removePrefix("pending_")
-                            val categoryKey = try { 
-                                SystemCategoryKey.valueOf(categoryKeyName) 
-                            } catch (e: Exception) { 
-                                null 
-                            }
-                            
-                            if (categoryKey != null) {
-                                val categoryId = repository.getCategoryIdBySystemKey(categoryKey)
-                                if (categoryId != null) {
-                                    navController.navigate("reading/$categoryId")
-                                }
-                            }
+                            val categoryId = pendingNavigation!!.removePrefix("pending_")
+                            navController.navigate("reading/$categoryId")
                             pendingNavigation = null
                         }
                     }

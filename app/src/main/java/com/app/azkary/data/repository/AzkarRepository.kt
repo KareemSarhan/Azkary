@@ -85,7 +85,8 @@ class AzkarRepository @Inject constructor(
                         systemKey = cat.systemKey,
                         progress = progress,
                         from = cat.from,
-                        to = cat.to
+                        to = cat.to,
+                        notificationEnabled = cat.notificationEnabled
                     )
                 }
             }
@@ -507,5 +508,13 @@ class AzkarRepository @Inject constructor(
                 dateProgressPairs.toMap()
             }
         }
+    }
+
+    suspend fun getCategoriesWithNotifications(): List<CategoryEntity> {
+        return categoryDao.getCategoriesWithNotifications()
+    }
+
+    suspend fun setCategoryNotificationEnabled(categoryId: String, enabled: Boolean) {
+        categoryDao.updateNotificationEnabled(categoryId, enabled)
     }
 }

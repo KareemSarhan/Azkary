@@ -4,52 +4,41 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.app.azkary.data.model.SystemCategoryKey
-import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.repository.AzkarRepository
+import com.app.azkary.util.LocaleManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.first
+import java.time.LocalDate
 
 @HiltWorker
 class AzkarNotificationWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val notificationManager: AzkarNotificationManager,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val repository: AzkarRepository,
+    private val localeManager: LocaleManager
 ) : CoroutineWorker(context, params) {
 
     companion object {
         const val WORK_TAG = "azkar_notification_worker"
-        const val KEY_CATEGORY_KEY = "category_key"
+        const val KEY_CATEGORY_ID = "category_id"
     }
 
     override suspend fun doWork(): Result {
-        val categoryKeyName = inputData.getString(KEY_CATEGORY_KEY) ?: return Result.failure()
-        val categoryKey = try {
-            SystemCategoryKey.valueOf(categoryKeyName)
-        } catch (e: IllegalArgumentException) {
-            return Result.failure()
-        }
+        val categoryId = inputData.getString(KEY_CATEGORY_ID) ?: return Result.failure()
 
-        val notificationPrefs = userPreferencesRepository.notificationPreferences.first()
+        val langTag = localeManager.getCurrentLanguageTag(applicationContext)
+        val today = LocalDate.now().toString()
 
-        when (categoryKey) {
-            SystemCategoryKey.MORNING -> {
-                if (notificationPrefs.morningAzkarEnabled) {
-                    notificationManager.showMorningNotification()
-                }
-            }
-            SystemCategoryKey.NIGHT -> {
-                if (notificationPrefs.nightAzkarEnabled) {
-                    notificationManager.showNightNotification()
-                }
-            }
-            SystemCategoryKey.SLEEP -> {
-                if (notificationPrefs.sleepAzkarEnabled) {
-                    notificationManager.showSleepNotification()
-                }
-            }
-        }
+        val categories = repository.observeCategoriesWithDisplayName(langTag, today).first()
+        val category = categories.find { it.id == categoryId } ?: return Result.failure()
+
+        notificationManager.showCategoryNotification(
+            categoryId = categoryId,
+            categoryName = category.name,
+            notificationId = categoryId.hashCode()
+        )
 
         return Result.success()
     }

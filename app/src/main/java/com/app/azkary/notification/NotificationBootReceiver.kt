@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +26,9 @@ class NotificationBootReceiver : BroadcastReceiver() {
     @Inject
     lateinit var prayerTimesRepository: PrayerTimesRepository
 
+    @Inject
+    lateinit var azkarRepository: AzkarRepository
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -37,7 +41,6 @@ class NotificationBootReceiver : BroadcastReceiver() {
 
     private suspend fun rescheduleNotifications() {
         val locationPrefs = userPreferencesRepository.locationPreferences.first()
-        val notificationPrefs = userPreferencesRepository.notificationPreferences.first()
 
         if (!locationPrefs.useLocation || locationPrefs.lastResolvedLocation == null) {
             return
@@ -51,17 +54,11 @@ class NotificationBootReceiver : BroadcastReceiver() {
             longitude = location.longitude
         )
 
-        val tomorrowTimes = prayerTimesRepository.getDayPrayerTimes(
-            date = LocalDate.now().plusDays(1),
-            latitude = location.latitude,
-            longitude = location.longitude
-        )
-
         if (todayTimes != null) {
+            val categories = azkarRepository.getCategoriesWithNotifications()
             notificationScheduler.scheduleNotifications(
                 todayTimes = todayTimes,
-                tomorrowTimes = tomorrowTimes,
-                preferences = notificationPrefs
+                categories = categories
             )
         }
     }

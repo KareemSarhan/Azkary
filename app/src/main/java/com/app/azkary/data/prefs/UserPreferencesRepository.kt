@@ -30,12 +30,6 @@ data class ReadingPreferences(
     val holdToComplete: Boolean = true
 )
 
-data class NotificationPreferences(
-    val morningAzkarEnabled: Boolean = true,
-    val nightAzkarEnabled: Boolean = true,
-    val sleepAzkarEnabled: Boolean = false
-)
-
 @Singleton
 class UserPreferencesRepository @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -50,11 +44,6 @@ class UserPreferencesRepository @Inject constructor(
     private val APP_OPEN_COUNT = intPreferencesKey("app_open_count")
     private val FIRST_INSTALL_DATE = longPreferencesKey("first_install_date")
     private val LAST_PROMPT_VERSION = stringPreferencesKey("last_prompt_version")
-
-    // Notification preferences keys
-    private val MORNING_AZKAR_ENABLED = booleanPreferencesKey("morning_azkar_enabled")
-    private val NIGHT_AZKAR_ENABLED = booleanPreferencesKey("night_azkar_enabled")
-    private val SLEEP_AZKAR_ENABLED = booleanPreferencesKey("sleep_azkar_enabled")
 
     val locationPreferences: Flow<LocationPreferences> = context.dataStore.data.map { preferences ->
         LocationPreferences(
@@ -76,14 +65,6 @@ class UserPreferencesRepository @Inject constructor(
 
     val showWeeklyProgress: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[SHOW_WEEKLY_PROGRESS] ?: true
-    }
-
-    val notificationPreferences: Flow<NotificationPreferences> = context.dataStore.data.map { preferences ->
-        NotificationPreferences(
-            morningAzkarEnabled = preferences[MORNING_AZKAR_ENABLED] ?: true,
-            nightAzkarEnabled = preferences[NIGHT_AZKAR_ENABLED] ?: true,
-            sleepAzkarEnabled = preferences[SLEEP_AZKAR_ENABLED] ?: false
-        )
     }
 
     suspend fun setUseLocation(enabled: Boolean) {
@@ -164,18 +145,5 @@ class UserPreferencesRepository @Inject constructor(
         return openCount >= 5 && 
                daysSinceInstall >= 3 && 
                lastPrompt != currentVersion
-    }
-
-    // Notification preferences setters
-    suspend fun setMorningAzkarEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[MORNING_AZKAR_ENABLED] = enabled }
-    }
-
-    suspend fun setNightAzkarEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[NIGHT_AZKAR_ENABLED] = enabled }
-    }
-
-    suspend fun setSleepAzkarEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[SLEEP_AZKAR_ENABLED] = enabled }
     }
 }
