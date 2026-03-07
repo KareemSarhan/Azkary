@@ -156,6 +156,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setUseTrueBlack(enabled: Boolean) {
+        viewModelScope.launch {
+            themePreferencesRepository.setUseTrueBlack(enabled)
+        }
+    }
+
     fun setHoldToComplete(enabled: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.setHoldToComplete(enabled)
