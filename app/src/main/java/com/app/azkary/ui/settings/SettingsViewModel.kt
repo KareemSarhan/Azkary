@@ -41,7 +41,7 @@ class SettingsViewModel @Inject constructor(
     private val azkarRepository: AzkarRepository,
     private val notificationScheduler: AzkarNotificationScheduler,
     private val localeManager: LocaleManager,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     val themeSettings: StateFlow<ThemeSettings> = themePreferencesRepository.themeSettings
@@ -152,6 +152,12 @@ class SettingsViewModel @Inject constructor(
     fun setThemeMode(themeMode: ThemeMode) {
         viewModelScope.launch {
             themePreferencesRepository.setThemeMode(themeMode)
+        }
+    }
+
+    fun setUseTrueBlack(enabled: Boolean) {
+        viewModelScope.launch {
+            themePreferencesRepository.setUseTrueBlack(enabled)
         }
     }
 

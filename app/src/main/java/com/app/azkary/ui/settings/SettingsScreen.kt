@@ -58,7 +58,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.app.azkary.R
 import com.app.azkary.data.prefs.ThemeMode
 import com.app.azkary.notification.NotificationPermissionHelper
@@ -264,7 +264,9 @@ fun SettingsScreen(
 
             ThemeSettingItem(
                 themeMode = themeSettings.themeMode,
+                useTrueBlack = themeSettings.useTrueBlack,
                 onThemeModeChange = { viewModel.setThemeMode(it) },
+                onTrueBlackChange = { viewModel.setUseTrueBlack(it) },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor,
                 onSurfaceVariantColor = onSurfaceVariantColor,
@@ -548,7 +550,9 @@ fun CustomIosToggle(
 @Composable
 private fun ThemeSettingItem(
     themeMode: ThemeMode,
+    useTrueBlack: Boolean,
     onThemeModeChange: (ThemeMode) -> Unit,
+    onTrueBlackChange: (Boolean) -> Unit,
     surfaceColor: Color,
     onSurfaceColor: Color,
     onSurfaceVariantColor: Color,
@@ -596,6 +600,46 @@ private fun ThemeSettingItem(
             }
             if (mode != ThemeMode.values().last()) {
                 Spacer(Modifier.height(8.dp))
+            }
+        }
+
+        AnimatedVisibility(visible = themeMode == ThemeMode.DARK) {
+            Column {
+                Spacer(Modifier.height(8.dp))
+                Surface(
+                    color = surfaceColor,
+                    shape = RoundedCornerShape(16.dp),
+                    tonalElevation = 2.dp,
+                    shadowElevation = 2.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.settings_true_black_oled),
+                                color = onSurfaceColor,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                stringResource(R.string.settings_true_black_description),
+                                color = onSurfaceVariantColor,
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(top = 2.dp)
+                            )
+                        }
+                        CustomIosToggle(
+                            isOn = useTrueBlack,
+                            onToggle = { onTrueBlackChange(!useTrueBlack) }
+                        )
+                    }
+                }
             }
         }
     }

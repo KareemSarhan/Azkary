@@ -34,14 +34,18 @@ fun AzkaryTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val darkTheme = true // Force dark theme always
+    val darkTheme = when (themeSettings.themeMode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+    }
 
     val context = LocalContext.current
     val colorScheme = when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+        darkTheme && themeSettings.useTrueBlack -> TrueBlackColorScheme
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-        darkTheme && themeSettings.useTrueBlack -> TrueBlackColorScheme
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

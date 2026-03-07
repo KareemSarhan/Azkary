@@ -30,7 +30,7 @@ import javax.inject.Inject
 class CategoryCreationViewModel @Inject constructor(
     private val repository: AzkarRepository,
     private val localeManager: LocaleManager,
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     
