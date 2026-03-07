@@ -17,6 +17,7 @@ import com.app.azkary.data.model.AvailableZikr
 import com.app.azkary.data.model.AzkarItemUi
 import com.app.azkary.data.model.CategoryItemConfig
 import com.app.azkary.data.model.CategoryUi
+import com.app.azkary.data.model.SystemCategoryKey
 import com.app.azkary.data.seed.SeedManager
 import com.app.azkary.util.ArabicNormalizer
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -443,6 +444,10 @@ class AzkarRepository @Inject constructor(
         categoryIds.forEachIndexed { index, categoryId ->
             categoryDao.updateSortOrder(categoryId, index)
         }
+    }
+
+    suspend fun getCategoryIdBySystemKey(systemKey: SystemCategoryKey): String? {
+        return categoryDao.getCategoryBySystemKey(systemKey.name)?.categoryId
     }
 
     fun observeAvailableItems(langTag: String): Flow<List<AvailableZikr>> {

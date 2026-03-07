@@ -1,32 +1,35 @@
- companion object {
-    const val CHANNELId: String,
-        const val title: String
-        const val content: String,
-        const val notificationId: Int,
-        val categoryKey: SystemCategoryKey
-    ): android.app.Notification {
-        val notification = buildNotification(
-            channelId = channelId,
-            title = title
-            content = content
-            notificationId = notificationId
-            categoryKey = categoryKey
-        )
+package com.app.azkary.notification
 
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            notificationId,
-            categoryKey
-        )
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import com.app.azkary.MainActivity
+import com.app.azkary.R
+import com.app.azkary.data.model.SystemCategoryKey
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-        return NotificationCompat.Builder(context)
-            .setSmallIcon(R.drawable.icon)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .build()
+@Singleton
+class AzkarNotificationManager @Inject constructor(
+    @param:ApplicationContext private val context: Context
+) {
+
+    companion object {
+        const val CHANNEL_ID_MORNING = "azkar_morning_channel"
+        const val CHANNEL_ID_NIGHT = "azkar_night_channel"
+        const val CHANNEL_ID_SLEEP = "azkar_sleep_channel"
+
+        const val NOTIFICATION_ID_MORNING = 1001
+        const val NOTIFICATION_ID_NIGHT = 1002
+        const val NOTIFICATION_ID_SLEEP = 1003
+
+        const val EXTRA_CATEGORY_KEY = "category_key"
     }
-}
 
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

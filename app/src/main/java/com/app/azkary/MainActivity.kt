@@ -37,7 +37,6 @@ import com.app.azkary.util.AppUpdateManager
 import com.app.azkary.util.AppUpdateManagerFactory
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import androidx.compose.ui.unit.LayoutDirection as ComposeLayoutDirection
 
@@ -106,10 +105,9 @@ class MainActivity : ComponentActivity() {
                             }
                             
                             if (categoryKey != null) {
-                                val categories = repository.getAllCategories().first()
-                                val category = categories.find { it.systemKey == categoryKey }
-                                if (category != null) {
-                                    navController.navigate("reading/${category.id}")
+                                val categoryId = repository.getCategoryIdBySystemKey(categoryKey)
+                                if (categoryId != null) {
+                                    navController.navigate("reading/$categoryId")
                                 }
                             }
                             pendingNavigation = null

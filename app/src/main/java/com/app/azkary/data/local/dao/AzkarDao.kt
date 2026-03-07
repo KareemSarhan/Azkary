@@ -32,6 +32,9 @@ interface CategoryDao {
 
     @Query("SELECT MAX(sortOrder) FROM categories WHERE isArchived = 0")
     suspend fun getMaxSortOrder(): Int?
+
+    @Query("SELECT * FROM categories WHERE systemKey = :systemKey LIMIT 1")
+    suspend fun getCategoryBySystemKey(systemKey: String): CategoryEntity?
 }
 
 @Dao
