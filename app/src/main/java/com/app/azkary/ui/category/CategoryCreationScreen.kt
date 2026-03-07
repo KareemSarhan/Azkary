@@ -1,8 +1,6 @@
 package com.app.azkary.ui.category
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,35 +13,36 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -70,37 +69,26 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import com.app.azkary.R
-import com.app.azkary.util.ArabicNormalizer
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.app.azkary.R
 import com.app.azkary.data.model.AvailableZikr
 import com.app.azkary.data.model.CategoryItemConfig
+import com.app.azkary.util.ArabicNormalizer
 import kotlinx.coroutines.launch
-import androidx.compose.ui.res.stringResource
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,95 +99,93 @@ fun CategoryCreationScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val availableItems by viewModel.availableItems.collectAsState(initial = emptyList())
-    
+
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
+    LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-    
+
     LaunchedEffect(uiState.error) {
         uiState.error?.let { error ->
             snackbarHostState.showSnackbar(error)
             viewModel.clearError()
         }
     }
-    
+
     var showCustomZikrDialog by remember { mutableStateOf(false) }
-    
+
     val filteredItems = if (uiState.searchQuery.isBlank()) {
         availableItems
     } else {
         availableItems.filter { item ->
-            ArabicNormalizer.fuzzyMatch(uiState.searchQuery, item.arabicText) ||
-            ArabicNormalizer.fuzzyMatch(uiState.searchQuery, item.title) ||
-            ArabicNormalizer.fuzzyMatch(uiState.searchQuery, item.transliteration)
+            ArabicNormalizer.fuzzyMatch(
+                uiState.searchQuery,
+                item.arabicText
+            ) || ArabicNormalizer.fuzzyMatch(
+                uiState.searchQuery,
+                item.title
+            ) || ArabicNormalizer.fuzzyMatch(uiState.searchQuery, item.transliteration)
         }
     }
-    
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                title = {
-                    Text(
-                        text = if (categoryId != null) stringResource(R.string.category_edit_title) else stringResource(R.string.category_create_title),
-                        style = MaterialTheme.typography.titleMedium
+                containerColor = MaterialTheme.colorScheme.surface,
+                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                actionIconContentColor = MaterialTheme.colorScheme.onSurface
+            ), title = {
+                Text(
+                    text = if (categoryId != null) stringResource(R.string.category_edit_title) else stringResource(
+                        R.string.category_create_title
+                    ), style = MaterialTheme.typography.titleMedium
+                )
+            }, navigationIcon = {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.category_back_content_description)
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.category_back_content_description)
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                            viewModel.saveCategory(
-                                onSuccess = onBack,
-                                onError = { error ->
-                                    coroutineScope.launch {
-                                        snackbarHostState.showSnackbar(error)
-                                    }
-                                }
-                            )
-                        }
-                    ) {
-                        Icon(Icons.Default.Save, contentDescription = stringResource(R.string.category_save_content_description))
-                    }
                 }
-            )
+            }, actions = {
+                IconButton(
+                    onClick = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                        viewModel.saveCategory(
+                            onSuccess = onBack, onError = { error ->
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(error)
+                                }
+                            })
+                    }) {
+                    Icon(
+                        Icons.Default.Save,
+                        contentDescription = stringResource(R.string.category_save_content_description)
+                    )
+                }
+            })
         },
         bottomBar = {
             if (categoryId != null) {
                 BottomAppBar(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    tonalElevation = 0.dp
+                    containerColor = MaterialTheme.colorScheme.surface, tonalElevation = 0.dp
                 ) {
                     Button(
                         onClick = {
                             keyboardController?.hide()
                             focusManager.clearFocus()
                             viewModel.saveCategory(
-                                onSuccess = onBack,
-                                onError = { error ->
+                                onSuccess = onBack, onError = { error ->
                                     coroutineScope.launch {
                                         snackbarHostState.showSnackbar(error)
                                     }
-                                }
-                            )
+                                })
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -211,8 +197,7 @@ fun CategoryCreationScreen(
                     }
                 }
             }
-        }
-    ) { padding ->
+        }) { padding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -237,8 +222,16 @@ fun CategoryCreationScreen(
                         onToChange = viewModel::onToChange
                     )
                 }
+
+                item {
+                    NotificationToggleSection(
+                        enabled = uiState.notificationEnabled,
+                        prayerTimeIndex = uiState.from,
+                        onToggle = viewModel::onNotificationToggle
+                    )
+                }
             }
-            
+
             item {
                 SearchField(
                     value = uiState.searchQuery,
@@ -246,16 +239,15 @@ fun CategoryCreationScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            
-             if (uiState.selectedItems.isNotEmpty()) {
+
+            if (uiState.selectedItems.isNotEmpty()) {
                 item {
                     SectionHeader(text = stringResource(R.string.category_selected_items))
                 }
-                
+
                 itemsIndexed(
                     items = uiState.selectedItems,
-                    key = { _, it -> "selected_${it.itemId}" }
-                ) { index, config ->
+                    key = { _, it -> "selected_${it.itemId}" }) { index, config ->
                     val item = availableItems.find { it.id == config.itemId }
                     if (item != null) {
                         SelectedItemCard(
@@ -266,17 +258,29 @@ fun CategoryCreationScreen(
                             isStockCategory = uiState.isStockCategory,
                             currentLangTag = uiState.currentLangTag,
                             onRemove = { viewModel.onItemRemove(config.itemId) },
-                            onCountChange = { count -> viewModel.onItemCountChange(config.itemId, count) },
+                            onCountChange = { count ->
+                                viewModel.onItemCountChange(
+                                    config.itemId, count
+                                )
+                            },
                             onInfiniteToggle = { viewModel.onItemInfiniteToggle(config.itemId) },
-                            onMoveUp = { if (index > 0) viewModel.moveSelectedItem(index, index - 1) },
-                            onMoveDown = { if (index < uiState.selectedItems.size - 1) viewModel.moveSelectedItem(index, index + 1) },
+                            onMoveUp = {
+                                if (index > 0) viewModel.moveSelectedItem(
+                                    index, index - 1
+                                )
+                            },
+                            onMoveDown = {
+                                if (index < uiState.selectedItems.size - 1) viewModel.moveSelectedItem(
+                                    index, index + 1
+                                )
+                            },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
             }
-            
-             item {
+
+            item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -285,12 +289,15 @@ fun CategoryCreationScreen(
                     Spacer(modifier = Modifier.weight(1f))
                     if (!uiState.isStockCategory) {
                         IconButton(onClick = { showCustomZikrDialog = true }) {
-                            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.category_add_custom_zikr))
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = stringResource(R.string.category_add_custom_zikr)
+                            )
                         }
                     }
                 }
             }
-            
+
             if (availableItems.isEmpty()) {
                 item {
                     Box(
@@ -307,7 +314,7 @@ fun CategoryCreationScreen(
                                 modifier = Modifier.size(48.dp),
                                 color = MaterialTheme.colorScheme.primary
                             )
-                         Text(
+                            Text(
                                 text = stringResource(R.string.category_loading_zikr),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -316,12 +323,9 @@ fun CategoryCreationScreen(
                     }
                 }
             } else {
-items(
-                    items = filteredItems.filter { item -> 
-                        uiState.selectedItems.none { it.itemId == item.id } 
-                    },
-                    key = { "available_${it.id}" }
-                ) { item ->
+                items(items = filteredItems.filter { item ->
+                    uiState.selectedItems.none { it.itemId == item.id }
+                }, key = { "available_${it.id}" }) { item ->
                     val isSelected = uiState.selectedItems.any { it.itemId == item.id }
                     AvailableZikrCard(
                         item = item,
@@ -331,7 +335,7 @@ items(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                
+
                 if (filteredItems.isEmpty() && uiState.searchQuery.isNotBlank()) {
                     item {
                         Box(
@@ -340,7 +344,7 @@ items(
                                 .padding(vertical = 24.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                         Text(
+                            Text(
                                 text = stringResource(R.string.category_no_zikr_found),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -349,13 +353,13 @@ items(
                     }
                 }
             }
-            
+
             item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
-    
+
     if (showCustomZikrDialog) {
         CustomZikrDialog(
             onDismiss = { showCustomZikrDialog = false },
@@ -369,16 +373,65 @@ items(
                     isInfinite = isInfinite
                 )
                 showCustomZikrDialog = false
-            }
+            })
+    }
+}
+
+@Composable
+fun NotificationToggleSection(
+    enabled: Boolean, prayerTimeIndex: Int, onToggle: (Boolean) -> Unit
+) {
+    val prayerTimeName = when (prayerTimeIndex) {
+        0 -> stringResource(R.string.schedule_fajr)
+        1 -> stringResource(R.string.schedule_sunrise)
+        2 -> stringResource(R.string.schedule_dhuhr)
+        3 -> stringResource(R.string.schedule_asr)
+        4 -> stringResource(R.string.schedule_maghrib)
+        5 -> stringResource(R.string.schedule_isha)
+        6 -> stringResource(R.string.schedule_firstthird)
+        7 -> stringResource(R.string.schedule_midnight)
+        8 -> stringResource(R.string.schedule_lastthird)
+        else -> stringResource(R.string.schedule_fajr)
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
         )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.notification_enabled),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(R.string.notification_time_after, prayerTimeName),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Switch(
+                checked = enabled, onCheckedChange = onToggle, colors = SwitchDefaults.colors(
+                    checkedThumbColor = MaterialTheme.colorScheme.primary,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                )
+            )
+        }
     }
 }
 
 @Composable
 private fun CategoryNameField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier
 ) {
     TextField(
         value = value,
@@ -403,9 +456,7 @@ private fun CategoryNameField(
 
 @Composable
 private fun SearchField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = value,
@@ -420,7 +471,10 @@ private fun SearchField(
         trailingIcon = {
             AnimatedVisibility(visible = value.isNotEmpty()) {
                 IconButton(onClick = { onValueChange("") }) {
-                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.category_clear_content_description))
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = stringResource(R.string.category_clear_content_description)
+                    )
                 }
             }
         },
@@ -438,8 +492,7 @@ private fun SearchField(
 
 @Composable
 private fun SectionHeader(
-    text: String,
-    modifier: Modifier = Modifier
+    text: String, modifier: Modifier = Modifier
 ) {
     Text(
         text = text,
@@ -458,7 +511,7 @@ private fun AvailableZikrCard(
     modifier: Modifier = Modifier
 ) {
     val isArabic = currentLangTag == "ar"
-    
+
     Card(
         onClick = { if (!isSelected) onSelect() },
         modifier = modifier,
@@ -479,15 +532,18 @@ private fun AvailableZikrCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 if (isArabic) {
                     item.arabicText?.let { arabic ->
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                             Text(
                                 text = arabic.take(50) + if (arabic.length > 50) "..." else "",
-                                style = MaterialTheme.typography.titleMedium.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                                style = MaterialTheme.typography.titleMedium.merge(
+                                    TextStyle(
+                                        textDirection = TextDirection.Rtl
+                                    )
+                                ),
                                 color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -503,7 +559,9 @@ private fun AvailableZikrCard(
                         Text(
                             text = transliteration.take(60) + if (transliteration.length > 60) "..." else "",
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.7f
+                            ) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
                     }
                 } else {
@@ -519,28 +577,38 @@ private fun AvailableZikrCard(
                         Text(
                             text = transliteration.take(60) + if (transliteration.length > 60) "..." else "",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f)
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.9f
+                            ) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f)
                         )
                     }
                     item.translation?.let { translation ->
                         Text(
                             text = translation.take(80) + if (translation.length > 80) "..." else "",
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                alpha = 0.7f
+                            ) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
                     }
                     item.arabicText?.let { arabic ->
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                             Text(
                                 text = arabic.take(40) + if (arabic.length > 40) "..." else "",
-                                style = MaterialTheme.typography.bodySmall.merge(TextStyle(textDirection = TextDirection.Rtl)),
-                                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                style = MaterialTheme.typography.bodySmall.merge(
+                                    TextStyle(
+                                        textDirection = TextDirection.Rtl
+                                    )
+                                ),
+                                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer.copy(
+                                    alpha = 0.5f
+                                ) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
                         }
                     }
                 }
             }
-            
+
             if (isSelected) {
                 Button(
                     onClick = onSelect,
@@ -594,11 +662,9 @@ private fun SelectedItemCard(
     modifier: Modifier = Modifier
 ) {
     val isArabic = currentLangTag == "ar"
-    
+
     Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
+        modifier = modifier, shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
@@ -610,37 +676,52 @@ private fun SelectedItemCard(
             Row {
                 if (!isStockCategory) {
                     IconButton(
-                        onClick = onMoveUp,
-                        enabled = index > 0,
-                        modifier = Modifier.size(32.dp)
+                        onClick = onMoveUp, enabled = index > 0, modifier = Modifier.size(32.dp)
                     ) {
-                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.category_move_up_content_description), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Icon(
+                            Icons.Default.KeyboardArrowUp,
+                            contentDescription = stringResource(R.string.category_move_up_content_description),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                     IconButton(
                         onClick = onMoveDown,
                         enabled = index < totalCount - 1,
                         modifier = Modifier.size(32.dp)
                     ) {
-                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = stringResource(R.string.category_move_down_content_description), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Icon(
+                            Icons.Default.KeyboardArrowDown,
+                            contentDescription = stringResource(R.string.category_move_down_content_description),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                     IconButton(
-                        onClick = onRemove,
-                        modifier = Modifier.size(36.dp)
+                        onClick = onRemove, modifier = Modifier.size(36.dp)
                     ) {
-                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.category_remove_content_description), tint = MaterialTheme.colorScheme.error)
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.category_remove_content_description),
+                            tint = MaterialTheme.colorScheme.error
+                        )
                     }
                 } else {
                     IconButton(
-                        onClick = {},
-                        enabled = false,
-                        modifier = Modifier.size(32.dp)
+                        onClick = {}, enabled = false, modifier = Modifier.size(32.dp)
                     ) {
-                        Icon(Icons.Default.Lock, contentDescription = stringResource(R.string.category_stock_limited_editing_content_description), tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
+                        Icon(
+                            Icons.Default.Lock,
+                            contentDescription = stringResource(R.string.category_stock_limited_editing_content_description),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        )
                     }
                 }
             }
             IconButton(onClick = {}) {
-                Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.category_edit_counts_content_description), tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f))
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.category_edit_counts_content_description),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                )
             }
         }
         Column(
@@ -650,15 +731,18 @@ private fun SelectedItemCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 if (isArabic) {
                     item.arabicText?.let { arabic ->
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                             Text(
                                 text = arabic.take(40) + if (arabic.length > 40) "..." else "",
-                                style = MaterialTheme.typography.titleSmall.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                                style = MaterialTheme.typography.titleSmall.merge(
+                                    TextStyle(
+                                        textDirection = TextDirection.Rtl
+                                    )
+                                ),
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
@@ -691,7 +775,11 @@ private fun SelectedItemCard(
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                             Text(
                                 text = arabic.take(30) + if (arabic.length > 30) "..." else "",
-                                style = MaterialTheme.typography.bodySmall.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                                style = MaterialTheme.typography.bodySmall.merge(
+                                    TextStyle(
+                                        textDirection = TextDirection.Rtl
+                                    )
+                                ),
                                 color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f)
                             )
                         }
@@ -713,7 +801,7 @@ private fun SelectedItemCard(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
-                    
+
                     if (config.isInfinite) {
                         Surface(
                             shape = RoundedCornerShape(8.dp),
@@ -757,12 +845,14 @@ private fun SelectedItemCard(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                                 unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
                                 focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f)
+                                unfocusedContainerColor = MaterialTheme.colorScheme.primary.copy(
+                                    alpha = 0.05f
+                                )
                             )
                         )
                     }
                 }
-                
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -778,8 +868,12 @@ private fun SelectedItemCard(
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = MaterialTheme.colorScheme.primary,
                             checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                            uncheckedThumbColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
-                            uncheckedTrackColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.3f)
+                            uncheckedThumbColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                                alpha = 0.5f
+                            ),
+                            uncheckedTrackColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(
+                                alpha = 0.3f
+                            )
                         )
                     )
                 }
@@ -787,13 +881,11 @@ private fun SelectedItemCard(
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ScheduleSection(
-    from: Int,
-    to: Int,
-    onFromChange: (Int) -> Unit,
-    onToChange: (Int) -> Unit
+    from: Int, to: Int, onFromChange: (Int) -> Unit, onToChange: (Int) -> Unit
 ) {
     val scheduleOptions = listOf(
         0 to stringResource(R.string.schedule_fajr),
@@ -815,17 +907,16 @@ private fun ScheduleSection(
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
-        
+
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Box(modifier = Modifier.weight(1f)) {
                 var expanded by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded }
-                ) {
+                    expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+                    val fillMaxWidth = Modifier
+                        .fillMaxWidth()
                     OutlinedTextField(
                         value = scheduleOptions.find { it.first == from }?.second ?: "",
                         onValueChange = {},
@@ -841,33 +932,28 @@ private fun ScheduleSection(
                         )
                     )
                     DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
+                        expanded = expanded, onDismissRequest = { expanded = false }) {
                         scheduleOptions.forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(option.second) },
-                                onClick = {
-                                    onFromChange(option.first)
-                                    expanded = false
-                                }
-                            )
+                            DropdownMenuItem(text = { Text(option.second) }, onClick = {
+                                onFromChange(option.first)
+                                expanded = false
+                            })
                         }
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.width(8.dp))
-            
+
             Box(modifier = Modifier.weight(1f)) {
                 var expanded by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded }
-                ) {
-                     OutlinedTextField(
-                        value = scheduleOptions.find { it.first == to }?.second ?: "" + 
-                            if (to < from) " ${stringResource(R.string.schedule_next_day_suffix)}" else "",
+                    expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+                    val fillMaxWidth = Modifier
+                        .fillMaxWidth()
+                    OutlinedTextField(
+                        value = scheduleOptions.find { it.first == to }?.second
+                            ?: ("" + if (to < from) " ${stringResource(R.string.schedule_next_day_suffix)}" else ""),
                         onValueChange = {},
                         readOnly = true,
                         label = { Text(stringResource(R.string.schedule_to_label)) },
@@ -881,21 +967,17 @@ private fun ScheduleSection(
                         )
                     )
                     DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
+                        expanded = expanded, onDismissRequest = { expanded = false }) {
                         scheduleOptions.forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(option.second) },
-                                onClick = {
-                                    onToChange(option.first)
-                                    expanded = false
-                                }
-                            )
+                            DropdownMenuItem(text = { Text(option.second) }, onClick = {
+                                onToChange(option.first)
+                                expanded = false
+                            })
                         }
                     }
                 }
             }
         }
+
     }
 }

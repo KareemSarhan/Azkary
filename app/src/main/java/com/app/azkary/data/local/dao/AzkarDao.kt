@@ -35,6 +35,12 @@ interface CategoryDao {
 
     @Query("SELECT * FROM categories WHERE systemKey = :systemKey LIMIT 1")
     suspend fun getCategoryBySystemKey(systemKey: String): CategoryEntity?
+
+    @Query("SELECT * FROM categories WHERE notificationEnabled = 1 AND isArchived = 0")
+    suspend fun getCategoriesWithNotifications(): List<CategoryEntity>
+
+    @Query("UPDATE categories SET notificationEnabled = :enabled WHERE categoryId = :categoryId")
+    suspend fun updateNotificationEnabled(categoryId: String, enabled: Boolean)
 }
 
 @Dao

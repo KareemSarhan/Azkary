@@ -7,13 +7,13 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.app.azkary.data.model.SystemCategoryKey
-import com.app.azkary.data.prefs.NotificationPreferences
+import com.app.azkary.data.local.entities.CategoryEntity
 import com.app.azkary.domain.model.DayPrayerTimes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -28,74 +28,56 @@ class AzkarNotificationScheduler @Inject constructor(
 
     companion object {
         const val REMINDER_MINUTES = 30L
-
-        private const val WORK_NAME_MORNING = "morning_azkar_notification"
-        private const val WORK_NAME_NIGHT = "night_azkar_notification"
-        private const val WORK_NAME_SLEEP = "sleep_azkar_notification"
+        const val WORK_TAG = "azkar_notification_worker"
+        
+        fun getWorkNameForCategory(categoryId: String) = "category_notification_$categoryId"
     }
 
     fun scheduleNotifications(
         todayTimes: DayPrayerTimes,
-        tomorrowTimes: DayPrayerTimes? = null,
-        preferences: NotificationPreferences
+        categories: List<CategoryEntity>
     ) {
         cancelAllNotifications()
 
         val now = Instant.now()
         val zoneId = todayTimes.timezone
 
-        if (preferences.morningAzkarEnabled) {
-            val morningTime = LocalDateTime.of(todayTimes.date, todayTimes.fajr)
-                .atZone(zoneId)
-                .toInstant()
+        categories.forEach { category ->
+            val triggerTime = getPrayerTimeByIndex(todayTimes, category.from, zoneId)
                 .plus(Duration.ofMinutes(REMINDER_MINUTES))
 
-            if (morningTime.isAfter(now)) {
+            if (triggerTime.isAfter(now)) {
                 scheduleNotification(
-                    workName = WORK_NAME_MORNING,
-                    categoryKey = SystemCategoryKey.MORNING,
-                    triggerTime = morningTime
-                )
-            }
-        }
-
-        if (preferences.nightAzkarEnabled) {
-            val nightTime = LocalDateTime.of(todayTimes.date, todayTimes.asr)
-                .atZone(zoneId)
-                .toInstant()
-                .plus(Duration.ofMinutes(REMINDER_MINUTES))
-
-            if (nightTime.isAfter(now)) {
-                scheduleNotification(
-                    workName = WORK_NAME_NIGHT,
-                    categoryKey = SystemCategoryKey.NIGHT,
-                    triggerTime = nightTime
-                )
-            }
-        }
-
-        if (preferences.sleepAzkarEnabled) {
-            val sleepTime = LocalDateTime.of(todayTimes.date, todayTimes.isha)
-                .atZone(zoneId)
-                .toInstant()
-                .plus(Duration.ofMinutes(REMINDER_MINUTES))
-
-            if (sleepTime.isAfter(now)) {
-                scheduleNotification(
-                    workName = WORK_NAME_SLEEP,
-                    categoryKey = SystemCategoryKey.SLEEP,
-                    triggerTime = sleepTime
+                    categoryId = category.categoryId,
+                    triggerTime = triggerTime
                 )
             }
         }
     }
 
+    private fun getPrayerTimeByIndex(times: DayPrayerTimes, index: Int, zoneId: ZoneId): Instant {
+        val time: LocalTime = when (index) {
+            0 -> times.fajr
+            1 -> times.sunrise
+            2 -> times.dhuhr
+            3 -> times.asr
+            4 -> times.maghrib
+            5 -> times.isha
+            6 -> times.firstthird
+            7 -> times.midnight
+            8 -> times.lastthird
+            else -> times.fajr
+        }
+        return LocalDateTime.of(times.date, time).atZone(zoneId).toInstant()
+    }
+
     private fun scheduleNotification(
-        workName: String,
-        categoryKey: SystemCategoryKey,
+        categoryId: String,
         triggerTime: Instant
     ) {
         val delay = Duration.between(Instant.now(), triggerTime)
+        
+        if (delay.isNegative || delay.isZero) return
 
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
@@ -104,28 +86,24 @@ class AzkarNotificationScheduler @Inject constructor(
         val workRequest = OneTimeWorkRequestBuilder<AzkarNotificationWorker>()
             .setInitialDelay(delay.toMillis(), TimeUnit.MILLISECONDS)
             .setConstraints(constraints)
-            .setInputData(workDataOf(AzkarNotificationWorker.KEY_CATEGORY_KEY to categoryKey.name))
-            .addTag(AzkarNotificationWorker.WORK_TAG)
+            .setInputData(workDataOf(
+                AzkarNotificationWorker.KEY_CATEGORY_ID to categoryId
+            ))
+            .addTag(WORK_TAG)
             .build()
 
         workManager.enqueueUniqueWork(
-            workName,
+            getWorkNameForCategory(categoryId),
             ExistingWorkPolicy.REPLACE,
             workRequest
         )
     }
 
     fun cancelAllNotifications() {
-        workManager.cancelUniqueWork(WORK_NAME_MORNING)
-        workManager.cancelUniqueWork(WORK_NAME_NIGHT)
-        workManager.cancelUniqueWork(WORK_NAME_SLEEP)
+        workManager.cancelAllWorkByTag(WORK_TAG)
     }
 
-    fun rescheduleNotifications(
-        todayTimes: DayPrayerTimes,
-        tomorrowTimes: DayPrayerTimes? = null,
-        preferences: NotificationPreferences
-    ) {
-        scheduleNotifications(todayTimes, tomorrowTimes, preferences)
+    fun cancelNotificationForCategory(categoryId: String) {
+        workManager.cancelUniqueWork(getWorkNameForCategory(categoryId))
     }
 }

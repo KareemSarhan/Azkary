@@ -7,7 +7,8 @@ data class CategoryUi(
     val systemKey: SystemCategoryKey?,
     val progress: Float,
     val from: Int,
-    val to: Int
+    val to: Int,
+    val notificationEnabled: Boolean = false
 )
 
 data class AzkarItemUi(

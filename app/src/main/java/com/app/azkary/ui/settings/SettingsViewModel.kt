@@ -3,18 +3,19 @@ package com.app.azkary.ui.settings
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.azkary.data.model.CategoryUi
 import com.app.azkary.data.model.LatLng
 import com.app.azkary.data.prefs.ThemeMode
 import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
 import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.domain.model.DayPrayerTimes
 import android.util.Log
 import com.app.azkary.R
 import com.app.azkary.domain.model.WindowCalculationResult
-import com.app.azkary.data.prefs.NotificationPreferences
 import com.app.azkary.notification.AzkarNotificationScheduler
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -35,6 +38,7 @@ class SettingsViewModel @Inject constructor(
     private val locationRepository: LocationRepository,
     private val geocodingRepository: com.app.azkary.data.repository.GeocodingRepository,
     private val prayerTimesRepository: PrayerTimesRepository,
+    private val azkarRepository: AzkarRepository,
     private val notificationScheduler: AzkarNotificationScheduler,
     private val localeManager: LocaleManager,
     @param:ApplicationContext private val context: Context
@@ -68,12 +72,16 @@ class SettingsViewModel @Inject constructor(
             initialValue = true
         )
 
-    val notificationPreferences: StateFlow<NotificationPreferences> = userPreferencesRepository.notificationPreferences
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = NotificationPreferences()
+    val categories: StateFlow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { langTag ->
+        azkarRepository.observeCategoriesWithDisplayName(
+            langTag = langTag,
+            date = LocalDate.now().toString()
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
 
     private val _isRefreshingLocation = MutableStateFlow(false)
     val isRefreshingLocation: StateFlow<Boolean> = _isRefreshingLocation.asStateFlow()
@@ -81,7 +89,6 @@ class SettingsViewModel @Inject constructor(
     private val _locationError = MutableStateFlow<String?>(null)
     val locationError: StateFlow<String?> = _locationError.asStateFlow()
 
-    // Prayer times state
     private val _todayPrayerTimes = MutableStateFlow<DayPrayerTimes?>(null)
     val todayPrayerTimes: StateFlow<DayPrayerTimes?> = _todayPrayerTimes.asStateFlow()
 
@@ -94,16 +101,10 @@ class SettingsViewModel @Inject constructor(
     private val _isRefreshingPrayerTimes = MutableStateFlow(false)
     val isRefreshingPrayerTimes: StateFlow<Boolean> = _isRefreshingPrayerTimes.asStateFlow()
 
-    /**
-     * Get the display name of the current language
-     */
     fun getCurrentLanguageDisplayName(): String {
         return localeManager.getCurrentLanguageDisplayName(context)
     }
 
-    /**
-     * Open the Android app-specific language settings
-     */
     fun openLanguageSettings() {
         localeManager.openAppLanguageSettings(context)
     }
@@ -128,7 +129,6 @@ class SettingsViewModel @Inject constructor(
                     val latLng = LatLng(location.latitude, location.longitude)
                     userPreferencesRepository.setLastResolvedLocation(latLng)
 
-                    // Reverse geocode to get city name
                     val cityName = geocodingRepository.getCityName(
                         latLng.latitude,
                         latLng.longitude
@@ -149,7 +149,6 @@ class SettingsViewModel @Inject constructor(
         _locationError.value = null
     }
 
-    // Theme settings methods
     fun setThemeMode(themeMode: ThemeMode) {
         viewModelScope.launch {
             themePreferencesRepository.setThemeMode(themeMode)
@@ -174,24 +173,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    // Notification settings methods
-    fun setMorningAzkarEnabled(enabled: Boolean) {
+    fun setCategoryNotificationEnabled(categoryId: String, enabled: Boolean) {
         viewModelScope.launch {
-            userPreferencesRepository.setMorningAzkarEnabled(enabled)
-            updateNotificationSchedule()
-        }
-    }
-
-    fun setNightAzkarEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.setNightAzkarEnabled(enabled)
-            updateNotificationSchedule()
-        }
-    }
-
-    fun setSleepAzkarEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.setSleepAzkarEnabled(enabled)
+            azkarRepository.setCategoryNotificationEnabled(categoryId, enabled)
             updateNotificationSchedule()
         }
     }
@@ -199,7 +183,6 @@ class SettingsViewModel @Inject constructor(
     private fun updateNotificationSchedule() {
         viewModelScope.launch {
             val locationPrefs = locationPreferences.value
-            val notificationPrefs = notificationPreferences.value
 
             if (locationPrefs.useLocation && locationPrefs.lastResolvedLocation != null) {
                 try {
@@ -210,17 +193,11 @@ class SettingsViewModel @Inject constructor(
                         longitude = location.longitude
                     )
 
-                    val tomorrowTimes = prayerTimesRepository.getDayPrayerTimes(
-                        date = LocalDate.now().plusDays(1),
-                        latitude = location.latitude,
-                        longitude = location.longitude
-                    )
-
                     if (todayTimes != null) {
+                        val categoriesWithNotifications = azkarRepository.getCategoriesWithNotifications()
                         notificationScheduler.scheduleNotifications(
                             todayTimes = todayTimes,
-                            tomorrowTimes = tomorrowTimes,
-                            preferences = notificationPrefs
+                            categories = categoriesWithNotifications
                         )
                     }
                 } catch (e: Exception) {
@@ -230,7 +207,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    // Prayer times methods
     fun refreshPrayerTimes() {
         viewModelScope.launch {
             val locationPrefs = locationPreferences.value
@@ -249,46 +225,36 @@ class SettingsViewModel @Inject constructor(
                     latitude = location.latitude,
                     longitude = location.longitude
                 )
-                
-                 _todayPrayerTimes.value = todayTimes
 
-                 // Log prayer times in Settings screen
-                 todayTimes?.let { times ->
-                     Log.d("PrayerTimes", "=== Prayer Times (Settings) - All 9 Timings ===")
-                     Log.d("PrayerTimes", "Date: ${times.date}, Timezone: ${times.timezone}")
-                     Log.d("PrayerTimes", "Daytime Prayers:")
-                     Log.d("PrayerTimes", "  Fajr: ${times.fajr}, Sunrise: ${times.sunrise}")
-                     Log.d("PrayerTimes", "  Dhuhr: ${times.dhuhr}, Asr: ${times.asr}")
-                     Log.d("PrayerTimes", "  Maghrib: ${times.maghrib}, Isha: ${times.isha}")
-                     Log.d("PrayerTimes", "Night/Late Prayers:")
-                     Log.d("PrayerTimes", "  Firstthird: ${times.firstthird} (Tahajjud start)")
-                     Log.d("PrayerTimes", "  Midnight: ${times.midnight} (Islamic)")
-                     Log.d("PrayerTimes", "  Lastthird: ${times.lastthird} (Before Fajr)")
-                 }
-                 
-                 // Calculate current windows
-                  if (todayTimes != null) {
-                      val windows = prayerTimesRepository.getCurrentWindows(
-                          latitude = location.latitude,
-                          longitude = location.longitude
-                      )
-                      _currentWindows.value = windows
-                      // Log windows
-                      Log.d("PrayerTimes", "Current window: ${windows.currentWindow?.window}, Next: ${windows.nextWindow?.window}")
+                _todayPrayerTimes.value = todayTimes
 
-                      // Schedule notifications with new prayer times
-                      val notificationPrefs = notificationPreferences.value
-                      val tomorrowTimes = prayerTimesRepository.getDayPrayerTimes(
-                          date = LocalDate.now().plusDays(1),
-                          latitude = location.latitude,
-                          longitude = location.longitude
-                      )
-                      notificationScheduler.scheduleNotifications(
-                          todayTimes = todayTimes,
-                          tomorrowTimes = tomorrowTimes,
-                          preferences = notificationPrefs
-                      )
-                  }
+                todayTimes?.let { times ->
+                    Log.d("PrayerTimes", "=== Prayer Times (Settings) - All 9 Timings ===")
+                    Log.d("PrayerTimes", "Date: ${times.date}, Timezone: ${times.timezone}")
+                    Log.d("PrayerTimes", "Daytime Prayers:")
+                    Log.d("PrayerTimes", "  Fajr: ${times.fajr}, Sunrise: ${times.sunrise}")
+                    Log.d("PrayerTimes", "  Dhuhr: ${times.dhuhr}, Asr: ${times.asr}")
+                    Log.d("PrayerTimes", "  Maghrib: ${times.maghrib}, Isha: ${times.isha}")
+                    Log.d("PrayerTimes", "Night/Late Prayers:")
+                    Log.d("PrayerTimes", "  Firstthird: ${times.firstthird} (Tahajjud start)")
+                    Log.d("PrayerTimes", "  Midnight: ${times.midnight} (Islamic)")
+                    Log.d("PrayerTimes", "  Lastthird: ${times.lastthird} (Before Fajr)")
+                }
+
+                if (todayTimes != null) {
+                    val windows = prayerTimesRepository.getCurrentWindows(
+                        latitude = location.latitude,
+                        longitude = location.longitude
+                    )
+                    _currentWindows.value = windows
+                    Log.d("PrayerTimes", "Current window: ${windows.currentWindow?.window}, Next: ${windows.nextWindow?.window}")
+
+                    val categoriesWithNotifications = azkarRepository.getCategoriesWithNotifications()
+                    notificationScheduler.scheduleNotifications(
+                        todayTimes = todayTimes,
+                        categories = categoriesWithNotifications
+                    )
+                }
 
             } catch (e: Exception) {
                 _prayerTimesError.value = "${context.getString(R.string.error_prayer_times)}: ${e.message}"
@@ -303,7 +269,6 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun initializePrayerTimes() {
-        // Auto-refresh prayer times when location becomes available
         viewModelScope.launch {
             locationPreferences.collect { prefs ->
                 if (prefs.useLocation && prefs.lastResolvedLocation != null) {

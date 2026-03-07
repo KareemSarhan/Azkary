@@ -181,6 +181,8 @@
 
     <!-- Notification Settings -->
     <string name="settings_section_notifications">NOTIFICATIONS</string>
+    <string name="notification_enabled">Reminder</string>
+    <string name="notification_time_after">30 min after %s</string>
     <string name="settings_morning_azkar">Morning Azkar</string>
     <string name="settings_morning_azkar_desc">Remind me after Fajr</string>
     <string name="settings_night_azkar">Night Azkar</string>
@@ -189,6 +191,8 @@
     <string name="settings_sleep_azkar_desc">Remind me after Isha</string>
 
     <!-- Notification Channels -->
+    <string name="notification_channel_general">Azkar Reminders</string>
+    <string name="notification_channel_general_desc">Reminders for your azkar categories</string>
     <string name="notification_channel_morning">Morning Azkar</string>
     <string name="notification_channel_morning_desc">Reminders for morning azkar after Fajr</string>
     <string name="notification_channel_night">Night Azkar</string>
@@ -197,6 +201,7 @@
     <string name="notification_channel_sleep_desc">Reminders for sleep azkar after Isha</string>
 
     <!-- Notification Content -->
+    <string name="notification_reminder_content">It\'s time for your azkar.</string>
     <string name="notification_morning_title">☀️ Morning Azkar</string>
     <string name="notification_morning_content">It\'s time for your morning azkar. Start your day with remembrance of Allah.</string>
     <string name="notification_night_title">🌅 Night Azkar</string>

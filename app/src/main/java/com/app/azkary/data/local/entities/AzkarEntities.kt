@@ -14,7 +14,8 @@ data class CategoryEntity(
     val sortOrder: Int,
     val isArchived: Boolean = false,
     val from: Int,
-    val to: Int
+    val to: Int,
+    val notificationEnabled: Boolean = false
 )
 
 @Entity(

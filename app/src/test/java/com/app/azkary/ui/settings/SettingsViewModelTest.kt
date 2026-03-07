@@ -9,6 +9,7 @@ import com.app.azkary.data.prefs.ThemeMode
 import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
 import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.GeocodingRepository
 import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
@@ -56,6 +57,7 @@ class SettingsViewModelTest {
     private lateinit var locationRepository: LocationRepository
     private lateinit var geocodingRepository: GeocodingRepository
     private lateinit var prayerTimesRepository: PrayerTimesRepository
+    private lateinit var azkarRepository: AzkarRepository
     private lateinit var notificationScheduler: AzkarNotificationScheduler
     private lateinit var localeManager: LocaleManager
     private lateinit var context: Context
@@ -70,6 +72,7 @@ class SettingsViewModelTest {
         locationRepository = mockk(relaxed = true)
         geocodingRepository = mockk(relaxed = true)
         prayerTimesRepository = mockk(relaxed = true)
+        azkarRepository = mockk(relaxed = true)
         notificationScheduler = mockk(relaxed = true)
         localeManager = mockk(relaxed = true)
         context = mockk(relaxed = true)
@@ -80,6 +83,7 @@ class SettingsViewModelTest {
             LocationPreferences(useLocation = false, lastResolvedLocation = null, locationName = null)
         )
         every { userPreferencesRepository.holdToComplete } returns MutableStateFlow(true)
+        every { azkarRepository.observeCategoriesWithDisplayName(any(), any()) } returns MutableStateFlow(emptyList())
 
         viewModel = SettingsViewModel(
             userPreferencesRepository = userPreferencesRepository,
@@ -87,6 +91,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
@@ -115,6 +120,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
@@ -294,6 +300,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
@@ -326,6 +333,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
@@ -368,6 +376,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
@@ -400,6 +409,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
@@ -436,6 +446,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context
@@ -494,6 +505,7 @@ class SettingsViewModelTest {
             locationRepository = locationRepository,
             geocodingRepository = geocodingRepository,
             prayerTimesRepository = prayerTimesRepository,
+            azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
             localeManager = localeManager,
             context = context

@@ -1,6 +1,7 @@
 package com.app.azkary.ui.settings
 
 import android.Manifest
+import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -77,7 +78,7 @@ fun SettingsScreen(
     val themeSettings by viewModel.themeSettings.collectAsState()
     val holdToComplete by viewModel.holdToComplete.collectAsState()
     val showWeeklyProgress by viewModel.showWeeklyProgress.collectAsState()
-    val notificationPrefs by viewModel.notificationPreferences.collectAsState()
+    val categories by viewModel.categories.collectAsState()
 
     // Support/Feedback sheet state
     var showSupportSheet by remember { mutableStateOf(false) }
@@ -280,54 +281,24 @@ fun SettingsScreen(
                 color = onBackgroundColor.copy(alpha = 0.6f)
             )
 
-            SettingsToggleItem(
-                title = stringResource(R.string.settings_morning_azkar),
-                subtitle = stringResource(R.string.settings_morning_azkar_desc),
-                isEnabled = notificationPrefs.morningAzkarEnabled,
-                onToggle = { enabled ->
-                    if (enabled) {
-                        notificationPermissionLauncher.requestNotificationPermission()
-                    }
-                    viewModel.setMorningAzkarEnabled(enabled)
-                },
-                surfaceColor = surfaceColor,
-                onSurfaceColor = onSurfaceColor,
-                onSurfaceVariantColor = onSurfaceVariantColor
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            SettingsToggleItem(
-                title = stringResource(R.string.settings_night_azkar),
-                subtitle = stringResource(R.string.settings_night_azkar_desc),
-                isEnabled = notificationPrefs.nightAzkarEnabled,
-                onToggle = { enabled ->
-                    if (enabled) {
-                        notificationPermissionLauncher.requestNotificationPermission()
-                    }
-                    viewModel.setNightAzkarEnabled(enabled)
-                },
-                surfaceColor = surfaceColor,
-                onSurfaceColor = onSurfaceColor,
-                onSurfaceVariantColor = onSurfaceVariantColor
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            SettingsToggleItem(
-                title = stringResource(R.string.settings_sleep_azkar),
-                subtitle = stringResource(R.string.settings_sleep_azkar_desc),
-                isEnabled = notificationPrefs.sleepAzkarEnabled,
-                onToggle = { enabled ->
-                    if (enabled) {
-                        notificationPermissionLauncher.requestNotificationPermission()
-                    }
-                    viewModel.setSleepAzkarEnabled(enabled)
-                },
-                surfaceColor = surfaceColor,
-                onSurfaceColor = onSurfaceColor,
-                onSurfaceVariantColor = onSurfaceVariantColor
-            )
+            // Category notification toggles
+            categories.forEach { category ->
+                SettingsToggleItem(
+                    title = category.name,
+                    subtitle = formatNotificationTime(context, category.from),
+                    isEnabled = category.notificationEnabled,
+                    onToggle = { enabled ->
+                        if (enabled) {
+                            notificationPermissionLauncher.requestNotificationPermission()
+                        }
+                        viewModel.setCategoryNotificationEnabled(category.id, enabled)
+                    },
+                    surfaceColor = surfaceColor,
+                    onSurfaceColor = onSurfaceColor,
+                    onSurfaceVariantColor = onSurfaceVariantColor
+                )
+                Spacer(Modifier.height(8.dp))
+            }
 
             Spacer(Modifier.height(32.dp))
 
@@ -672,4 +643,21 @@ private fun ThemeSettingItem(
             }
         }
     }
+}
+
+@Composable
+private fun formatNotificationTime(context: Context, prayerTimeIndex: Int): String {
+    val prayerTimeName = when (prayerTimeIndex) {
+        0 -> context.getString(R.string.schedule_fajr)
+        1 -> context.getString(R.string.schedule_sunrise)
+        2 -> context.getString(R.string.schedule_dhuhr)
+        3 -> context.getString(R.string.schedule_asr)
+        4 -> context.getString(R.string.schedule_maghrib)
+        5 -> context.getString(R.string.schedule_isha)
+        6 -> context.getString(R.string.schedule_firstthird)
+        7 -> context.getString(R.string.schedule_midnight)
+        8 -> context.getString(R.string.schedule_lastthird)
+        else -> context.getString(R.string.schedule_fajr)
+    }
+    return context.getString(R.string.notification_time_after, prayerTimeName)
 }
