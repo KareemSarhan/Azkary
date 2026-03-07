@@ -15,9 +15,10 @@ interface GeocodingRepository {
 
 @Singleton
 class GeocodingRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : GeocodingRepository {
 
+    @Suppress("DEPRECATION")
     override suspend fun getCityName(latitude: Double, longitude: Double): String? =
         withContext(Dispatchers.IO) {
             try {

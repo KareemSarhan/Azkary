@@ -37,7 +37,7 @@ class SettingsViewModel @Inject constructor(
     private val prayerTimesRepository: PrayerTimesRepository,
     private val notificationScheduler: AzkarNotificationScheduler,
     private val localeManager: LocaleManager,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     val themeSettings: StateFlow<ThemeSettings> = themePreferencesRepository.themeSettings

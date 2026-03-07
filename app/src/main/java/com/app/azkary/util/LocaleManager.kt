@@ -22,7 +22,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class LocaleManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     // Observable language tag that updates on configuration changes
     private val _currentLangTag = MutableStateFlow(getCurrentLanguageTag(context))

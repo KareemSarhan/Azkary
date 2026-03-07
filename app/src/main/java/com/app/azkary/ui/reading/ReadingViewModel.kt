@@ -31,7 +31,7 @@ class ReadingViewModel @Inject constructor(
     private val localeManager: LocaleManager,
     private val islamicDateProvider: IslamicDateProvider,
     private val userPreferencesRepository: UserPreferencesRepository,
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val categoryId: String? = savedStateHandle["categoryId"]

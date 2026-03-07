@@ -42,7 +42,7 @@ class AzkarRepository @Inject constructor(
     private val categoryItemDao: CategoryItemDao,
     private val progressDao: ProgressDao,
     private val seedManager: SeedManager,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
 
     private fun <T> selectBestText(
