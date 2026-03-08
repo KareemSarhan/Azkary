@@ -72,7 +72,7 @@ class ReadingViewModel @Inject constructor(
         }
     }
 
-    val items: Flow<List<AzkarItemUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
+    val items: StateFlow<List<AzkarItemUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         if (categoryId == null) {
             flowOf(emptyList())
         } else {
@@ -84,9 +84,13 @@ class ReadingViewModel @Inject constructor(
                 )
             }
         }
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
 
-    val weightedProgress: Flow<Float> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
+    val weightedProgress: StateFlow<Float> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         if (categoryId == null) {
             flowOf(0f)
         } else {
@@ -96,7 +100,11 @@ class ReadingViewModel @Inject constructor(
                 )
             }
         }
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = 0f
+    )
 
     fun incrementRepeat(itemId: String) {
         viewModelScope.launch {

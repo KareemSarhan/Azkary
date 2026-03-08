@@ -47,14 +47,18 @@ class SummaryViewModel @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    val categories: Flow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
+    val categories: StateFlow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         flow { emit(islamicDateProvider.getCurrentDate().toString()) }.flatMapLatest { date ->
             repository.observeCategoriesWithDisplayName(
                 langTag = lang,
                 date = date
             )
         }
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
 
     // Job that wakes up at the next window boundary to re-evaluate the current window
     private var windowRefreshJob: Job? = null
@@ -95,9 +99,31 @@ class SummaryViewModel @Inject constructor(
         }
     }
 
+    private fun CategoryUi.matchesWindow(window: com.app.azkary.domain.model.AzkarWindow): Boolean = when (window) {
+        com.app.azkary.domain.model.AzkarWindow.MORNING -> from in 0..2
+        com.app.azkary.domain.model.AzkarWindow.NIGHT   -> from in 3..4
+        com.app.azkary.domain.model.AzkarWindow.SLEEP   -> from == 5
+    }
+
     val currentSession: Flow<CategoryUi?> = categories.combine(currentWindows) { categoryList, windows ->
-        val targetKey = windows?.currentWindow?.window?.let { azkarWindowToCategoryKey(it) }
-        categoryList.find { it.systemKey == targetKey }
+        val currentWindowEnum = windows?.currentWindow?.window
+        val targetKey = currentWindowEnum?.let { azkarWindowToCategoryKey(it) }
+
+        // 1. System category for this window — show only if incomplete
+        val systemCategory = categoryList.find { it.systemKey == targetKey }
+        if (systemCategory != null && systemCategory.progress < 1f) {
+            return@combine systemCategory
+        }
+
+        // 2. User categories in this window — prefer incomplete
+        if (currentWindowEnum != null) {
+            val userInWindow = categoryList.filter { it.systemKey == null && it.matchesWindow(currentWindowEnum) }
+            val result = userInWindow.firstOrNull { it.progress < 1f } ?: userInWindow.firstOrNull()
+            if (result != null) return@combine result
+        }
+
+        // 3. Fallback: system category (even if complete), then Morning, Night, first
+        systemCategory
             ?: categoryList.find { it.systemKey == SystemCategoryKey.MORNING }
             ?: categoryList.find { it.systemKey == SystemCategoryKey.NIGHT }
             ?: categoryList.firstOrNull()

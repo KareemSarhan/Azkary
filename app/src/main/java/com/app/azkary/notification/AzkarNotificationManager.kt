@@ -16,7 +16,8 @@ import javax.inject.Singleton
 
 @Singleton
 class AzkarNotificationManager @Inject constructor(
-    @param:ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context,
+    private val permissionHelper: NotificationPermissionHelper
 ) {
 
     companion object {
@@ -68,7 +69,9 @@ class AzkarNotificationManager @Inject constructor(
             categoryId = categoryId,
             channelId = channelId
         )
-        notificationManager.notify(notificationId, notification)
+        if (permissionHelper.hasNotificationPermission()) {
+            notificationManager.notify(notificationId, notification)
+        }
     }
 
     private fun buildNotification(
