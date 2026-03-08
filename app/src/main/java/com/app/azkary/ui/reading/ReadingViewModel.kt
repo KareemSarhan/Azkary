@@ -67,7 +67,7 @@ class ReadingViewModel @Inject constructor(
 
     fun toggleVibration() {
         viewModelScope.launch {
-            val currentEnabled = vibrationEnabled.value
+            val currentEnabled = vibrationEnabledInternal.value
             userPreferencesRepository.setVibrationEnabled(!currentEnabled)
         }
     }
@@ -86,7 +86,7 @@ class ReadingViewModel @Inject constructor(
         }
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.Eagerly,
         initialValue = emptyList()
     )
 
@@ -102,7 +102,7 @@ class ReadingViewModel @Inject constructor(
         }
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.Eagerly,
         initialValue = 0f
     )
 

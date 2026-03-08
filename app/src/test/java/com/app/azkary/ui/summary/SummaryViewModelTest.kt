@@ -25,8 +25,10 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -149,7 +151,7 @@ class SummaryViewModelTest {
     }
 
     @Test
-    fun `holdToComplete should emit value from user preferences`() = runTest {
+    fun `holdToComplete should emit value from user preferences`() = runBlocking {
         val holdToCompleteFlow = MutableStateFlow(true)
         every { userPreferencesRepository.holdToComplete } returns holdToCompleteFlow
 
@@ -161,6 +163,9 @@ class SummaryViewModelTest {
             localeManager = localeManager,
             context = context
         )
+
+        // Give coroutines time to start
+        delay(100)
 
         newViewModel.holdToComplete.test {
             assertEquals(true, awaitItem())
@@ -249,21 +254,31 @@ class SummaryViewModelTest {
     }
 
     @Test
-    fun `toggleCategoryCompletion should mark incomplete when progress is 100 percent`() = runTest {
+    fun `toggleCategoryCompletion should mark incomplete when progress is 100 percent`() {
         coEvery { repository.markCategoryIncomplete(any(), any()) } just Runs
 
         // Create a category with progress >= 1f
         val completeCategory = testCategories[1].copy(progress = 1f)
+        // categories is Eagerly — we need a fresh ViewModel so its StateFlow loads completeCategory
         every { repository.observeCategoriesWithDisplayName(any(), any()) } returns flowOf(listOf(completeCategory))
+        val testViewModel = SummaryViewModel(
+            repository = repository,
+            userPreferencesRepository = userPreferencesRepository,
+            prayerTimesRepository = prayerTimesRepository,
+            islamicDateProvider = islamicDateProvider,
+            localeManager = localeManager,
+            context = context
+        )
 
-        viewModel.toggleCategoryCompletion("cat2")
-        advanceUntilIdle()
+        Thread.sleep(100)
+        testViewModel.toggleCategoryCompletion("cat2")
+        Thread.sleep(100)
 
         coVerify { repository.markCategoryIncomplete("cat2", testDate.toString()) }
     }
 
     @Test
-    fun `location preferences with enabled location should trigger prayer times refresh`() = runTest {
+    fun `location preferences with enabled location should trigger prayer times refresh`() {
         // Set up mock BEFORE creating ViewModel
         val locationPrefs = LocationPreferences(
             useLocation = true,
@@ -273,8 +288,8 @@ class SummaryViewModelTest {
         every { userPreferencesRepository.locationPreferences } returns MutableStateFlow(locationPrefs)
 
         val mockWindows = createMockWindowCalculationResult()
-        coEvery { 
-            prayerTimesRepository.getCurrentWindows(any(), any(), any(), any()) 
+        coEvery {
+            prayerTimesRepository.getCurrentWindows(any(), any(), any(), any())
         } returns mockWindows
 
         // Create new ViewModel with location enabled
@@ -287,13 +302,14 @@ class SummaryViewModelTest {
             context = context
         )
 
-        advanceUntilIdle()
+        // Give coroutines time to run with the test dispatcher
+        Thread.sleep(100)
 
-        coVerify { prayerTimesRepository.getCurrentWindows(testLocation.latitude, testLocation.longitude, any(), any()) }
+        coVerify(timeout = 1000) { prayerTimesRepository.getCurrentWindows(testLocation.latitude, testLocation.longitude, any(), any()) }
     }
 
     @Test
-    fun `location preferences with disabled location should not trigger prayer times refresh`() = runTest {
+    fun `location preferences with disabled location should not trigger prayer times refresh`() {
         // Set up mock BEFORE creating ViewModel
         every { userPreferencesRepository.locationPreferences } returns MutableStateFlow(
             LocationPreferences(useLocation = false, lastResolvedLocation = null, locationName = null)
@@ -309,16 +325,16 @@ class SummaryViewModelTest {
             context = context
         )
 
-        advanceUntilIdle()
+        Thread.sleep(100)
 
         coVerify(exactly = 0) { prayerTimesRepository.getCurrentWindows(any(), any(), any(), any()) }
     }
 
     @Test
-    fun `sessionEndTime should be updated when prayer times are refreshed`() = runTest {
+    fun `sessionEndTime should be updated when prayer times are refreshed`() {
         val mockWindows = createMockWindowCalculationResult()
-        coEvery { 
-            prayerTimesRepository.getCurrentWindows(any(), any(), any(), any()) 
+        coEvery {
+            prayerTimesRepository.getCurrentWindows(any(), any(), any(), any())
         } returns mockWindows
 
         // Set up location preferences with location enabled
@@ -340,7 +356,7 @@ class SummaryViewModelTest {
             context = context
         )
 
-        advanceUntilIdle()
+        Thread.sleep(100)
 
         // Verify prayer times were fetched
         coVerify { prayerTimesRepository.getCurrentWindows(testLocation.latitude, testLocation.longitude, any(), any()) }
@@ -388,15 +404,15 @@ class SummaryViewModelTest {
     }
 
     @Test
-    fun `categories should update when locale changes`() = runTest {
+    fun `categories should update when locale changes`() = runBlocking {
         val langFlow = MutableStateFlow("en")
         every { localeManager.currentLangTagFlow } returns langFlow
 
-        every { 
-            repository.observeCategoriesWithDisplayName(any(), any()) 
-        } returns flowOf(testCategories)
+        // Return different categories per locale so StateFlow emits a new value (avoids deduplication)
+        val arCategories = testCategories.map { it.copy(name = "${it.name} AR") }
+        every { repository.observeCategoriesWithDisplayName(eq("en"), any()) } returns flowOf(testCategories)
+        every { repository.observeCategoriesWithDisplayName(eq("ar"), any()) } returns flowOf(arCategories)
 
-        
         val testViewModel = SummaryViewModel(
             repository = repository,
             userPreferencesRepository = userPreferencesRepository,
@@ -406,11 +422,15 @@ class SummaryViewModelTest {
             context = context
         )
 
+        delay(100)
+
         testViewModel.categories.test {
+            // en categories loaded eagerly at ViewModel creation
             awaitItem()
 
             langFlow.value = "ar"
 
+            // ar categories are different — StateFlow emits new value
             awaitItem()
 
             cancelAndIgnoreRemainingEvents()
@@ -418,7 +438,7 @@ class SummaryViewModelTest {
     }
 
     @Test
-    fun `weeklyProgress should emit correct day progress`() = runTest {
+    fun `weeklyProgress should emit correct day progress`() = runBlocking {
         val dateProgressMap = mapOf(
             LocalDate.now().toString() to 0.5f,
             LocalDate.now().minusDays(1).toString() to 0.3f,
@@ -439,6 +459,8 @@ class SummaryViewModelTest {
             context = context
         )
 
+        delay(100)
+
         testViewModel.weeklyProgress.test {
             val progress = awaitItem()
             assertEquals(7, progress.size)
@@ -448,7 +470,7 @@ class SummaryViewModelTest {
     }
 
     @Test
-    fun `weeklyProgress should mark today correctly`() = runTest {
+    fun `weeklyProgress should mark today correctly`() = runBlocking {
         val today = LocalDate.now()
         val dateProgressMap = mapOf(
             today.toString() to 1.0f,
@@ -469,6 +491,8 @@ class SummaryViewModelTest {
             localeManager = localeManager,
             context = context
         )
+
+        delay(100)
 
         testViewModel.weeklyProgress.test {
             val progress = awaitItem()

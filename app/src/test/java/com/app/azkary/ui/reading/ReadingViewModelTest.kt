@@ -197,6 +197,11 @@ class ReadingViewModelTest {
         val langFlow = MutableStateFlow("en")
         every { localeManager.currentLangTagFlow } returns langFlow
 
+        // Return different items per locale so StateFlow emits a new value (avoids deduplication)
+        val arItems = listOf(testItems[0])
+        every { repository.observeItemsForCategory(any(), eq("en"), any()) } returns flowOf(testItems)
+        every { repository.observeItemsForCategory(any(), eq("ar"), any()) } returns flowOf(arItems)
+
         val newViewModel = ReadingViewModel(
             repository = repository,
             localeManager = localeManager,
@@ -207,13 +212,13 @@ class ReadingViewModelTest {
         )
 
         newViewModel.items.test {
-            // Initial emission
+            // Initial emission with "en" locale (Eagerly — loaded at ViewModel creation)
             awaitItem()
 
             // Change language
             langFlow.value = "ar"
 
-            // Should trigger new emission
+            // Should trigger new emission with different items
             awaitItem()
 
             cancelAndIgnoreRemainingEvents()
@@ -459,10 +464,11 @@ class ReadingViewModelTest {
             savedStateHandle = savedStateHandle
         )
 
-        newViewModel.vibrationEnabled.test {
-            assertEquals(false, awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
+        // Wait for the vibrationEnabledInternal to sync with the repository
+        advanceUntilIdle()
+
+        // Verify the internal state has synced to false
+        assertEquals(false, newViewModel.vibrationEnabledInternal.value)
 
         newViewModel.toggleVibration()
         advanceUntilIdle()
@@ -507,12 +513,14 @@ class ReadingViewModelTest {
         )
 
         newViewModel.weightedProgress.test {
-            val firstValue = awaitItem()
+            val progressValue = awaitItem()
 
             langFlow.value = "ar"
-            val secondValue = awaitItem()
+            // Same progress value for both locales — StateFlow deduplicates, no second emission,
+            // which is the expected "stable" behaviour we want to assert.
+            expectNoEvents()
+            assertEquals(progressValue, newViewModel.weightedProgress.value, 0.0f)
 
-            assertEquals(firstValue, secondValue, 0.0f)
             cancelAndIgnoreRemainingEvents()
         }
     }
