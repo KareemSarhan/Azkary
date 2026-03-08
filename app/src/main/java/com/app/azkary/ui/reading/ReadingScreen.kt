@@ -58,7 +58,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.app.azkary.R
 import com.app.azkary.util.BidiHelper
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -119,6 +118,12 @@ fun ReadingScreen(
     LaunchedEffect(initialPageIndex) {
         if (pagerState.currentPage != initialPageIndex && items.isNotEmpty()) {
             pagerState.scrollToPage(initialPageIndex)
+        }
+    }
+
+    LaunchedEffect(isComplete) {
+        if (isComplete && items.isNotEmpty()) {
+            pagerState.animateScrollToPage(items.size)
         }
     }
 
@@ -267,10 +272,11 @@ fun ReadingScreen(
                         val isAlreadyComplete = item.currentRepeats >= item.requiredRepeats
 
                         if (isAlreadyComplete) {
-                            if (page < items.size - 1) {
-                                scope.launch {
-                                    performVibration(350L)
-                                    pagerState.animateScrollToPage(page + 1)
+                            scope.launch {
+                                performVibration(350L)
+                                when {
+                                    page < items.size - 1 -> pagerState.animateScrollToPage(page + 1)
+                                    isComplete -> pagerState.animateScrollToPage(items.size)
                                 }
                             }
                             return@AzkarReadingItem
@@ -282,9 +288,12 @@ fun ReadingScreen(
                         val willBeComplete = (item.currentRepeats + 1) >= item.requiredRepeats
                         if (willBeComplete) {
                             scope.launch {
-                                delay(0)
                                 performVibration(350L)
-                                pagerState.animateScrollToPage(page + 1)
+                                // Only eagerly advance for non-last items — last item navigates to
+                                // the completion screen once isComplete flips true (LaunchedEffect).
+                                if (page < items.size - 1) {
+                                    pagerState.animateScrollToPage(page + 1)
+                                }
                             }
                         }
                     },
@@ -292,8 +301,12 @@ fun ReadingScreen(
                         if (!isActive) return@AzkarReadingItem
 
                         if (holdToComplete) {
-                            performVibration(50L)
+                            performVibration(350L)
                             viewModel.markItemComplete(item.id)
+                            if (page < items.size - 1) {
+                                scope.launch { pagerState.animateScrollToPage(page + 1) }
+                            }
+                            // last item: LaunchedEffect(isComplete) handles navigation
                         } else {
                             scope.launch {
                                 snackbarHostState.showSnackbar(holdToCompleteDisabledMessage)
