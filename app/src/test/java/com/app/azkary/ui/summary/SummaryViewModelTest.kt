@@ -254,9 +254,18 @@ class SummaryViewModelTest {
 
         // Create a category with progress >= 1f
         val completeCategory = testCategories[1].copy(progress = 1f)
+        // categories is Eagerly — we need a fresh ViewModel so its StateFlow loads completeCategory
         every { repository.observeCategoriesWithDisplayName(any(), any()) } returns flowOf(listOf(completeCategory))
+        val testViewModel = SummaryViewModel(
+            repository = repository,
+            userPreferencesRepository = userPreferencesRepository,
+            prayerTimesRepository = prayerTimesRepository,
+            islamicDateProvider = islamicDateProvider,
+            localeManager = localeManager,
+            context = context
+        )
 
-        viewModel.toggleCategoryCompletion("cat2")
+        testViewModel.toggleCategoryCompletion("cat2")
         advanceUntilIdle()
 
         coVerify { repository.markCategoryIncomplete("cat2", testDate.toString()) }
@@ -392,11 +401,11 @@ class SummaryViewModelTest {
         val langFlow = MutableStateFlow("en")
         every { localeManager.currentLangTagFlow } returns langFlow
 
-        every { 
-            repository.observeCategoriesWithDisplayName(any(), any()) 
-        } returns flowOf(testCategories)
+        // Return different categories per locale so StateFlow emits a new value (avoids deduplication)
+        val arCategories = testCategories.map { it.copy(name = "${it.name} AR") }
+        every { repository.observeCategoriesWithDisplayName(eq("en"), any()) } returns flowOf(testCategories)
+        every { repository.observeCategoriesWithDisplayName(eq("ar"), any()) } returns flowOf(arCategories)
 
-        
         val testViewModel = SummaryViewModel(
             repository = repository,
             userPreferencesRepository = userPreferencesRepository,
@@ -407,10 +416,12 @@ class SummaryViewModelTest {
         )
 
         testViewModel.categories.test {
+            // en categories loaded eagerly at ViewModel creation
             awaitItem()
 
             langFlow.value = "ar"
 
+            // ar categories are different — StateFlow emits new value
             awaitItem()
 
             cancelAndIgnoreRemainingEvents()
