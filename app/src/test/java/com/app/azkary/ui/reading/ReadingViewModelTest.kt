@@ -464,14 +464,11 @@ class ReadingViewModelTest {
             savedStateHandle = savedStateHandle
         )
 
-        newViewModel.vibrationEnabled.test {
-            // vibrationEnabled uses WhileSubscribed with initialValue=true; the upstream
-            // (MutableStateFlow(false)) emits after the initial replay, so skip it.
-            awaitItem() // initial true (WhileSubscribed initialValue)
-            assertEquals(false, awaitItem()) // actual false from upstream
-            cancelAndIgnoreRemainingEvents()
-        }
-        // After the test block vibrationEnabled.value == false, so toggleVibration inverts to true.
+        // Wait for the vibrationEnabledInternal to sync with the repository
+        advanceUntilIdle()
+
+        // Verify the internal state has synced to false
+        assertEquals(false, newViewModel.vibrationEnabledInternal.value)
 
         newViewModel.toggleVibration()
         advanceUntilIdle()

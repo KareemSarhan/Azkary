@@ -63,6 +63,9 @@ class SummaryViewModel @Inject constructor(
     // Job that wakes up at the next window boundary to re-evaluate the current window
     private var windowRefreshJob: Job? = null
 
+    // Job that collects location preferences changes
+    private var locationPreferencesJob: Job? = null
+
     // Prayer times state - must be declared before currentSession uses it
     private val _sessionEndTime = MutableStateFlow<String?>(null)
     val sessionEndTime: StateFlow<String?> = _sessionEndTime.asStateFlow()
@@ -159,7 +162,7 @@ class SummaryViewModel @Inject constructor(
     init {
         println("DEBUG: SummaryViewModel - ViewModel initialized")
         // Auto-refresh prayer times when ViewModel is created and location is enabled
-        viewModelScope.launch {
+        locationPreferencesJob = viewModelScope.launch {
             userPreferencesRepository.locationPreferences.collect { prefs ->
                 println("DEBUG: SummaryViewModel - Location prefs changed: useLocation=${prefs.useLocation}, location=${prefs.lastResolvedLocation}")
                 if (prefs.useLocation && prefs.lastResolvedLocation != null) {
@@ -171,6 +174,12 @@ class SummaryViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        windowRefreshJob?.cancel()
+        locationPreferencesJob?.cancel()
     }
 
     private fun refreshPrayerTimes() {

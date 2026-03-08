@@ -67,7 +67,7 @@ class ReadingViewModel @Inject constructor(
 
     fun toggleVibration() {
         viewModelScope.launch {
-            val currentEnabled = vibrationEnabled.value
+            val currentEnabled = vibrationEnabledInternal.value
             userPreferencesRepository.setVibrationEnabled(!currentEnabled)
         }
     }
