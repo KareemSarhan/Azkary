@@ -117,3 +117,80 @@ meaning notifications are never rescheduled after a device reboot.
 | 3 | Broken `.first()` in boot receiver | `NotificationBootReceiver.kt` | Critical |
 | 4 | Missing permission check before `notify()` | `AzkarNotificationManager.kt` | Critical (Android 13+) |
 | 5 | Convert raw `Flow` to `StateFlow` in ViewModels | `ReadingViewModel.kt`, `SummaryViewModel.kt` | Minor |
+
+---
+
+## Feature: currentSession Supports All Categories (Window-Aware Priority)
+
+**File:** `ui/summary/SummaryViewModel.kt` — `currentSession` flow (lines 98–104)
+
+### Current behaviour
+
+`currentSession` only considers system categories (MORNING / NIGHT / SLEEP) matched by
+`systemKey`. User-created categories are never surfaced as the current session even when
+their assigned window is active.
+
+### Required behaviour
+
+For the active prayer window, `currentSession` must resolve as follows, in order:
+
+1. **System category for the current window that is incomplete** (`progress < 1f`) → show it.
+2. **System category for the current window that is complete** → do NOT show it; fall through.
+3. **User categories whose `from` index falls in the current window, preferring incomplete ones**
+   → show the first incomplete user category in that window; if all are done, show the first
+   complete one.
+4. **No match in the current window** → existing fallbacks (Morning system → Night system →
+   `firstOrNull()`).
+
+### Window mapping for user categories
+
+User categories are assigned a window based on their `from` prayer index:
+
+| `from` index | Prayer | Window |
+|---|---|---|
+| 0, 1, 2 | Fajr, Sunrise, Dhuhr | `MORNING` |
+| 3, 4 | Asr, Maghrib | `NIGHT` |
+| 5 | Isha | `SLEEP` |
+
+### Implementation
+
+**Step 1 — Add a helper extension in `SummaryViewModel.kt`:**
+
+```kotlin
+private fun CategoryUi.matchesWindow(window: AzkarWindow): Boolean = when (window) {
+    AzkarWindow.MORNING -> from in 0..2
+    AzkarWindow.NIGHT   -> from in 3..4
+    AzkarWindow.SLEEP   -> from == 5
+}
+```
+
+**Step 2 — Replace the `currentSession` flow body:**
+
+```kotlin
+val currentSession: Flow<CategoryUi?> = categories.combine(currentWindows) { categoryList, windows ->
+    val currentWindowEnum = windows?.currentWindow?.window
+    val targetKey = currentWindowEnum?.let { azkarWindowToCategoryKey(it) }
+
+    // 1. System category for this window — show only if incomplete
+    val systemCategory = categoryList.find { it.systemKey == targetKey }
+    if (systemCategory != null && systemCategory.progress < 1f) {
+        return@combine systemCategory
+    }
+
+    // 2. User categories whose window matches — prefer incomplete
+    if (currentWindowEnum != null) {
+        val userInWindow = categoryList.filter { it.systemKey == null && it.matchesWindow(currentWindowEnum) }
+        val result = userInWindow.firstOrNull { it.progress < 1f } ?: userInWindow.firstOrNull()
+        if (result != null) return@combine result
+    }
+
+    // 3. Fallback chain (system category even if complete, then Morning, Night, first)
+    systemCategory
+        ?: categoryList.find { it.systemKey == SystemCategoryKey.MORNING }
+        ?: categoryList.find { it.systemKey == SystemCategoryKey.NIGHT }
+        ?: categoryList.firstOrNull()
+}
+```
+
+**No other files need to change.** `CategoryUi.from` is already populated from the database,
+and `AzkarWindow` is already imported in the ViewModel.
