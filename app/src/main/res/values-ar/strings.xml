@@ -195,8 +195,6 @@
     <string name="notification_channel_base_desc">تذكيرات لفئات الأذكار المدمجة (الصباح، المساء، النوم)</string>
     <string name="notification_channel_user">أذكاري</string>
     <string name="notification_channel_user_desc">تذكيرات لفئات أذكارك المخصصة</string>
-    <string name="notification_channel_general">تذكيرات الأذكار</string>
-    <string name="notification_channel_general_desc">تذكيرات لفئات الأذكار الخاصة بك</string>
     <string name="notification_channel_morning">أذكار الصباح</string>
     <string name="notification_channel_morning_desc">تذكيرات لأذكار الصباح بعد الفجر</string>
     <string name="notification_channel_night">أذكار المساء</string>
