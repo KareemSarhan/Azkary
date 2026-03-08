@@ -67,12 +67,12 @@ class ReadingViewModel @Inject constructor(
 
     fun toggleVibration() {
         viewModelScope.launch {
-            val currentEnabled = vibrationEnabled.value
+            val currentEnabled = vibrationEnabledInternal.value
             userPreferencesRepository.setVibrationEnabled(!currentEnabled)
         }
     }
 
-    val items: Flow<List<AzkarItemUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
+    val items: StateFlow<List<AzkarItemUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         if (categoryId == null) {
             flowOf(emptyList())
         } else {
@@ -84,9 +84,13 @@ class ReadingViewModel @Inject constructor(
                 )
             }
         }
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = emptyList()
+    )
 
-    val weightedProgress: Flow<Float> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
+    val weightedProgress: StateFlow<Float> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         if (categoryId == null) {
             flowOf(0f)
         } else {
@@ -96,7 +100,11 @@ class ReadingViewModel @Inject constructor(
                 )
             }
         }
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = 0f
+    )
 
     fun incrementRepeat(itemId: String) {
         viewModelScope.launch {

@@ -10,6 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -63,12 +64,4 @@ class NotificationBootReceiver : BroadcastReceiver() {
         }
     }
 
-    private suspend fun <T> kotlinx.coroutines.flow.Flow<T>.first(): T {
-        var result: T? = null
-        collect { 
-            result = it
-            return@collect
-        }
-        return result!!
-    }
 }

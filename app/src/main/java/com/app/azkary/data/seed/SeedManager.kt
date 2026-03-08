@@ -204,7 +204,8 @@ class SeedManager @Inject constructor(
                         sortOrder = seedCat.sortOrder,
                         isArchived = seedCat.isArchived,
                         from = seedCat.from,
-                        to = seedCat.to
+                        to = seedCat.to,
+                        notificationEnabled = seedCat.systemKey != null
                     )
                 )
 

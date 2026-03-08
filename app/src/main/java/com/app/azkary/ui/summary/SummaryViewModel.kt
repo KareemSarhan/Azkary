@@ -27,6 +27,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -45,14 +47,24 @@ class SummaryViewModel @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    val categories: Flow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
+    val categories: StateFlow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         flow { emit(islamicDateProvider.getCurrentDate().toString()) }.flatMapLatest { date ->
             repository.observeCategoriesWithDisplayName(
                 langTag = lang,
                 date = date
             )
         }
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = emptyList()
+    )
+
+    // Job that wakes up at the next window boundary to re-evaluate the current window
+    private var windowRefreshJob: Job? = null
+
+    // Job that collects location preferences changes
+    private var locationPreferencesJob: Job? = null
 
     // Prayer times state - must be declared before currentSession uses it
     private val _sessionEndTime = MutableStateFlow<String?>(null)
@@ -90,9 +102,31 @@ class SummaryViewModel @Inject constructor(
         }
     }
 
+    private fun CategoryUi.matchesWindow(window: com.app.azkary.domain.model.AzkarWindow): Boolean = when (window) {
+        com.app.azkary.domain.model.AzkarWindow.MORNING -> from in 0..2
+        com.app.azkary.domain.model.AzkarWindow.NIGHT   -> from in 3..4
+        com.app.azkary.domain.model.AzkarWindow.SLEEP   -> from == 5
+    }
+
     val currentSession: Flow<CategoryUi?> = categories.combine(currentWindows) { categoryList, windows ->
-        val targetKey = windows?.currentWindow?.window?.let { azkarWindowToCategoryKey(it) }
-        categoryList.find { it.systemKey == targetKey }
+        val currentWindowEnum = windows?.currentWindow?.window
+        val targetKey = currentWindowEnum?.let { azkarWindowToCategoryKey(it) }
+
+        // 1. System category for this window — show only if incomplete
+        val systemCategory = categoryList.find { it.systemKey == targetKey }
+        if (systemCategory != null && systemCategory.progress < 1f) {
+            return@combine systemCategory
+        }
+
+        // 2. User categories in this window — prefer incomplete
+        if (currentWindowEnum != null) {
+            val userInWindow = categoryList.filter { it.systemKey == null && it.matchesWindow(currentWindowEnum) }
+            val result = userInWindow.firstOrNull { it.progress < 1f } ?: userInWindow.firstOrNull()
+            if (result != null) return@combine result
+        }
+
+        // 3. Fallback: system category (even if complete), then Morning, Night, first
+        systemCategory
             ?: categoryList.find { it.systemKey == SystemCategoryKey.MORNING }
             ?: categoryList.find { it.systemKey == SystemCategoryKey.NIGHT }
             ?: categoryList.firstOrNull()
@@ -128,7 +162,7 @@ class SummaryViewModel @Inject constructor(
     init {
         println("DEBUG: SummaryViewModel - ViewModel initialized")
         // Auto-refresh prayer times when ViewModel is created and location is enabled
-        viewModelScope.launch {
+        locationPreferencesJob = viewModelScope.launch {
             userPreferencesRepository.locationPreferences.collect { prefs ->
                 println("DEBUG: SummaryViewModel - Location prefs changed: useLocation=${prefs.useLocation}, location=${prefs.lastResolvedLocation}")
                 if (prefs.useLocation && prefs.lastResolvedLocation != null) {
@@ -140,6 +174,12 @@ class SummaryViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        windowRefreshJob?.cancel()
+        locationPreferencesJob?.cancel()
     }
 
     private fun refreshPrayerTimes() {
@@ -167,12 +207,33 @@ class SummaryViewModel @Inject constructor(
                 println("DEBUG: SummaryViewModel - Received windows: currentWindow=${windows.currentWindow}, nextWindow=${windows.nextWindow}")
                 _currentWindows.value = windows
                 updateSessionEndTime(windows)
+                scheduleNextWindowRefresh(windows)
             } catch (e: Exception) {
                 println("DEBUG: SummaryViewModel - Error in refreshPrayerTimes: ${e.message}")
                 e.printStackTrace()
                 // Graceful fallback - keep default behavior if prayer times unavailable
                 _sessionEndTime.value = null
             }
+        }
+    }
+
+    /**
+     * Schedules a self-renewing coroutine that wakes up exactly when the next window
+     * boundary is reached and re-evaluates which category should be "current".
+     */
+    private fun scheduleNextWindowRefresh(windows: WindowCalculationResult) {
+        windowRefreshJob?.cancel()
+        windowRefreshJob = viewModelScope.launch {
+            val nextStart = windows.nextWindow?.start
+            val delayMs = if (nextStart != null) {
+                (nextStart.toEpochMilli() - System.currentTimeMillis()).coerceAtLeast(0) + 1_000L
+            } else {
+                // No next window scheduled (e.g. sleep window extends into tomorrow):
+                // re-check in 1 hour so we pick up the new day's Fajr.
+                3_600_000L
+            }
+            delay(delayMs)
+            refreshPrayerTimes()
         }
     }
 
