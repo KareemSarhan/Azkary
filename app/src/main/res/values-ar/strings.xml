@@ -191,6 +191,10 @@
     <string name="settings_sleep_azkar_desc">ذكرني بعد العشاء</string>
 
     <!-- Notification Channels -->
+    <string name="notification_channel_base">أذكار يومية</string>
+    <string name="notification_channel_base_desc">تذكيرات لفئات الأذكار المدمجة (الصباح، المساء، النوم)</string>
+    <string name="notification_channel_user">أذكاري</string>
+    <string name="notification_channel_user_desc">تذكيرات لفئات أذكارك المخصصة</string>
     <string name="notification_channel_general">تذكيرات الأذكار</string>
     <string name="notification_channel_general_desc">تذكيرات لفئات الأذكار الخاصة بك</string>
     <string name="notification_channel_morning">أذكار الصباح</string>
