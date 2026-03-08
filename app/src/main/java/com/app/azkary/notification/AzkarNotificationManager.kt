@@ -81,8 +81,8 @@ class AzkarNotificationManager @Inject constructor(
         categoryId: String,
         channelId: String
     ): android.app.Notification {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            setPackage(context.packageName)
+        val intent = Intent().apply {
+            component = android.content.ComponentName(context, MainActivity::class.java)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra(EXTRA_CATEGORY_ID, categoryId)
         }
