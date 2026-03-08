@@ -191,8 +191,10 @@
     <string name="settings_sleep_azkar_desc">Remind me after Isha</string>
 
     <!-- Notification Channels -->
-    <string name="notification_channel_general">Azkar Reminders</string>
-    <string name="notification_channel_general_desc">Reminders for your azkar categories</string>
+    <string name="notification_channel_base">Daily Azkar</string>
+    <string name="notification_channel_base_desc">Reminders for built-in azkar categories (Morning, Evening, Sleep)</string>
+    <string name="notification_channel_user">My Azkar</string>
+    <string name="notification_channel_user_desc">Reminders for your custom azkar categories</string>
     <string name="notification_channel_morning">Morning Azkar</string>
     <string name="notification_channel_morning_desc">Reminders for morning azkar after Fajr</string>
     <string name="notification_channel_night">Night Azkar</string>

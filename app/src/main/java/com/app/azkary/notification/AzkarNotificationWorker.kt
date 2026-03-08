@@ -37,6 +37,7 @@ class AzkarNotificationWorker @AssistedInject constructor(
         notificationManager.showCategoryNotification(
             categoryId = categoryId,
             categoryName = category.name,
+            categoryType = category.type,
             notificationId = categoryId.hashCode()
         )
 
