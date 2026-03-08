@@ -27,6 +27,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -53,6 +55,9 @@ class SummaryViewModel @Inject constructor(
             )
         }
     }
+
+    // Job that wakes up at the next window boundary to re-evaluate the current window
+    private var windowRefreshJob: Job? = null
 
     // Prayer times state - must be declared before currentSession uses it
     private val _sessionEndTime = MutableStateFlow<String?>(null)
@@ -167,12 +172,33 @@ class SummaryViewModel @Inject constructor(
                 println("DEBUG: SummaryViewModel - Received windows: currentWindow=${windows.currentWindow}, nextWindow=${windows.nextWindow}")
                 _currentWindows.value = windows
                 updateSessionEndTime(windows)
+                scheduleNextWindowRefresh(windows)
             } catch (e: Exception) {
                 println("DEBUG: SummaryViewModel - Error in refreshPrayerTimes: ${e.message}")
                 e.printStackTrace()
                 // Graceful fallback - keep default behavior if prayer times unavailable
                 _sessionEndTime.value = null
             }
+        }
+    }
+
+    /**
+     * Schedules a self-renewing coroutine that wakes up exactly when the next window
+     * boundary is reached and re-evaluates which category should be "current".
+     */
+    private fun scheduleNextWindowRefresh(windows: WindowCalculationResult) {
+        windowRefreshJob?.cancel()
+        windowRefreshJob = viewModelScope.launch {
+            val nextStart = windows.nextWindow?.start
+            val delayMs = if (nextStart != null) {
+                (nextStart.toEpochMilli() - System.currentTimeMillis()).coerceAtLeast(0) + 1_000L
+            } else {
+                // No next window scheduled (e.g. sleep window extends into tomorrow):
+                // re-check in 1 hour so we pick up the new day's Fajr.
+                3_600_000L
+            }
+            delay(delayMs)
+            refreshPrayerTimes()
         }
     }
 
