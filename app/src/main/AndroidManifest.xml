@@ -9,9 +9,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Notification permission for Android 13+ -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Schedule exact alarms for precise notification timing -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <!-- Wake lock to ensure notifications are shown -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Reschedule notifications after device reboot -->
