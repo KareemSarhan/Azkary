@@ -62,7 +62,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          ./gradlew assembleRelease \
+          ./gradlew assemblePlayRelease \
             -Pandroid.injected.signing.store.file=${{ github.workspace }}/app/keystore.jks \
             -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
             -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
@@ -74,7 +74,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          ./gradlew bundleRelease \
+          ./gradlew bundlePlayRelease \
             -Pandroid.injected.signing.store.file=${{ github.workspace }}/app/keystore.jks \
             -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
             -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
@@ -101,11 +101,11 @@ jobs:
           VERSION="${{ steps.get_version.outputs.VERSION }}"
           VERSION_CODE="${{ steps.get_version_code.outputs.VERSION_CODE }}"
           
-          mv app/build/outputs/apk/release/app-release.apk \
-             "app/build/outputs/apk/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk"
+          mv app/build/outputs/apk/play/release/app-play-release.apk \
+             "app/build/outputs/apk/play/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk"
           
-          mv app/build/outputs/bundle/release/app-release.aab \
-             "app/build/outputs/bundle/release/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
+          mv app/build/outputs/bundle/playRelease/app-play-release.aab \
+             "app/build/outputs/bundle/playRelease/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
 
       - name: Generate Release Notes
         id: release_notes
@@ -139,8 +139,8 @@ jobs:
           echo "" >> release_notes.md
           echo "### Checksums" >> release_notes.md
           echo "\`\`\`" >> release_notes.md
-          echo "APK: $(sha256sum "app/build/outputs/apk/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk" | cut -d' ' -f1)" >> release_notes.md
-          echo "AAB: $(sha256sum "app/build/outputs/bundle/release/Azkary-v${VERSION}-${VERSION_CODE}-release.aab" | cut -d' ' -f1)" >> release_notes.md
+          echo "APK: $(sha256sum "app/build/outputs/apk/play/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk" | cut -d' ' -f1)" >> release_notes.md
+          echo "AAB: $(sha256sum "app/build/outputs/bundle/playRelease/Azkary-v${VERSION}-${VERSION_CODE}-release.aab" | cut -d' ' -f1)" >> release_notes.md
           echo "\`\`\`" >> release_notes.md
 
       - name: Create GitHub Release
@@ -160,13 +160,13 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-release-apk
-          path: app/build/outputs/apk/release/Azkary-v*.apk
+          path: app/build/outputs/apk/play/release/Azkary-v*.apk
 
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v7
         with:
           name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-release-aab
-          path: app/build/outputs/bundle/release/Azkary-v*.aab
+          path: app/build/outputs/bundle/playRelease/Azkary-v*.aab
 
       - name: Clean up keystore
         if: always()
