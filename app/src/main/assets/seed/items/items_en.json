@@ -29,8 +29,8 @@
       "itemId": "itm-ayat-al-kursi-1",
       "requiredRepeats": 1,
       "title": "Ayat al-Kursi",
-      "text": "Allāhu lā ilāha illā huwa al-ḥayyul-qayyūm... (Qur’an 2:255)",
-      "translation": "Allah! There is no deity except Him, the Ever-Living, the Sustainer of existence... (Qur’an 2:255).",
+      "text": "Allāhu lā ilāha illā huwa al-ḥayyul-qayyūm, lā ta’khudhuhū sinatun wa lā nawm, lahū mā fī as-samāwāti wa mā fī al-arḍ, man dhā alladhī yashfaʿu ʿindahū illā bi-idhnih, yaʿlamu mā bayna aydīhim wa mā khalfahum, wa lā yuḥīṭūna bi-shay’in min ʿilmihī illā bimā shā’, wasiʿa kursiyyuhū as-samāwāti wal-arḍ, wa lā ya’ūduhū ḥifẓuhumā, wa huwal-ʿaliyyul-ʿaẓīm.",
+      "translation": "Allah! There is no deity except Him, the Ever-Living, the Sustainer of existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Throne extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great.",
       "referenceText": "Abu Huraira narrated the story of guarding zakat and being taught to recite Ayat al-Kursi before sleeping for protection; the Prophet ﷺ confirmed it. Sahih al-Bukhari (5010)."
     },
     {
@@ -93,8 +93,8 @@
       "itemId": "itm-last-two-baqara-1",
       "requiredRepeats": 1,
       "title": "The Last Two Verses of Al-Baqarah",
-      "text": "Āmana ar-Rasūlu... (2:285-286)",
-      "translation": "Whoever recites the last two verses of Surah Al-Baqarah at night, they will be sufficient for him.",
+      "text": "Āmana ar-rasūlu bimā unzila ilayhi min rabbihī wal-mu'minūn, kullun āmana billāhi wa malā'ikatihī wa kutubihī wa rusulih, lā nufarriqu bayna aḥadin min rusulih, wa qālū samiʿnā wa aṭaʿnā, ghufrānaka rabbanā wa ilaykal-maṣīr. (285) Lā yukallifu Allāhu nafsan illā wusʿahā, lahā mā kasabat wa ʿalayhā mā iktasabat, rabbanā lā tu'ākhidhnā in nasīnā aw akhṭa'nā, rabbanā wa lā taḥmil ʿalaynā iṣran kamā ḥamaltahū ʿalā alladhīna min qablinā, rabbanā wa lā tuḥammilnā mā lā ṭāqata lanā bih, waʿfu ʿannā, waghfir lanā, warḥamnā, anta mawlānā fanṣurnā ʿalā al-qawmi al-kāfirīn. (286)",
+      "translation": "The Messenger has believed in what was revealed to him from his Lord, and so have the believers. All of them have believed in Allah and His angels and His books and His messengers, saying: \"We make no distinction between any of His messengers.\" And they say: \"We hear and we obey. We seek Your forgiveness, our Lord, and to You is the final destination.\" (285) Allah does not burden a soul beyond that it can bear. It will have the consequence of what good it has gained, and it will bear the consequence of what evil it has earned. \"Our Lord, do not impose blame upon us if we have forgotten or erred. Our Lord, and lay not upon us a burden like that which You laid upon those before us. Our Lord, and burden us not with that which we have no ability to bear. And pardon us; and forgive us; and have mercy upon us. You are our protector, so give us victory over the disbelieving people.\" (286)",
       "referenceText": "The Prophet ﷺ said: “If somebody recited the last two verses of Surat Al-Baqara at night, that will be sufficient for him.” Sahih al-Bukhari (5009)."
     },
     {
@@ -103,13 +103,13 @@
       "title": "Contentment with Allah (3x)",
       "text": "Raḍītu billāhi Rabban, wa bil-Islāmi dīnan, wa bi-Muḥammadin ﷺ nabiyyan.",
       "translation": "I am pleased with Allah as my Lord, with Islam as my religion, and with Muhammad as my Prophet.",
-      "referenceText": "This dhikr is recited three times in the morning and evening. It is commonly cited in the collections of morning/evening azkar (e.g., Hisn al-Muslim) with attributions to Ahmad, an-Nasa’i, at-Tirmidhi and others.[Abu Dawood 5072]"
+      "referenceText": "This dhikr is recited three times in the morning and evening. It is commonly cited in the collections of morning/evening azkar (e.g., Hisn al-Muslim) with attributions to Ahmad, an-Nasa’i, at-Tirmidhi and others."
     },
     {
       "itemId": "itm-sayyidul-istighfar-1",
       "requiredRepeats": 1,
       "title": "Sayyid al-Istighfar",
-      "text": "Allāhumma anta rabbī lā ilāha illā anta, khalaqtanī wa anā ʿabduka, wa anā ʿalā ʿahdika wa waʿdika mastataʿt...",
+      "text": "Allāhumma anta rabbī lā ilāha illā anta, khalaqtanī wa anā ʿabduka, wa anā ʿalā ʿahdika wa waʿdika mastataʿt, aʿūdhu bika min sharri mā ṣanaʿt, abū'u laka biniʿmatika ʿalayya, wa abū'u bidhanbī, faghfir lī fa-innahu lā yaghfiru adh-dhunūba illā ant.",
       "translation": "O Allah, You are my Lord, there is none worthy of worship but You. You created me and I am your slave. I keep Your covenant, and my pledge to You so far as I am able. I seek refuge in You from the evil of what I have done. I admit to Your blessings upon me, and I admit to my misdeeds. Forgive me, for there is none who may forgive sins but You.",
       "referenceText": "Narrated Shaddad bin Aus: The Prophet ﷺ said: “The most superior way of asking for forgiveness is that the servant says... Whoever says it in the daytime with firm faith and dies before evening will be from the people of Paradise; and whoever says it at night with firm faith and dies before morning will be from the people of Paradise.” Sahih al-Bukhari (6306)."
     },
