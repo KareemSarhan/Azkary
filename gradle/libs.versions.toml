@@ -34,7 +34,7 @@ playServicesLocation = "21.3.0"
 appUpdate = "2.1.0"
 playReview = "2.0.1"
 workmanager = "2.10.0"
-desugaring = "2.1.4"
+desugaring = "2.1.5"
 
 [libraries]
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
