@@ -162,25 +162,25 @@ jobs:
             echo "**Enjoying Azkary?** Leave a ⭐ on GitHub or a review on Google Play — it helps others find the app!"
           } > release_notes.md
 
-      - name: Delete existing release if present
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release delete "v${{ steps.get_version.outputs.VERSION }}" --yes --cleanup-tag=false 2>/dev/null || true
-
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ steps.get_version.outputs.VERSION }}
-          name: Azkary v${{ steps.get_version.outputs.VERSION }}
-          body_path: release_notes.md
-          files: |
-            app/build/outputs/apk/play/release/Azkary-v*.apk
-            app/build/outputs/bundle/playRelease/Azkary-v*.aab
-          draft: false
-          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
+          VERSION_CODE: ${{ steps.get_version_code.outputs.VERSION_CODE }}
+        run: |
+          # Delete existing release if present (ignore errors if none exists)
+          gh release delete "v${VERSION}" --yes --cleanup-tag=false 2>/dev/null || true
+
+          # Create tag if it doesn't exist yet (needed for workflow_dispatch)
+          git tag "v${VERSION}" 2>/dev/null || true
+          git push origin "v${VERSION}" 2>/dev/null || true
+
+          # Create the release with assets
+          gh release create "v${VERSION}" \
+            --title "Azkary v${VERSION}" \
+            --notes-file release_notes.md \
+            "app/build/outputs/apk/play/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk" \
+            "app/build/outputs/bundle/playRelease/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
