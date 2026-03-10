@@ -171,12 +171,9 @@ jobs:
           # Delete existing release if present (ignore errors if none exists)
           gh release delete "v${VERSION}" --yes --cleanup-tag=false 2>/dev/null || true
 
-          # Create tag if it doesn't exist yet (needed for workflow_dispatch)
-          git tag "v${VERSION}" 2>/dev/null || true
-          git push origin "v${VERSION}" 2>/dev/null || true
-
-          # Create the release with assets
+          # Create the release with assets (--target creates the tag on this commit if needed)
           gh release create "v${VERSION}" \
+            --target "${{ github.sha }}" \
             --title "Azkary v${VERSION}" \
             --notes-file release_notes.md \
             "app/build/outputs/apk/play/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk" \
