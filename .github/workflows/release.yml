@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release (e.g., 3.0.0)'
+        description: 'Version to release (e.g., 3.1.1)'
         required: true
-        default: '3.0.0'
+        default: '3.1.1'
 
 env:
   JAVA_VERSION: '17'
@@ -21,10 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -38,7 +38,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Cache Gradle dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -55,6 +55,22 @@ jobs:
           ENCODED_KEYSTORE: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           echo "$ENCODED_KEYSTORE" | base64 -d > app/keystore.jks
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            VERSION=${GITHUB_REF#refs/tags/v}
+            echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Extract version code
+        id: get_version_code
+        run: |
+          VERSION_CODE=$(grep "versionCode" app/build.gradle.kts | grep -o '[0-9]\+' | head -1)
+          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_OUTPUT
 
       - name: Build Release APK
         env:
@@ -80,30 +96,14 @@ jobs:
             -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
             -Pandroid.injected.signing.key.password=$KEY_PASSWORD
 
-      - name: Get version from tag
-        id: get_version
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          else
-            VERSION=${GITHUB_REF#refs/tags/v}
-            echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Extract version code
-        id: get_version_code
-        run: |
-          VERSION_CODE=$(grep "versionCode" app/build.gradle.kts | grep -o '[0-9]\+' | head -1)
-          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_OUTPUT
-
       - name: Rename artifacts
         run: |
           VERSION="${{ steps.get_version.outputs.VERSION }}"
           VERSION_CODE="${{ steps.get_version_code.outputs.VERSION_CODE }}"
-          
+
           mv app/build/outputs/apk/play/release/app-play-release.apk \
              "app/build/outputs/apk/play/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk"
-          
+
           mv app/build/outputs/bundle/playRelease/app-play-release.aab \
              "app/build/outputs/bundle/playRelease/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
 
@@ -112,58 +112,78 @@ jobs:
         run: |
           VERSION="${{ steps.get_version.outputs.VERSION }}"
           VERSION_CODE="${{ steps.get_version_code.outputs.VERSION_CODE }}"
-          
-          # Get changes since last tag
-          LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
-          
-          if [ -z "$LAST_TAG" ]; then
-            CHANGES=$(git log --pretty=format:"- %s" --no-merges)
-          else
-            CHANGES=$(git log --pretty=format:"- %s" --no-merges ${LAST_TAG}..HEAD)
-          fi
-          
-          # Create release notes
-          echo "## What's New in v$VERSION ($VERSION_CODE)" > release_notes.md
-          echo "" >> release_notes.md
-          echo "### Changes" >> release_notes.md
-          echo "$CHANGES" >> release_notes.md
-          echo "" >> release_notes.md
-          echo "### Downloads" >> release_notes.md
-          echo "- **APK**: For direct installation on Android devices" >> release_notes.md
-          echo "- **AAB**: For Google Play Store upload" >> release_notes.md
-          echo "" >> release_notes.md
-          echo "### Installation" >> release_notes.md
-          echo '1. Download the APK file' >> release_notes.md
-          echo '2. Enable "Install from Unknown Sources" in Settings' >> release_notes.md
-          echo '3. Open the downloaded APK and install' >> release_notes.md
-          echo "" >> release_notes.md
-          echo "### Checksums" >> release_notes.md
-          echo "\`\`\`" >> release_notes.md
-          echo "APK: $(sha256sum "app/build/outputs/apk/play/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk" | cut -d' ' -f1)" >> release_notes.md
-          echo "AAB: $(sha256sum "app/build/outputs/bundle/playRelease/Azkary-v${VERSION}-${VERSION_CODE}-release.aab" | cut -d' ' -f1)" >> release_notes.md
-          echo "\`\`\`" >> release_notes.md
+
+          APK_PATH="app/build/outputs/apk/play/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk"
+          AAB_PATH="app/build/outputs/bundle/playRelease/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
+
+          APK_SHA=$(sha256sum "$APK_PATH" | cut -d' ' -f1)
+          AAB_SHA=$(sha256sum "$AAB_PATH" | cut -d' ' -f1)
+
+          # Extract this version's section from CHANGELOG.md
+          CHANGELOG_SECTION=$(awk "/^## \[$VERSION\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
+
+          {
+            echo "## What's New in v${VERSION}"
+            echo ""
+            if [ -n "$CHANGELOG_SECTION" ]; then
+              echo "$CHANGELOG_SECTION"
+            else
+              echo "_No changelog entry found for this version. See commit history for details._"
+            fi
+            echo ""
+            echo "---"
+            echo ""
+            echo "### Install"
+            echo ""
+            echo "1. Download the **APK** file below"
+            echo "2. On your device go to **Settings → Security** and enable _Install from unknown sources_"
+            echo "3. Open the downloaded APK and tap **Install**"
+            echo ""
+            echo "> Already using Azkary? Install over the existing app — your data and settings are preserved."
+            echo ""
+            echo "---"
+            echo ""
+            echo "### Downloads"
+            echo ""
+            echo "| File | Description |"
+            echo "|------|-------------|"
+            echo "| \`Azkary-v${VERSION}-${VERSION_CODE}-release.apk\` | Direct install on any Android device |"
+            echo "| \`Azkary-v${VERSION}-${VERSION_CODE}-release.aab\` | Google Play Store bundle |"
+            echo ""
+            echo "### Verify (SHA-256 checksums)"
+            echo ""
+            echo '```'
+            echo "APK: ${APK_SHA}"
+            echo "AAB: ${AAB_SHA}"
+            echo '```'
+            echo ""
+            echo "---"
+            echo ""
+            echo "**Enjoying Azkary?** Leave a ⭐ on GitHub or a review on Google Play — it helps others find the app!"
+          } > release_notes.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
           name: Azkary v${{ steps.get_version.outputs.VERSION }}
           body_path: release_notes.md
           files: |
-            app/build/outputs/apk/release/Azkary-v*.apk
-            app/build/outputs/bundle/release/Azkary-v*.aab
+            app/build/outputs/apk/play/release/Azkary-v*.apk
+            app/build/outputs/bundle/playRelease/Azkary-v*.aab
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload APK Artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-release-apk
           path: app/build/outputs/apk/play/release/Azkary-v*.apk
 
       - name: Upload AAB Artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-release-aab
           path: app/build/outputs/bundle/playRelease/Azkary-v*.aab
