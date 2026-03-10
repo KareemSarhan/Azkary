@@ -16,7 +16,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 20
-        versionName = "3.1.1"
+        versionName = "3.1.2"
 
         testInstrumentationRunner = "com.app.azkary.HiltTestRunner"
         vectorDrawables {

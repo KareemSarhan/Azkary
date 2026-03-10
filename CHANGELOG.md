@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [3.1.1] - 2025-03-10
+## [3.1.2] - 2025-03-10
 
 ### Fixed
 - Removed unnecessary alarm permissions (`USE_EXACT_ALARM`, `SCHEDULE_EXACT_ALARM`) — the app no longer requests permissions it doesn't need, improving your privacy and reducing the permission footprint
@@ -44,8 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-language support (Arabic/English)
 - Custom categories
 
-[Unreleased]: https://github.com/KareemSarhan/Azkary/compare/v3.1.1...HEAD
-[3.1.1]: https://github.com/KareemSarhan/Azkary/compare/v3.1.0...v3.1.1
+[Unreleased]: https://github.com/KareemSarhan/Azkary/compare/v3.1.2...HEAD
+[3.1.2]: https://github.com/KareemSarhan/Azkary/compare/v3.1.0...v3.1.2
 [3.1.0]: https://github.com/KareemSarhan/Azkary/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/KareemSarhan/Azkary/compare/v2.0.0...v3.0.0
 [2.0.0]: https://github.com/KareemSarhan/Azkary/releases/tag/v2.0.0
