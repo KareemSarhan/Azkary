@@ -33,7 +33,7 @@ material = "1.13.0"
 playServicesLocation = "21.3.0"
 appUpdate = "2.1.0"
 playReview = "2.0.1"
-workmanager = "2.10.0"
+workmanager = "2.11.1"
 desugaring = "2.1.5"
 
 [libraries]
