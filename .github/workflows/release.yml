@@ -162,6 +162,12 @@ jobs:
             echo "**Enjoying Azkary?** Leave a ⭐ on GitHub or a review on Google Play — it helps others find the app!"
           } > release_notes.md
 
+      - name: Delete existing release if present
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete "v${{ steps.get_version.outputs.VERSION }}" --yes --cleanup-tag=false 2>/dev/null || true
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
