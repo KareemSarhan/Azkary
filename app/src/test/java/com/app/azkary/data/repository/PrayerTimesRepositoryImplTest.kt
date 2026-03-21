@@ -455,7 +455,7 @@ class PrayerTimesRepositoryImplTest {
     @Test
     fun `getCurrentWindows calculates windows correctly`() = runTest {
         // Given
-        val today = LocalDate.now()
+        val today = LocalDate.now(ZoneId.of("UTC"))
         val tomorrow = today.plusDays(1)
         val monthEntity = PrayerMonthEntity(
             id = 1,
@@ -488,7 +488,7 @@ class PrayerTimesRepositoryImplTest {
     @Test
     fun `getIslamicCurrentDate returns today after fajr`() = runTest {
         // Given
-        val today = LocalDate.now()
+        val today = LocalDate.now(ZoneId.of("UTC"))
         val monthEntity = PrayerMonthEntity(
             id = 1,
             year = today.year,
@@ -496,10 +496,10 @@ class PrayerTimesRepositoryImplTest {
             latitude = 24.7136,
             longitude = 46.6753,
             methodId = 4,
-            timezone = ZoneId.systemDefault().id
+            timezone = "UTC"
         )
         val dayEntity = createPrayerDayEntity(1, today).copy(
-            fajr = LocalTime.of(5, 0) // Early fajr, so now is after fajr
+            fajr = LocalTime.of(0, 1) // Very early fajr to ensure test passes
         )
 
         coEvery { 
