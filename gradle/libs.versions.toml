@@ -32,7 +32,7 @@ kover = "0.9.7"
 material = "1.13.0"
 playServicesLocation = "21.3.0"
 appUpdate = "2.1.0"
-playReview = "2.0.1"
+playReview = "2.0.2"
 workmanager = "2.10.0"
 desugaring = "2.1.5"
 
