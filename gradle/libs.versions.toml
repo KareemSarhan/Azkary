@@ -9,8 +9,11 @@ espressoCore = "3.7.0"
 kotlinxCoroutinesTest = "1.10.2"
 turbine = "1.2.1"
 lifecycleRuntimeKtx = "2.10.0"
+
 activityCompose = "1.13.0"
-composeBom = "2026.02.01"
+
+composeBom = "2026.03.00"
+
 loggingInterceptor = "5.3.2"
 materialIconsExtended = "1.7.8"
 materialVersion = "1.10.5"
