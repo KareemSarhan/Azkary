@@ -1,0 +1,43 @@
+--- a/app/src/test/java/com/app/azkary/data/repository/PrayerTimesRepositoryImplTest.kt
++++ b/app/src/test/java/com/app/azkary/data/repository/PrayerTimesRepositoryImplTest.kt
+@@ -41,6 +41,7 @@ import org.junit.runner.RunWith
+ import org.robolectric.RobolectricTestRunner
+ import org.robolectric.annotation.Config
+ import java.time.Instant
++import java.time.ZoneId
+ import java.time.LocalDate
+ import java.time.LocalTime
+-import java.time.ZoneId
++import java.time.Clock
+ 
+ @OptIn(ExperimentalCoroutinesApi::class)
+ @RunWith(RobolectricTestRunner::class)
+@@ -58,6 +59,8 @@ class PrayerTimesRepositoryImplTest {
+     private lateinit var testDispatcher: TestDispatcher
+     private lateinit var repository: PrayerTimesRepositoryImpl
+ 
++    private val fixedClock = Clock.systemDefaultZone()
++
+     @Before
+     fun setup() {
+         testDispatcher = StandardTestDispatcher()
+@@ -489,7 +492,9 @@ class PrayerTimesRepositoryImplTest {
+     @Test
+     fun `getIslamicCurrentDate returns today after fajr`() = runTest {
+         // Given
+-        val today = LocalDate.now()
++        val testTimezone = ZoneId.of("Asia/Riyadh")
++        val fixedInstant = Instant.parse("2026-03-17T10:00:00Z") // 10 AM UTC = 1 PM Riyadh
++        val today = LocalDate.ofInstant(fixedInstant, testTimezone)
+         val monthEntity = PrayerMonthEntity(
+             id = 1,
+             year = today.year,
+             month = today.monthValue,
+             latitude = 24.7136,
+             longitude = 46.6753,
+             methodId = 4,
+-            timezone = ZoneId.systemDefault().id
++            timezone = testTimezone.id
+         )
+         val dayEntity = createPrayerDayEntity(1, today).copy(
+             fajr = LocalTime.of(5, 0) // Early fajr, so now is after fajr
