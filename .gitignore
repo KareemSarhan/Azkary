@@ -10,6 +10,9 @@
 local.properties
 *.log
 
+# Worktrees
+.worktrees/
+
 # Release artifacts
 /app/release/
 
