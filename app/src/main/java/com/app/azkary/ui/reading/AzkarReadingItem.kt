@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.azkary.R
 import com.app.azkary.data.model.AzkarItemUi
+import com.app.azkary.ui.theme.QuranUthmaniFont
+import com.app.azkary.util.isQuranicItem
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -61,12 +63,13 @@ fun AzkarReadingItem(
         ) {
             // Arabic Text
             item.arabicText?.let { arabic ->
+                val fontFamily = if (isQuranicItem(item.id)) QuranUthmaniFont else FontFamily.Default
                 Text(
                     text = arabic,
                     style = MaterialTheme.typography.headlineMedium.copy(
-                        fontSize = 28.sp, // Reduced further for better fit
+                        fontSize = 28.sp,
                         lineHeight = 42.sp,
-                        fontFamily = FontFamily.Default,
+                        fontFamily = fontFamily,
                         color = colors.onBackground
                     ),
                     textAlign = TextAlign.Center,
