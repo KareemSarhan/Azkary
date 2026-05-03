@@ -22,9 +22,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.Job
@@ -48,7 +48,7 @@ class SummaryViewModel @Inject constructor(
 ) : ViewModel() {
 
     val categories: StateFlow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
-        flow { emit(islamicDateProvider.getCurrentDate().toString()) }.flatMapLatest { date ->
+        islamicDateProvider.currentDateFlow.filterNotNull().map { it.toString() }.flatMapLatest { date ->
             repository.observeCategoriesWithDisplayName(
                 langTag = lang,
                 date = date
@@ -161,6 +161,9 @@ class SummaryViewModel @Inject constructor(
 
     init {
         println("DEBUG: SummaryViewModel - ViewModel initialized")
+        viewModelScope.launch {
+            islamicDateProvider.refreshDate()
+        }
         // Auto-refresh prayer times when ViewModel is created and location is enabled
         locationPreferencesJob = viewModelScope.launch {
             userPreferencesRepository.locationPreferences.collect { prefs ->
@@ -261,7 +264,8 @@ class SummaryViewModel @Inject constructor(
     fun toggleCategoryCompletion(categoryId: String) {
         viewModelScope.launch {
             val category = categories.first().find { it.id == categoryId } ?: return@launch
-            val today = islamicDateProvider.getCurrentDate().toString()
+            val today = islamicDateProvider.currentDateFlow.value?.toString()
+                ?: islamicDateProvider.getCurrentDate().toString()
 
             if (category.progress >= 1f) {
                 repository.markCategoryIncomplete(categoryId, today)
