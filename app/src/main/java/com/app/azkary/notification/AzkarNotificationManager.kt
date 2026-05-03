@@ -14,6 +14,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+enum class NotificationResult {
+    SHOWN,
+    PERMISSION_DENIED
+}
+
 @Singleton
 class AzkarNotificationManager @Inject constructor(
     @param:ApplicationContext private val context: Context,
@@ -60,7 +65,10 @@ class AzkarNotificationManager @Inject constructor(
         categoryName: String,
         categoryType: CategoryType,
         notificationId: Int
-    ) {
+    ): NotificationResult {
+        if (!permissionHelper.hasNotificationPermission()) {
+            return NotificationResult.PERMISSION_DENIED
+        }
         val channelId = if (categoryType == CategoryType.DEFAULT) CHANNEL_ID_BASE else CHANNEL_ID_USER
         val notification = buildNotification(
             title = categoryName,
@@ -69,9 +77,8 @@ class AzkarNotificationManager @Inject constructor(
             categoryId = categoryId,
             channelId = channelId
         )
-        if (permissionHelper.hasNotificationPermission()) {
-            notificationManager.notify(notificationId, notification)
-        }
+        notificationManager.notify(notificationId, notification)
+        return NotificationResult.SHOWN
     }
 
     private fun buildNotification(

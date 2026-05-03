@@ -2,9 +2,11 @@ package com.app.azkary.notification
 
 import android.content.Context
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.app.azkary.data.local.entities.CategoryEntity
@@ -29,6 +31,7 @@ class AzkarNotificationScheduler @Inject constructor(
     companion object {
         const val REMINDER_MINUTES = 30L
         const val WORK_TAG = "azkar_notification_worker"
+        const val DAILY_SCHEDULER_WORK_NAME = "daily_notification_scheduler"
         
         fun getWorkNameForCategory(categoryId: String) = "category_notification_$categoryId"
     }
@@ -96,6 +99,26 @@ class AzkarNotificationScheduler @Inject constructor(
             getWorkNameForCategory(categoryId),
             ExistingWorkPolicy.REPLACE,
             workRequest
+        )
+    }
+
+    fun scheduleDailyRescheduling() {
+        val dailyRequest = PeriodicWorkRequestBuilder<DailyNotificationSchedulerWorker>(
+            24, TimeUnit.HOURS,
+            15, TimeUnit.MINUTES
+        )
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+                    .build()
+            )
+            .addTag(WORK_TAG)
+            .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            DAILY_SCHEDULER_WORK_NAME,
+            ExistingPeriodicWorkPolicy.KEEP,
+            dailyRequest
         )
     }
 

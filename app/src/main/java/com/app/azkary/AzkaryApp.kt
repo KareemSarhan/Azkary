@@ -47,6 +47,7 @@ class AzkaryApp : Application(), Configuration.Provider {
         applicationScope.launch {
             userPreferencesRepository.initializeFirstInstallDate()
             userPreferencesRepository.incrementAppOpenCount()
+            notificationScheduler.scheduleDailyRescheduling()
             scheduleNotificationsIfNeeded()
         }
     }

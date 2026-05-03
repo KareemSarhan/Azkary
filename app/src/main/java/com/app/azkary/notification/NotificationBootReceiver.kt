@@ -62,6 +62,8 @@ class NotificationBootReceiver : BroadcastReceiver() {
                 categories = categories
             )
         }
+
+        notificationScheduler.scheduleDailyRescheduling()
     }
 
 }

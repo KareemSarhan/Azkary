@@ -16,6 +16,7 @@ class AzkarNotificationWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val notificationManager: AzkarNotificationManager,
+    private val notificationScheduler: AzkarNotificationScheduler,
     private val repository: AzkarRepository,
     private val localeManager: LocaleManager
 ) : CoroutineWorker(context, params) {
@@ -34,12 +35,18 @@ class AzkarNotificationWorker @AssistedInject constructor(
         val categories = repository.observeCategoriesWithDisplayName(langTag, today).first()
         val category = categories.find { it.id == categoryId } ?: return Result.failure()
 
-        notificationManager.showCategoryNotification(
+        val result = notificationManager.showCategoryNotification(
             categoryId = categoryId,
             categoryName = category.name,
             categoryType = category.type,
             notificationId = categoryId.hashCode()
         )
+
+        if (result == NotificationResult.PERMISSION_DENIED) {
+            return Result.retry()
+        }
+
+        notificationScheduler.scheduleDailyRescheduling()
 
         return Result.success()
     }
