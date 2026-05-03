@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,11 +27,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.R
 import com.app.azkary.data.model.AyahUi
+import com.app.azkary.data.model.QuranUiState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
@@ -42,14 +43,18 @@ fun QuranReadingScreen(
     onBack: () -> Unit,
     viewModel: QuranReadingViewModel = hiltViewModel()
 ) {
-    val surahUi by viewModel.surahUi.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = surahUi?.surahName ?: stringResource(R.string.quran_loading),
+                        text = when (uiState) {
+                            is QuranUiState.Success -> (uiState as QuranUiState.Success).surah.surahName
+                            else -> stringResource(R.string.quran_loading)
+                        },
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -64,45 +69,62 @@ fun QuranReadingScreen(
             )
         }
     ) { paddingValues ->
-        if (surahUi == null) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator()
+        when (uiState) {
+            is QuranUiState.Loading -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-        } else {
-            val surah = surahUi!!
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp)
-            ) {
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
+            is QuranUiState.Success -> {
+                val surah = (uiState as QuranUiState.Success).surah
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = context.resources.getQuantityString(R.plurals.quran_ayah_count, surah.totalAyahs, surah.totalAyahs),
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 12.dp),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    items(items = surah.ayahs, key = { it.ayahNumber }) { ayah ->
+                        AyahCard(ayah = ayah)
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
+                }
+            }
+            is QuranUiState.Error -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Text(
-                        text = stringResource(R.string.quran_ayah_count, surah.totalAyahs),
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp),
-                        textAlign = TextAlign.Center
+                        text = stringResource(R.string.quran_loading),
+                        style = MaterialTheme.typography.bodyLarge
                     )
-                }
-
-                items(items = surah.ayahs, key = { it.ayahNumber }) { ayah ->
-                    AyahCard(ayah = ayah)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
         }

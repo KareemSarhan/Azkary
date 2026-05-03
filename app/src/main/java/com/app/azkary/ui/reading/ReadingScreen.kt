@@ -64,7 +64,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ReadingScreen(
     onBack: () -> Unit,
-    onNavigateToQuran: (Int) -> Unit = {},
+    onNavigateToQuran: ((Int) -> Unit)? = null,
     viewModel: ReadingViewModel = hiltViewModel()
 ) {
     val items by viewModel.items.collectAsState(initial = emptyList())

@@ -107,22 +107,24 @@ fun AzkarReadingItem(
             }
 
             // Read Surah chip
-            if (item.quranReference != null && onNavigateToQuran != null) {
-                Spacer(modifier = Modifier.height(12.dp))
-                AssistChip(
-                    onClick = { onNavigateToQuran(item.quranReference!!.surahNumber) },
-                    label = {
-                        Text(text = stringResource(R.string.quran_read_surah))
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.MenuBook,
-                            contentDescription = null,
-                            modifier = Modifier.padding(start = 4.dp)
-                        )
-                    },
-                    modifier = Modifier.align(Alignment.Start)
-                )
+            item.quranReference?.let { quranRef ->
+                if (onNavigateToQuran != null) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    AssistChip(
+                        onClick = { onNavigateToQuran(quranRef.surahNumber) },
+                        label = {
+                            Text(text = stringResource(R.string.quran_read_surah))
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.MenuBook,
+                                contentDescription = null,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        },
+                        modifier = Modifier.align(Alignment.Start)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(48.dp))

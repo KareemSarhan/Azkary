@@ -199,11 +199,11 @@ fun SummaryScreen(
                 }
 
                 // Verse of the Day Card
-                if (verseOfDay != null) {
+                verseOfDay?.let { vod ->
                     item {
                         VerseOfDayCard(
-                            verseOfDay = verseOfDay!!,
-                            onClick = { onNavigateToQuran(verseOfDay!!.surahNumber) }
+                            verseOfDay = vod,
+                            onClick = { onNavigateToQuran(vod.surahNumber) }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }

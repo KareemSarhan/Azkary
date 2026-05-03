@@ -23,6 +23,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.app.azkary.data.model.SystemCategoryKey
 import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
@@ -160,7 +162,10 @@ class MainActivity : ComponentActivity() {
                                     categoryId = categoryId
                                 )
                             }
-                            composable("quran/{surahNumber}") {
+                            composable(
+                                route = "quran/{surahNumber}",
+                                arguments = listOf(navArgument("surahNumber") { type = NavType.IntType })
+                            ) {
                                 QuranReadingScreen(
                                     onBack = { navController.popBackStack() }
                                 )
