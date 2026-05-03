@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -38,7 +38,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Cache Gradle dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
@@ -180,13 +180,13 @@ jobs:
             "app/build/outputs/bundle/playRelease/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
 
       - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-release-apk
           path: app/build/outputs/apk/play/release/Azkary-v*.apk
 
       - name: Upload AAB Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-release-aab
           path: app/build/outputs/bundle/playRelease/Azkary-v*.aab
