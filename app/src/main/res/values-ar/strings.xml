@@ -215,4 +215,11 @@
     <string name="notification_permission_required">إذن الإشعارات مطلوب</string>
     <string name="notification_permission_rationale">يرجى تفعيل الإشعارات لتلقي تذكيرات الأذكار</string>
     <string name="notification_permission_denied">الإشعارات معطلة. قم بتفعيلها من الإعدادات لتلقي التذكيرات.</string>
+
+    <!-- Quran Screen -->
+    <string name="quran_loading">جاري التحميل…</string>
+    <string name="quran_ayah_count">%d آية</string>
+    <string name="quran_read_surah">اقرأ السورة</string>
+    <string name="quran_verse_of_the_day">آية اليوم</string>
+    <string name="quran_surah_ayah">%1$s : %2$d</string>
 </resources>

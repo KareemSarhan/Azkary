@@ -215,4 +215,11 @@
     <string name="notification_permission_required">Notification permission required</string>
     <string name="notification_permission_rationale">Please enable notifications to receive azkar reminders</string>
     <string name="notification_permission_denied">Notifications are disabled. Enable in settings to receive reminders.</string>
+
+    <!-- Quran Screen -->
+    <string name="quran_loading">Loading…</string>
+    <string name="quran_ayah_count">%d verses</string>
+    <string name="quran_read_surah">Read Surah</string>
+    <string name="quran_verse_of_the_day">Verse of the Day</string>
+    <string name="quran_surah_ayah">%1$s : %2$d</string>
 </resources>

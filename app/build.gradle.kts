@@ -124,4 +124,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     coreLibraryDesugaring(libs.desugaring)
+    implementation(libs.quran.sdk)
 }

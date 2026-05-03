@@ -14,6 +14,7 @@ import com.app.azkary.data.local.dao.CategoryTextDao
 import com.app.azkary.data.local.dao.PrayerDayDao
 import com.app.azkary.data.local.dao.PrayerMonthDao
 import com.app.azkary.data.local.dao.ProgressDao
+import com.app.azkary.data.quran.QuranRepository
 import com.app.azkary.util.LocaleManager
 import com.app.azkary.util.SupportHelper
 import dagger.Binds
@@ -100,6 +101,12 @@ object AppModule {
         @ApplicationContext context: Context
     ): LocaleManager {
         return LocaleManager(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideQuranRepository(@ApplicationContext context: Context): QuranRepository {
+        return QuranRepository(context)
     }
 
     @Provides

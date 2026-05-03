@@ -64,6 +64,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ReadingScreen(
     onBack: () -> Unit,
+    onNavigateToQuran: (Int) -> Unit = {},
     viewModel: ReadingViewModel = hiltViewModel()
 ) {
     val items by viewModel.items.collectAsState(initial = emptyList())
@@ -260,6 +261,7 @@ fun ReadingScreen(
 
                 AzkarReadingItem(
                     item = item,
+                    onNavigateToQuran = onNavigateToQuran,
                     onIncrement = {
                         if (!isActive) return@AzkarReadingItem
 

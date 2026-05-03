@@ -13,8 +13,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,13 +35,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.azkary.R
 import com.app.azkary.data.model.AzkarItemUi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MenuBook
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AzkarReadingItem(
     item: AzkarItemUi,
     onIncrement: () -> Unit,
-    onHoldComplete: (() -> Unit)? = null
+    onHoldComplete: (() -> Unit)? = null,
+    onNavigateToQuran: ((Int) -> Unit)? = null
 ) {
     val colors = MaterialTheme.colorScheme
 
@@ -99,6 +104,25 @@ fun AzkarReadingItem(
             // Reference card
             if (!item.reference.isNullOrBlank()) {
                 HadithInformationCardLtr(referenceText = item.reference)
+            }
+
+            // Read Surah chip
+            if (item.quranReference != null && onNavigateToQuran != null) {
+                Spacer(modifier = Modifier.height(12.dp))
+                AssistChip(
+                    onClick = { onNavigateToQuran(item.quranReference!!.surahNumber) },
+                    label = {
+                        Text(text = stringResource(R.string.quran_read_surah))
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.MenuBook,
+                            contentDescription = null,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    },
+                    modifier = Modifier.align(Alignment.Start)
+                )
             }
 
             Spacer(modifier = Modifier.height(48.dp))
