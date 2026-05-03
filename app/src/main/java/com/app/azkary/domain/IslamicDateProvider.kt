@@ -2,6 +2,9 @@ package com.app.azkary.domain
 
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import javax.inject.Inject
@@ -12,6 +15,9 @@ class IslamicDateProvider @Inject constructor(
     private val prayerTimesRepository: PrayerTimesRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
+    private val _currentDate = MutableStateFlow<LocalDate?>(null)
+    val currentDateFlow: StateFlow<LocalDate?> = _currentDate.asStateFlow()
+
     suspend fun getCurrentDate(): LocalDate {
         val locationPrefs = userPreferencesRepository.locationPreferences.first()
 
@@ -29,5 +35,9 @@ class IslamicDateProvider @Inject constructor(
         } catch (e: Exception) {
             LocalDate.now()
         }
+    }
+
+    suspend fun refreshDate() {
+        _currentDate.value = getCurrentDate()
     }
 }

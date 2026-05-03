@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,6 +28,7 @@ import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.domain.AppRatingManager
+import com.app.azkary.domain.IslamicDateProvider
 import com.app.azkary.notification.AzkarNotificationManager
 import com.app.azkary.ui.reading.ReadingScreen
 import com.app.azkary.ui.settings.SettingsScreen
@@ -37,6 +39,7 @@ import com.app.azkary.util.AppUpdateManager
 import com.app.azkary.util.AppUpdateManagerFactory
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.ui.unit.LayoutDirection as ComposeLayoutDirection
 
@@ -49,6 +52,7 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var localeManager: LocaleManager
     @Inject lateinit var appRatingManager: AppRatingManager
     @Inject lateinit var appUpdateManagerFactory: AppUpdateManagerFactory
+    @Inject lateinit var islamicDateProvider: IslamicDateProvider
 
     private lateinit var appUpdateManager: AppUpdateManager
 
@@ -170,6 +174,9 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         appUpdateManager.onResume()
         localeManager.notifyLocaleChanged()
+        lifecycleScope.launch {
+            islamicDateProvider.refreshDate()
+        }
     }
 
     override fun onDestroy() {

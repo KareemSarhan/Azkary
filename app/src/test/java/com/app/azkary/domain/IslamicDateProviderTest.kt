@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDate
@@ -247,4 +248,49 @@ class IslamicDateProviderTest {
         // Assert - Should fallback to Gregorian date
         assertEquals(LocalDate.now(), result)
     }
+
+    @Test
+    fun `currentDateFlow should be null initially`() = runTest {
+        assertNull(islamicDateProvider.currentDateFlow.value)
+    }
+
+    @Test
+    fun `refreshDate should update currentDateFlow`() = runTest {
+        val mockLocation = mockk<LatLng> {
+            every { latitude } returns 30.0444
+            every { longitude } returns 31.2357
+        }
+        val locationPrefs = mockk<com.app.azkary.data.prefs.LocationPreferences> {
+            every { useLocation } returns true
+            every { lastResolvedLocation } returns mockLocation
+        }
+        val expectedDate = LocalDate.of(1447, 8, 15)
+
+        every { userPreferencesRepository.locationPreferences } returns flowOf(locationPrefs)
+        coEvery { prayerTimesRepository.getIslamicCurrentDate(30.0444, 31.2357) } returns expectedDate
+
+        islamicDateProvider.refreshDate()
+
+        assertEquals(expectedDate, islamicDateProvider.currentDateFlow.value)
+    }
+
+    @Test
+    fun `refreshDate should fallback to Gregorian date on error`() = runTest {
+        val mockLocation = mockk<LatLng> {
+            every { latitude } returns 30.0444
+            every { longitude } returns 31.2357
+        }
+        val locationPrefs = mockk<com.app.azkary.data.prefs.LocationPreferences> {
+            every { useLocation } returns true
+            every { lastResolvedLocation } returns mockLocation
+        }
+
+        every { userPreferencesRepository.locationPreferences } returns flowOf(locationPrefs)
+        coEvery { prayerTimesRepository.getIslamicCurrentDate(any(), any()) } throws RuntimeException("Error")
+
+        islamicDateProvider.refreshDate()
+
+        assertEquals(LocalDate.now(), islamicDateProvider.currentDateFlow.value)
+    }
 }
+

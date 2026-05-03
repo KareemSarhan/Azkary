@@ -100,11 +100,15 @@ class ReadingViewModelTest {
         every { userPreferencesRepository.holdToComplete } returns MutableStateFlow(true)
         every { userPreferencesRepository.vibrationEnabled } returns MutableStateFlow(true)
         coEvery { islamicDateProvider.getCurrentDate() } returns testDate
-        every { 
-            repository.observeItemsForCategory(any(), any(), any()) 
+        every { islamicDateProvider.currentDateFlow } returns MutableStateFlow(testDate)
+        coEvery { islamicDateProvider.refreshDate() } coAnswers {
+            // Simulate refreshDate updating the flow - no-op in tests since we use a MutableStateFlow
+        }
+        every {
+            repository.observeItemsForCategory(any(), any(), any())
         } returns flowOf(testItems)
-        every { 
-            repository.getWeightedProgress(any(), any(), any()) 
+        every {
+            repository.getWeightedProgress(any(), any(), any())
         } returns flowOf(0.5f)
 
         viewModel = ReadingViewModel(
@@ -326,6 +330,7 @@ class ReadingViewModelTest {
     fun `incrementRepeat should use current date from islamicDateProvider`() = runTest {
         val customDate = LocalDate.of(2026, 3, 15)
         coEvery { islamicDateProvider.getCurrentDate() } returns customDate
+        every { islamicDateProvider.currentDateFlow } returns MutableStateFlow(customDate)
         coEvery { repository.incrementRepeat(any(), any(), any()) } just Runs
 
         // Recreate viewModel with custom date

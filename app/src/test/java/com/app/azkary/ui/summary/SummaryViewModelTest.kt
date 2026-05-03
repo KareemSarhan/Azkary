@@ -107,8 +107,12 @@ class SummaryViewModelTest {
             LocationPreferences(useLocation = false, lastResolvedLocation = null, locationName = null)
         )
         coEvery { islamicDateProvider.getCurrentDate() } returns testDate
-        every { 
-            repository.observeCategoriesWithDisplayName(any(), any()) 
+        every { islamicDateProvider.currentDateFlow } returns MutableStateFlow(testDate)
+        coEvery { islamicDateProvider.refreshDate() } coAnswers {
+            // Simulate refreshDate updating the flow - no-op in tests since we use a MutableStateFlow
+        }
+        every {
+            repository.observeCategoriesWithDisplayName(any(), any())
         } returns flowOf(testCategories)
         coEvery { 
             prayerTimesRepository.getCurrentWindows(any(), any(), any(), any()) 
