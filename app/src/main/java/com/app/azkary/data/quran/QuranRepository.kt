@@ -46,19 +46,16 @@ class QuranRepository @Inject constructor(
         return try {
             withContext(Dispatchers.IO) {
                 val name = db.getNameOfSurah(surahNumber)
-                val ayahs = db.getAyahsInSurah(surahNumber)
-                val metadata = db.getMetadataForSection(SectionType.SURAH, surahNumber)
                 val rawAyahs = db.getAyahsInSurah(surahNumber)
-                // For surahs other than Al-Fatihah (1) and At-Tawbah (9), the SDK
-                // returns the bismillah as the first element before ayah 1.
-                val hasBismillah = surahNumber != 1 && surahNumber != 9 && rawAyahs.size > 1
-                val bismillahText = if (hasBismillah) rawAyahs[0] else null
-                val ayahStartIndex = if (hasBismillah) 1 else 0
+                // Bismillah is shown before all surahs except Al-Fatihah (1) and At-Tawbah (9)
+                val bismillahText = if (surahNumber != 1 && surahNumber != 9) {
+                    "\u0628\u0650\u0633\u0652\u0645\u0650 \u0627\u0644\u0644\u0651\u064E\u0647\u0650 \u0627\u0644\u0631\u0651\u064E\u062D\u0652\u0645\u064E\u0670\u0646\u0650 \u0627\u0644\u0631\u0651\u064E\u062D\u0650\u064A\u0645\u0650"
+                } else null
                 QuranSurahUi(
                     surahNumber = surahNumber,
                     surahName = name,
                     bismillah = bismillahText,
-                    ayahs = rawAyahs.drop(ayahStartIndex).mapIndexed { index, text ->
+                    ayahs = rawAyahs.mapIndexed { index, text ->
                         AyahUi(ayahNumber = index + 1, text = text)
                     }
                 )
