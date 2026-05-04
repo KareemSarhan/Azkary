@@ -180,7 +180,6 @@ class SummaryViewModel @Inject constructor(
                 // verseOfDay remains null (default)
             }
         }
-        }
         // Auto-refresh prayer times when ViewModel is created and location is enabled
         locationPreferencesJob = viewModelScope.launch {
             userPreferencesRepository.locationPreferences.collect { prefs ->

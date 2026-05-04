@@ -13,8 +13,6 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Reschedule notifications after device reboot -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- Override quran-sdk minSdk 26 requirement - SDK uses standard SQLite compatible with API 24+ -->
-    <uses-sdk tools:overrideLibrary="com.tazkiyatech.quran.sdk" />
 
     <application
         android:name=".AzkaryApp"

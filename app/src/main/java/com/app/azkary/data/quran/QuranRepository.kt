@@ -1,7 +1,6 @@
 package com.app.azkary.data.quran
 
 import android.content.Context
-import android.os.Build
 import com.app.azkary.data.model.AyahUi
 import com.app.azkary.data.model.QuranSurahUi
 import com.app.azkary.data.model.VerseOfDayUi
@@ -24,10 +23,7 @@ class QuranRepository @Inject constructor(
     private var quranDatabase: QuranDatabase? = null
     private val dbMutex = Mutex()
 
-    private fun isSdkSupported(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-
     suspend fun openDatabaseIfNeeded() {
-        if (!isSdkSupported()) return
         if (quranDatabase != null) return
         dbMutex.withLock {
             if (quranDatabase == null) {
