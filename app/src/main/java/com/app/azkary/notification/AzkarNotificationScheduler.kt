@@ -112,7 +112,6 @@ class AzkarNotificationScheduler @Inject constructor(
                     .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
                     .build()
             )
-            .addTag(WORK_TAG)
             .build()
 
         workManager.enqueueUniquePeriodicWork(

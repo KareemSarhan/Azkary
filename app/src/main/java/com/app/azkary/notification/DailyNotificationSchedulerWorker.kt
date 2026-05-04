@@ -22,10 +22,6 @@ class DailyNotificationSchedulerWorker @AssistedInject constructor(
     private val azkarRepository: AzkarRepository
 ) : CoroutineWorker(context, params) {
 
-    companion object {
-        const val WORK_NAME = "daily_notification_scheduler"
-    }
-
     override suspend fun doWork(): Result {
         val locationPrefs = userPreferencesRepository.locationPreferences.first()
         if (!locationPrefs.useLocation || locationPrefs.lastResolvedLocation == null) {
