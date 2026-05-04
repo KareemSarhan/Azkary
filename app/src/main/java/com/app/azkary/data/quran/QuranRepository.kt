@@ -28,9 +28,11 @@ class QuranRepository @Inject constructor(
         dbMutex.withLock {
             if (quranDatabase == null) {
                 try {
-                    val db = QuranDatabase(applicationContext)
-                    db.openDatabase()
-                    quranDatabase = db
+                    withContext(Dispatchers.IO) {
+                        val db = QuranDatabase(applicationContext)
+                        db.openDatabase()
+                        quranDatabase = db
+                    }
                 } catch (_: Exception) {
                     quranDatabase = null
                 }
@@ -42,6 +44,7 @@ class QuranRepository @Inject constructor(
 
     suspend fun getSurah(surahNumber: Int): QuranSurahUi? {
         if (surahNumber < 1 || surahNumber > 114) return null
+        openDatabaseIfNeeded()
         val db = requireDb() ?: return null
         return try {
             withContext(Dispatchers.IO) {
@@ -84,6 +87,7 @@ class QuranRepository @Inject constructor(
     }
 
     suspend fun getVerseOfDay(islamicDate: String): VerseOfDayUi? {
+        openDatabaseIfNeeded()
         val db = requireDb() ?: return null
         return try {
             withContext(Dispatchers.IO) {
