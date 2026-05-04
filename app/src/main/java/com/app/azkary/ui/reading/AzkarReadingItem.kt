@@ -117,9 +117,7 @@ fun AzkarReadingItem(
                     }
 
                     // Full surah: continuous flowing text with inline ayah markers
-                    // Skip the first ayah if it's the bismillah (already shown above)
-                    val ayahStartIndex = if (item.quranSurah.bismillah != null && item.quranSurah.ayahs.isNotEmpty()) 1 else 0
-                    val surahText = item.quranSurah.ayahs.drop(ayahStartIndex).joinToString(" ") { ayah ->
+                    val surahText = item.quranSurah.ayahs.joinToString(" ") { ayah ->
                         "${ayah.text} \uFD3F${ayah.ayahNumber}\uFD3E"
                     }
                     Text(
