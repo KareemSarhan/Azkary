@@ -68,14 +68,10 @@ fun AzkarReadingItem(
         ) {
             // Arabic Text - Quran SDK ayahs or database text
             if (item.quranSurah != null) {
-                val ayahs = if (item.quranReference?.ayahNumber != null) {
-                    item.quranSurah.ayahs.filter { it.ayahNumber == item.quranReference.ayahNumber }
-                } else {
-                    item.quranSurah.ayahs
-                }
+                val isSingleAyah = item.quranReference?.ayahNumber != null
 
                 // Surah name header for full surahs
-                if (item.quranReference?.ayahNumber == null) {
+                if (!isSingleAyah) {
                     Text(
                         text = item.quranSurah.surahName,
                         style = MaterialTheme.typography.titleMedium.copy(
@@ -102,12 +98,30 @@ fun AzkarReadingItem(
                             .fillMaxWidth()
                             .padding(bottom = 16.dp)
                     )
-                }
 
-                // Render each ayah as a Quran-style card
-                ayahs.forEach { ayah ->
-                    AyahCard(ayah = ayah)
-                    Spacer(modifier = Modifier.height(8.dp))
+                    // Full surah: continuous flowing text with inline ayah markers
+                    val surahText = item.quranSurah.ayahs.joinToString(" ") { ayah ->
+                        "${ayah.text} \uFD3F${ayah.ayahNumber}\uFD3E"
+                    }
+                    Text(
+                        text = surahText,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            lineHeight = MaterialTheme.typography.bodyLarge.fontSize * 2.2,
+                            color = colors.onBackground,
+                            textDirection = TextDirection.Rtl
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    )
+                } else {
+                    // Single ayah: show as AyahCard
+                    val ayahs = item.quranSurah.ayahs.filter { it.ayahNumber == item.quranReference!!.ayahNumber }
+                    ayahs.forEach { ayah ->
+                        AyahCard(ayah = ayah)
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

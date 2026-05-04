@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.app.azkary.R
@@ -150,7 +151,8 @@ internal fun AyahCard(ayah: AyahUi) {
                 Text(
                     text = "\uFD3F${ayah.ayahNumber}\uFD3E",
                     style = MaterialTheme.typography.labelSmall.copy(
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        textDirection = TextDirection.Rtl
                     )
                 )
             }
