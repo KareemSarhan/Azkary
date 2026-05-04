@@ -47,17 +47,35 @@ class QuranRepository @Inject constructor(
             withContext(Dispatchers.IO) {
                 val name = db.getNameOfSurah(surahNumber)
                 val rawAyahs = db.getAyahsInSurah(surahNumber)
-                // Bismillah is shown before all surahs except Al-Fatihah (1) and At-Tawbah (9)
-                val bismillahText = if (surahNumber != 1 && surahNumber != 9) {
-                    "\u0628\u0650\u0633\u0652\u0645\u0650 \u0627\u0644\u0644\u0651\u064E\u0647\u0650 \u0627\u0644\u0631\u0651\u064E\u062D\u0652\u0645\u064E\u0670\u0646\u0650 \u0627\u0644\u0631\u0651\u064E\u062D\u0650\u064A\u0645\u0650"
-                } else null
+                // Extract bismillah from the first ayah for surahs other than Al-Fatihah (1) and At-Tawbah (9)
+                // The SDK prepends "بسم الله الرحمن الرحيم" to the first ayah text.
+                // Split on الرحيم to separate bismillah from the actual ayah content.
+                val bismillahMarker = "\u0627\u0644\u0631\u0651\u064E\u062D\u0650\u064A\u0645\u0650" // الرحيم
+                var bismillahText: String? = null
+                val ayahList = rawAyahs.mapIndexed { index, text ->
+                    AyahUi(ayahNumber = index + 1, text = text)
+                }.toMutableList()
+
+                if (surahNumber != 1 && surahNumber != 9 && ayahList.isNotEmpty()) {
+                    val firstAyah = ayahList[0]
+                    val splitIndex = firstAyah.text.indexOf(bismillahMarker)
+                    if (splitIndex >= 0) {
+                        val afterMarker = splitIndex + bismillahMarker.length
+                        bismillahText = firstAyah.text.substring(0, afterMarker).trim()
+                        val remaining = firstAyah.text.substring(afterMarker).trim()
+                        if (remaining.isNotEmpty()) {
+                            ayahList[0] = firstAyah.copy(text = remaining)
+                        } else {
+                            ayahList.removeAt(0)
+                        }
+                    }
+                }
+
                 QuranSurahUi(
                     surahNumber = surahNumber,
                     surahName = name,
                     bismillah = bismillahText,
-                    ayahs = rawAyahs.mapIndexed { index, text ->
-                        AyahUi(ayahNumber = index + 1, text = text)
-                    }
+                    ayahs = ayahList
                 )
             }
         } catch (_: Exception) {
