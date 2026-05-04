@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.AzkarItemUi
 import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.quran.QuranRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.domain.IslamicDateProvider
 import com.app.azkary.util.LocaleManager
@@ -29,6 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ReadingViewModel @Inject constructor(
     private val repository: AzkarRepository,
+    private val quranRepository: QuranRepository,
     private val localeManager: LocaleManager,
     private val islamicDateProvider: IslamicDateProvider,
     private val userPreferencesRepository: UserPreferencesRepository,
@@ -63,6 +65,9 @@ class ReadingViewModel @Inject constructor(
             islamicDateProvider.refreshDate()
         }
         viewModelScope.launch {
+            quranRepository.openDatabaseIfNeeded()
+        }
+        viewModelScope.launch {
             userPreferencesRepository.vibrationEnabled.collect { enabled ->
                 _vibrationEnabledInternal.value = enabled
             }
@@ -86,6 +91,15 @@ class ReadingViewModel @Inject constructor(
                     langTag = lang,
                     today
                 )
+            }
+        }
+    }.map { items ->
+        items.map { item ->
+            if (item.quranReference != null && item.quranSurah == null) {
+                val surah = quranRepository.getSurah(item.quranReference.surahNumber)
+                item.copy(quranSurah = surah)
+            } else {
+                item
             }
         }
     }.stateIn(

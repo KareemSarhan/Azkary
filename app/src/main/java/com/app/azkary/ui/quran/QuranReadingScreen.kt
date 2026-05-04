@@ -132,7 +132,7 @@ fun QuranReadingScreen(
 }
 
 @Composable
-private fun AyahCard(ayah: AyahUi) {
+internal fun AyahCard(ayah: AyahUi) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)

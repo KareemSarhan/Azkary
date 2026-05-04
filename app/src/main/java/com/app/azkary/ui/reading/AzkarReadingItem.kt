@@ -35,8 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.azkary.R
 import com.app.azkary.data.model.AzkarItemUi
+import com.app.azkary.ui.quran.AyahCard
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -64,21 +66,67 @@ fun AzkarReadingItem(
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Arabic Text
-            item.arabicText?.let { arabic ->
-                Text(
-                    text = arabic,
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontSize = 28.sp, // Reduced further for better fit
-                        lineHeight = 42.sp,
-                        fontFamily = FontFamily.Default,
-                        color = colors.onBackground
-                    ),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 28.dp)
-                )
+            // Arabic Text - Quran SDK ayahs or database text
+            if (item.quranSurah != null) {
+                val ayahs = if (item.quranReference?.ayahNumber != null) {
+                    item.quranSurah.ayahs.filter { it.ayahNumber == item.quranReference.ayahNumber }
+                } else {
+                    item.quranSurah.ayahs
+                }
+
+                // Surah name header for full surahs
+                if (item.quranReference?.ayahNumber == null) {
+                    Text(
+                        text = item.quranSurah.surahName,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            color = colors.primary,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    )
+                    val context = LocalContext.current
+                    Text(
+                        text = context.resources.getQuantityString(
+                            R.plurals.quran_ayah_count,
+                            item.quranSurah.totalAyahs,
+                            item.quranSurah.totalAyahs
+                        ),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = colors.onSurfaceVariant
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
+                    )
+                }
+
+                // Render each ayah as a Quran-style card
+                ayahs.forEach { ayah ->
+                    AyahCard(ayah = ayah)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            } else {
+                item.arabicText?.let { arabic ->
+                    Text(
+                        text = arabic,
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontSize = 28.sp,
+                            lineHeight = 42.sp,
+                            fontFamily = FontFamily.Default,
+                            color = colors.onBackground
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 28.dp)
+                    )
+                }
             }
 
             // Transliteration
@@ -106,9 +154,9 @@ fun AzkarReadingItem(
                 HadithInformationCardLtr(referenceText = item.reference)
             }
 
-            // Read Surah chip
+            // Read Surah chip - only show for single-ayah items (full surahs are already shown inline)
             item.quranReference?.let { quranRef ->
-                if (onNavigateToQuran != null) {
+                if (quranRef.ayahNumber != null && onNavigateToQuran != null) {
                     Spacer(modifier = Modifier.height(12.dp))
                     AssistChip(
                         onClick = { onNavigateToQuran(quranRef.surahNumber) },
@@ -121,8 +169,7 @@ fun AzkarReadingItem(
                                 contentDescription = null,
                                 modifier = Modifier.padding(start = 4.dp)
                             )
-                        },
-                        modifier = Modifier.align(Alignment.Start)
+                        }
                     )
                 }
             }

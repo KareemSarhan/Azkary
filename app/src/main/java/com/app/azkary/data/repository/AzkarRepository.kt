@@ -55,6 +55,8 @@ class AzkarRepository @Inject constructor(
             "itm-falaq-003" to QuranReference(113, null),
             "itm-nas-003" to QuranReference(114, null),
             "itm-ayatain-albaqarah-sleep-001" to QuranReference(2, 285),
+            "itm-recitation-sajdah-sleep-001" to QuranReference(32, null),
+            "itm-recitation-mulk-sleep-001" to QuranReference(67, null),
         )
     }
 

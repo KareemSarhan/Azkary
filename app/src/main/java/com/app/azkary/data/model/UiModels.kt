@@ -22,7 +22,8 @@ data class AzkarItemUi(
     val currentRepeats: Int,
     val isCompleted: Boolean,
     val isInfinite: Boolean = false,
-    val quranReference: QuranReference? = null
+    val quranReference: QuranReference? = null,
+    val quranSurah: QuranSurahUi? = null
 )
 
 data class AvailableZikr(
