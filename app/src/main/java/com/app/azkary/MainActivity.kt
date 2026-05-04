@@ -23,6 +23,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.app.azkary.data.model.SystemCategoryKey
 import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
@@ -35,6 +37,7 @@ import com.app.azkary.ui.settings.SettingsScreen
 import com.app.azkary.ui.summary.SummaryScreen
 import com.app.azkary.ui.theme.AzkaryTheme
 import com.app.azkary.ui.category.CategoryCreationScreen
+import com.app.azkary.ui.quran.QuranReadingScreen
 import com.app.azkary.util.AppUpdateManager
 import com.app.azkary.util.AppUpdateManagerFactory
 import com.app.azkary.util.LocaleManager
@@ -128,12 +131,18 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onNavigateToEditCategory = { categoryId ->
                                         navController.navigate("category/edit/$categoryId")
+                                    },
+                                    onNavigateToQuran = { surahNumber ->
+                                        navController.navigate("quran/$surahNumber")
                                     }
                                 )
                             }
                             composable("reading/{categoryId}") { backStackEntry ->
                                 ReadingScreen(
-                                    onBack = { navController.popBackStack() }
+                                    onBack = { navController.popBackStack() },
+                                    onNavigateToQuran = { surahNumber ->
+                                        navController.navigate("quran/$surahNumber")
+                                    }
                                 )
                             }
                             composable("settings") {
@@ -151,6 +160,14 @@ class MainActivity : ComponentActivity() {
                                 CategoryCreationScreen(
                                     onBack = { navController.popBackStack() },
                                     categoryId = categoryId
+                                )
+                            }
+                            composable(
+                                route = "quran/{surahNumber}",
+                                arguments = listOf(navArgument("surahNumber") { type = NavType.IntType })
+                            ) {
+                                QuranReadingScreen(
+                                    onBack = { navController.popBackStack() }
                                 )
                             }
                         }

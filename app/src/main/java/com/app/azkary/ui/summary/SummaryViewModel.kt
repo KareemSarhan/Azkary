@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.CategoryUi
 import com.app.azkary.data.model.DayProgress
 import com.app.azkary.data.model.SystemCategoryKey
+import com.app.azkary.data.model.VerseOfDayUi
 import java.time.LocalDate
 import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.quran.QuranRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.domain.IslamicDateProvider
@@ -44,6 +46,7 @@ class SummaryViewModel @Inject constructor(
     private val prayerTimesRepository: PrayerTimesRepository,
     private val islamicDateProvider: IslamicDateProvider,
     private val localeManager: LocaleManager,
+    private val quranRepository: QuranRepository,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -90,6 +93,9 @@ class SummaryViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = true
         )
+
+    private val _verseOfDay = MutableStateFlow<VerseOfDayUi?>(null)
+    val verseOfDay: StateFlow<VerseOfDayUi?> = _verseOfDay.asStateFlow()
 
     /**
      * Maps AzkarWindow to SystemCategoryKey for category selection
@@ -163,6 +169,16 @@ class SummaryViewModel @Inject constructor(
         println("DEBUG: SummaryViewModel - ViewModel initialized")
         viewModelScope.launch {
             islamicDateProvider.refreshDate()
+        }
+        // Load verse of the day
+        viewModelScope.launch {
+            try {
+                val islamicDate = islamicDateProvider.currentDateFlow.value?.toString()
+                    ?: islamicDateProvider.getCurrentDate().toString()
+                _verseOfDay.value = quranRepository.getVerseOfDay(islamicDate)
+            } catch (_: Exception) {
+                // verseOfDay remains null (default)
+            }
         }
         // Auto-refresh prayer times when ViewModel is created and location is enabled
         locationPreferencesJob = viewModelScope.launch {
