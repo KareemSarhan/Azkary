@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app.azkary.R
 import com.app.azkary.data.model.AzkarItemUi
-import com.app.azkary.ui.quran.AyahCard
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.ui.platform.LocalContext
@@ -99,28 +98,60 @@ fun AzkarReadingItem(
                             .padding(bottom = 16.dp)
                     )
 
+                    // Bismillah - centered on its own line
+                    item.quranSurah.bismillah?.let { bismillah ->
+                        Text(
+                            text = bismillah,
+                            style = MaterialTheme.typography.headlineMedium.copy(
+                                fontSize = 28.sp,
+                                lineHeight = 42.sp,
+                                fontFamily = FontFamily.Default,
+                                color = colors.onBackground,
+                                textDirection = TextDirection.Rtl
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 28.dp, bottom = 8.dp)
+                        )
+                    }
+
                     // Full surah: continuous flowing text with inline ayah markers
                     val surahText = item.quranSurah.ayahs.joinToString(" ") { ayah ->
                         "${ayah.text} \uFD3F${ayah.ayahNumber}\uFD3E"
                     }
                     Text(
                         text = surahText,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            lineHeight = MaterialTheme.typography.bodyLarge.fontSize * 2.2,
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontSize = 28.sp,
+                            lineHeight = 42.sp,
+                            fontFamily = FontFamily.Default,
                             color = colors.onBackground,
                             textDirection = TextDirection.Rtl
                         ),
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp)
+                            .padding(vertical = 28.dp)
                     )
                 } else {
-                    // Single ayah: show as AyahCard
+                    // Single ayah: show as plain text matching zikr style
                     val ayahs = item.quranSurah.ayahs.filter { it.ayahNumber == item.quranReference!!.ayahNumber }
                     ayahs.forEach { ayah ->
-                        AyahCard(ayah = ayah)
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = ayah.text,
+                            style = MaterialTheme.typography.headlineMedium.copy(
+                                fontSize = 28.sp,
+                                lineHeight = 42.sp,
+                                fontFamily = FontFamily.Default,
+                                color = colors.onBackground,
+                                textDirection = TextDirection.Rtl
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 28.dp)
+                        )
                     }
                 }
 

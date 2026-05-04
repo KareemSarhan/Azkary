@@ -15,6 +15,7 @@ data class VerseOfDayUi(
 data class QuranSurahUi(
     val surahNumber: Int,
     val surahName: String,
+    val bismillah: String?,
     val ayahs: List<AyahUi>
 ) {
     val totalAyahs: Int get() = ayahs.size

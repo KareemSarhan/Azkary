@@ -104,6 +104,23 @@ fun QuranReadingScreen(
                         )
                     }
 
+                    // Bismillah
+                    surah.bismillah?.let { bismillah ->
+                        item {
+                            Text(
+                                text = bismillah,
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    lineHeight = MaterialTheme.typography.bodyLarge.fontSize * 1.8,
+                                    textDirection = TextDirection.Rtl
+                                ),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 12.dp)
+                            )
+                        }
+                    }
+
                     items(items = surah.ayahs, key = { it.ayahNumber }) { ayah ->
                         AyahCard(ayah = ayah)
                         Spacer(modifier = Modifier.height(8.dp))
