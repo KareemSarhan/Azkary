@@ -50,11 +50,11 @@ class AzkarRepository @Inject constructor(
     companion object {
         private val QURAN_VERSE_ITEMS = mapOf(
             "itm-ayat-al-kursi-1" to QuranReference(2, 255),
-            "itm-last-two-baqara-1" to QuranReference(2, 285),
+            "itm-last-two-baqara-1" to QuranReference(2, 285, 286),
             "itm-ikhlas-003" to QuranReference(112, null),
             "itm-falaq-003" to QuranReference(113, null),
             "itm-nas-003" to QuranReference(114, null),
-            "itm-ayatain-albaqarah-sleep-001" to QuranReference(2, 285),
+            "itm-ayatain-albaqarah-sleep-001" to QuranReference(2, 285, 286),
             "itm-recitation-sajdah-sleep-001" to QuranReference(32, null),
             "itm-recitation-mulk-sleep-001" to QuranReference(67, null),
         )

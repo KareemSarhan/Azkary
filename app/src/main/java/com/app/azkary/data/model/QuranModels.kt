@@ -2,7 +2,8 @@ package com.app.azkary.data.model
 
 data class QuranReference(
     val surahNumber: Int,
-    val ayahNumber: Int? = null
+    val ayahNumber: Int? = null,
+    val ayahNumberEnd: Int? = null
 )
 
 data class VerseOfDayUi(

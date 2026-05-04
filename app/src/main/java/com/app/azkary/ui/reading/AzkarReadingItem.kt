@@ -67,10 +67,10 @@ fun AzkarReadingItem(
         ) {
             // Arabic Text - Quran SDK ayahs or database text
             if (item.quranSurah != null) {
-                val isSingleAyah = item.quranReference?.ayahNumber != null
+                val isFullSurah = item.quranReference?.ayahNumber == null
 
-                // Surah name header for full surahs
-                if (!isSingleAyah) {
+                if (isFullSurah) {
+                    // Surah name header
                     Text(
                         text = item.quranSurah.surahName,
                         style = MaterialTheme.typography.titleMedium.copy(
@@ -80,7 +80,7 @@ fun AzkarReadingItem(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 8.dp)
+                            .padding(bottom = 4.dp)
                     )
                     val context = LocalContext.current
                     Text(
@@ -95,7 +95,7 @@ fun AzkarReadingItem(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp)
+                            .padding(bottom = 8.dp)
                     )
 
                     // Bismillah - centered on its own line
@@ -112,12 +112,14 @@ fun AzkarReadingItem(
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 28.dp, bottom = 8.dp)
+                                .padding(top = 8.dp, bottom = 4.dp)
                         )
                     }
 
                     // Full surah: continuous flowing text with inline ayah markers
-                    val surahText = item.quranSurah.ayahs.joinToString(" ") { ayah ->
+                    // Skip the first ayah if it's the bismillah (already shown above)
+                    val ayahStartIndex = if (item.quranSurah.bismillah != null && item.quranSurah.ayahs.isNotEmpty()) 1 else 0
+                    val surahText = item.quranSurah.ayahs.drop(ayahStartIndex).joinToString(" ") { ayah ->
                         "${ayah.text} \uFD3F${ayah.ayahNumber}\uFD3E"
                     }
                     Text(
@@ -135,24 +137,30 @@ fun AzkarReadingItem(
                             .padding(vertical = 28.dp)
                     )
                 } else {
-                    // Single ayah: show as plain text matching zikr style
-                    val ayahs = item.quranSurah.ayahs.filter { it.ayahNumber == item.quranReference!!.ayahNumber }
-                    ayahs.forEach { ayah ->
-                        Text(
-                            text = ayah.text,
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                fontSize = 28.sp,
-                                lineHeight = 42.sp,
-                                fontFamily = FontFamily.Default,
-                                color = colors.onBackground,
-                                textDirection = TextDirection.Rtl
-                            ),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 28.dp)
-                        )
+                    // Specific ayah(s): filter to the requested range
+                    val ref = item.quranReference!!
+                    val ayahs = item.quranSurah.ayahs.filter { ayah ->
+                        val start = ref.ayahNumber!!
+                        val end = ref.ayahNumberEnd ?: start
+                        ayah.ayahNumber in start..end
                     }
+                    val ayahText = ayahs.joinToString(" ") { ayah ->
+                        "${ayah.text} \uFD3F${ayah.ayahNumber}\uFD3E"
+                    }
+                    Text(
+                        text = ayahText,
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontSize = 28.sp,
+                            lineHeight = 42.sp,
+                            fontFamily = FontFamily.Default,
+                            color = colors.onBackground,
+                            textDirection = TextDirection.Rtl
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 28.dp)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
