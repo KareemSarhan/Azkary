@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.AzkarItemUi
 import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.quran.QuranRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.domain.IslamicDateProvider
 import com.app.azkary.util.LocaleManager
@@ -13,21 +14,23 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ReadingViewModel @Inject constructor(
     private val repository: AzkarRepository,
+    private val quranRepository: QuranRepository,
     private val localeManager: LocaleManager,
     private val islamicDateProvider: IslamicDateProvider,
     private val userPreferencesRepository: UserPreferencesRepository,
@@ -36,9 +39,9 @@ class ReadingViewModel @Inject constructor(
 ) : ViewModel() {
     val categoryId: String? = savedStateHandle["categoryId"]
 
-    private val todayFlow: Flow<String> = flow {
-        emit(islamicDateProvider.getCurrentDate().toString())
-    }
+    private val todayFlow: Flow<String> = islamicDateProvider.currentDateFlow
+        .filterNotNull()
+        .map { it.toString() }
 
     val holdToComplete: StateFlow<Boolean> = userPreferencesRepository.holdToComplete
         .stateIn(
@@ -58,6 +61,12 @@ class ReadingViewModel @Inject constructor(
     val vibrationEnabledInternal = _vibrationEnabledInternal.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            islamicDateProvider.refreshDate()
+        }
+        viewModelScope.launch {
+            quranRepository.openDatabaseIfNeeded()
+        }
         viewModelScope.launch {
             userPreferencesRepository.vibrationEnabled.collect { enabled ->
                 _vibrationEnabledInternal.value = enabled
@@ -82,6 +91,15 @@ class ReadingViewModel @Inject constructor(
                     langTag = lang,
                     today
                 )
+            }
+        }
+    }.map { items ->
+        items.map { item ->
+            if (item.quranReference != null && item.quranSurah == null) {
+                val surah = quranRepository.getSurah(item.quranReference.surahNumber)
+                item.copy(quranSurah = surah)
+            } else {
+                item
             }
         }
     }.stateIn(
@@ -109,7 +127,8 @@ class ReadingViewModel @Inject constructor(
     fun incrementRepeat(itemId: String) {
         viewModelScope.launch {
             val id = categoryId ?: return@launch
-            val today = islamicDateProvider.getCurrentDate().toString()
+            val today = islamicDateProvider.currentDateFlow.value?.toString()
+                ?: islamicDateProvider.getCurrentDate().toString()
             repository.incrementRepeat(id, itemId, today)
         }
     }
@@ -117,7 +136,8 @@ class ReadingViewModel @Inject constructor(
     fun markItemComplete(itemId: String) {
         viewModelScope.launch {
             val id = categoryId ?: return@launch
-            val today = islamicDateProvider.getCurrentDate().toString()
+            val today = islamicDateProvider.currentDateFlow.value?.toString()
+                ?: islamicDateProvider.getCurrentDate().toString()
             repository.markItemComplete(id, itemId, today)
         }
     }

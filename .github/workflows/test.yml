@@ -61,7 +61,7 @@ jobs:
         path: app/build/reports/kover/
 
     - name: Add Coverage PR Comment
-      uses: mi-kas/kover-report@v1
+      uses: mi-kas/kover-report@v2
       if: github.event_name == 'pull_request'
       continue-on-error: true
       with:

@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.quran.QuranRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.notification.AzkarNotificationScheduler
@@ -34,6 +35,9 @@ class AzkaryApp : Application(), Configuration.Provider {
     @Inject
     lateinit var azkarRepository: AzkarRepository
 
+    @Inject
+    lateinit var quranRepository: QuranRepository
+
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override val workManagerConfiguration: Configuration
@@ -48,6 +52,7 @@ class AzkaryApp : Application(), Configuration.Provider {
             userPreferencesRepository.initializeFirstInstallDate()
             userPreferencesRepository.incrementAppOpenCount()
             notificationScheduler.scheduleDailyRescheduling()
+            quranRepository.openDatabaseIfNeeded()
             scheduleNotificationsIfNeeded()
         }
     }

@@ -3,6 +3,7 @@ package com.app.azkary.ui.summary
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -47,11 +49,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.app.azkary.R
 import com.app.azkary.data.model.CategoryUi
+import com.app.azkary.data.model.VerseOfDayUi
 import com.app.azkary.ui.theme.SessionGradientEnd
 import com.app.azkary.ui.theme.SessionGradientStart
 import com.app.azkary.ui.theme.SessionRingColor
@@ -68,6 +72,7 @@ fun SummaryScreen(
     onNavigateToSettings: () -> Unit,
     onNavigateToCreateCategory: () -> Unit,
     onNavigateToEditCategory: (String) -> Unit,
+    onNavigateToQuran: (Int) -> Unit = {},
     viewModel: SummaryViewModel = hiltViewModel()
 ) {
     LocalContext.current
@@ -78,6 +83,7 @@ fun SummaryScreen(
     val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
     val showWeeklyProgress by viewModel.showWeeklyProgress.collectAsState()
     val weeklyProgress by viewModel.weeklyProgress.collectAsState(initial = emptyList())
+    val verseOfDay by viewModel.verseOfDay.collectAsState()
 
     val today = androidx.compose.runtime.remember {
         val currentLocale = Locale.getDefault()
@@ -188,6 +194,17 @@ fun SummaryScreen(
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
                         WeeklyProgressCard(days = weeklyProgress)
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+
+                // Verse of the Day Card
+                verseOfDay?.let { vod ->
+                    item {
+                        VerseOfDayCard(
+                            verseOfDay = vod,
+                            onClick = { onNavigateToQuran(vod.surahNumber) }
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
@@ -468,6 +485,55 @@ fun AddCategoryItem(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun VerseOfDayCard(
+    verseOfDay: VerseOfDayUi,
+    onClick: () -> Unit
+) {
+    val colors = MaterialTheme.colorScheme
+
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = colors.surfaceVariant.copy(alpha = 0.6f)
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.quran_verse_of_the_day),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    color = colors.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = verseOfDay.ayahText,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    lineHeight = MaterialTheme.typography.bodyLarge.fontSize * 1.7
+                ),
+                textAlign = TextAlign.End,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = stringResource(R.string.quran_surah_ayah, verseOfDay.surahName, verseOfDay.ayahNumber),
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = colors.onSurfaceVariant
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.End
+            )
         }
     }
 }

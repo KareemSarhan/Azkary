@@ -17,6 +17,7 @@ import com.app.azkary.data.model.AvailableZikr
 import com.app.azkary.data.model.AzkarItemUi
 import com.app.azkary.data.model.CategoryItemConfig
 import com.app.azkary.data.model.CategoryUi
+import com.app.azkary.data.model.QuranReference
 import com.app.azkary.data.model.SystemCategoryKey
 import com.app.azkary.data.seed.SeedManager
 import com.app.azkary.util.ArabicNormalizer
@@ -45,6 +46,19 @@ class AzkarRepository @Inject constructor(
     private val seedManager: SeedManager,
     @param:ApplicationContext private val context: Context
 ) {
+
+    companion object {
+        private val QURAN_VERSE_ITEMS = mapOf(
+            "itm-ayat-al-kursi-1" to QuranReference(2, 255),
+            "itm-last-two-baqara-1" to QuranReference(2, 285, 286),
+            "itm-ikhlas-003" to QuranReference(112),
+            "itm-falaq-003" to QuranReference(113),
+            "itm-nas-003" to QuranReference(114),
+            "itm-ayatain-albaqarah-sleep-001" to QuranReference(2, 285, 286),
+            "itm-recitation-sajdah-sleep-001" to QuranReference(32),
+            "itm-recitation-mulk-sleep-001" to QuranReference(67),
+        )
+    }
 
     private fun <T> selectBestText(
         texts: List<T>,
@@ -125,7 +139,8 @@ class AzkarRepository @Inject constructor(
                         requiredRepeats = crossRef.requiredRepeats,
                         currentRepeats = progress?.currentRepeats ?: 0,
                         isCompleted = progress?.isCompleted ?: false,
-                        isInfinite = crossRef.isInfinite
+                        isInfinite = crossRef.isInfinite,
+                        quranReference = QURAN_VERSE_ITEMS[item.itemId]
                     )
                 }
             }

@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.CategoryUi
 import com.app.azkary.data.model.DayProgress
 import com.app.azkary.data.model.SystemCategoryKey
+import com.app.azkary.data.model.VerseOfDayUi
 import java.time.LocalDate
 import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.quran.QuranRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.domain.IslamicDateProvider
@@ -22,9 +24,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.Job
@@ -44,11 +46,12 @@ class SummaryViewModel @Inject constructor(
     private val prayerTimesRepository: PrayerTimesRepository,
     private val islamicDateProvider: IslamicDateProvider,
     private val localeManager: LocaleManager,
+    private val quranRepository: QuranRepository,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     val categories: StateFlow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
-        flow { emit(islamicDateProvider.getCurrentDate().toString()) }.flatMapLatest { date ->
+        islamicDateProvider.currentDateFlow.filterNotNull().map { it.toString() }.flatMapLatest { date ->
             repository.observeCategoriesWithDisplayName(
                 langTag = lang,
                 date = date
@@ -90,6 +93,9 @@ class SummaryViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = true
         )
+
+    private val _verseOfDay = MutableStateFlow<VerseOfDayUi?>(null)
+    val verseOfDay: StateFlow<VerseOfDayUi?> = _verseOfDay.asStateFlow()
 
     /**
      * Maps AzkarWindow to SystemCategoryKey for category selection
@@ -161,6 +167,19 @@ class SummaryViewModel @Inject constructor(
 
     init {
         println("DEBUG: SummaryViewModel - ViewModel initialized")
+        viewModelScope.launch {
+            islamicDateProvider.refreshDate()
+        }
+        // Load verse of the day
+        viewModelScope.launch {
+            try {
+                val islamicDate = islamicDateProvider.currentDateFlow.value?.toString()
+                    ?: islamicDateProvider.getCurrentDate().toString()
+                _verseOfDay.value = quranRepository.getVerseOfDay(islamicDate)
+            } catch (_: Exception) {
+                // verseOfDay remains null (default)
+            }
+        }
         // Auto-refresh prayer times when ViewModel is created and location is enabled
         locationPreferencesJob = viewModelScope.launch {
             userPreferencesRepository.locationPreferences.collect { prefs ->
@@ -261,7 +280,8 @@ class SummaryViewModel @Inject constructor(
     fun toggleCategoryCompletion(categoryId: String) {
         viewModelScope.launch {
             val category = categories.first().find { it.id == categoryId } ?: return@launch
-            val today = islamicDateProvider.getCurrentDate().toString()
+            val today = islamicDateProvider.currentDateFlow.value?.toString()
+                ?: islamicDateProvider.getCurrentDate().toString()
 
             if (category.progress >= 1f) {
                 repository.markCategoryIncomplete(categoryId, today)

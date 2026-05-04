@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.app.azkary"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 20
         versionName = "3.1.2"
@@ -124,4 +124,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     coreLibraryDesugaring(libs.desugaring)
+    implementation(libs.quran.sdk)
 }
