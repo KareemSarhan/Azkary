@@ -38,7 +38,7 @@ appUpdate = "2.1.0"
 playReview = "2.0.2"
 workmanager = "2.11.2"
 desugaring = "2.1.5"
-quranSdk = "3.0.0"
+quranSdk = "4.0.0"
 
 [libraries]
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
