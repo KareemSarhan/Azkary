@@ -16,7 +16,7 @@ composeBom = "2026.04.01"
 
 loggingInterceptor = "5.3.2"
 materialIconsExtended = "1.7.8"
-materialVersion = "1.11.0"
+materialVersion = "1.11.1"
 mockk = "1.14.9"
 mockwebserver = "5.3.2"
 okhttp = "5.3.2"
