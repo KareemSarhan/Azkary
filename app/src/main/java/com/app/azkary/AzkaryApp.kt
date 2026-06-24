@@ -83,7 +83,7 @@ class AzkaryApp : Application(), Configuration.Provider {
 
     private suspend fun scheduleMasjidChecksIfNeeded() {
         val masjidPreferences = userPreferencesRepository.masjidPreferences.first()
-        if (masjidPreferences.enabled && masjidPreferences.savedLocation != null) {
+        if (masjidPreferences.enabled && masjidPreferences.savedMasjids.isNotEmpty()) {
             masjidLocationScheduler.schedulePeriodicChecks()
         } else {
             masjidLocationScheduler.cancelChecks()

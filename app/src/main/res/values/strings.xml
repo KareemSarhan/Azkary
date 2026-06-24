@@ -30,11 +30,19 @@
     <string name="settings_current_location">Current Location</string>
     <string name="settings_location_not_available">Not available</string>
     <string name="settings_refresh_location_content_description">Refresh location</string>
+    <string name="settings_qibla_title">Qibla direction</string>
+    <string name="settings_qibla_subtitle">Find the direction to Makkah</string>
     <string name="settings_section_masjid_mode">MASJID MODE</string>
     <string name="settings_masjid_enabled_title">Masjid entry reminder</string>
     <string name="settings_masjid_enabled_desc">Use your saved masjid location for entry reminders</string>
     <string name="settings_masjid_dnd_title">DND at masjid</string>
     <string name="settings_masjid_dnd_desc">Turn on Do Not Disturb while inside the saved masjid</string>
+    <string name="settings_masjid_add">Add masjid</string>
+    <string name="settings_masjid_add_desc">Choose location and radius on the map</string>
+    <string name="settings_masjid_map_title">Masjid Location</string>
+    <string name="settings_masjid_default_name">Masjid</string>
+    <string name="settings_masjid_name_label">Masjid name</string>
+    <string name="settings_masjid_save">Save</string>
     <string name="settings_saved_masjid">Saved masjid</string>
     <string name="settings_save_current_masjid">Set current location as masjid</string>
     <string name="settings_masjid_not_saved">No masjid saved yet</string>
@@ -42,6 +50,8 @@
     <string name="settings_masjid_check_now">Check masjid location now</string>
     <string name="settings_masjid_saved">Masjid location saved</string>
     <string name="settings_masjid_dnd_access_needed">Allow Do Not Disturb access for Azkary, then enable this again.</string>
+    <string name="settings_masjid_edit_content_description">Edit masjid</string>
+    <string name="settings_masjid_delete_content_description">Delete masjid</string>
     <string name="settings_section_general">GENERAL</string>
     <string name="settings_language">Language</string>
     <string name="settings_language_content_description">Language settings</string>
@@ -59,6 +69,23 @@
     <string name="theme_system">System Default</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_title">Qibla</string>
+    <string name="qibla_location_required">Location required</string>
+    <string name="qibla_use_current_location">Use current location</string>
+    <string name="qibla_refresh_location">Refresh location</string>
+    <string name="qibla_bearing_label">Qibla bearing</string>
+    <string name="qibla_heading_label">Current heading</string>
+    <string name="qibla_location_label">Location</string>
+    <string name="qibla_compass_unavailable">Compass unavailable</string>
+    <string name="qibla_compass_calibrating">Compass calibrating</string>
+    <string name="qibla_aligned">Aligned</string>
+    <string name="qibla_turn_right">Turn right %d°</string>
+    <string name="qibla_turn_left">Turn left %d°</string>
+    <string name="qibla_unknown_heading">Unknown</string>
+    <string name="qibla_degrees">%d°</string>
+    <string name="qibla_compass_content_description">Qibla compass</string>
 
     <!-- Date Format (for SummaryScreen) -->
     <string name="date_format_pattern">EEEE dd MMMM</string>

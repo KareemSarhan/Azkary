@@ -33,11 +33,13 @@ import com.app.azkary.domain.AppRatingManager
 import com.app.azkary.domain.IslamicDateProvider
 import com.app.azkary.notification.AzkarNotificationManager
 import com.app.azkary.ui.reading.ReadingScreen
+import com.app.azkary.ui.settings.MasjidMapScreen
 import com.app.azkary.ui.settings.SettingsScreen
 import com.app.azkary.ui.summary.SummaryScreen
 import com.app.azkary.ui.theme.AzkaryTheme
 import com.app.azkary.ui.category.CategoryCreationScreen
 import com.app.azkary.ui.quran.QuranReadingScreen
+import com.app.azkary.ui.qibla.QiblaScreen
 import com.app.azkary.util.AppUpdateManager
 import com.app.azkary.util.AppUpdateManagerFactory
 import com.app.azkary.util.LocaleManager
@@ -147,6 +149,33 @@ class MainActivity : ComponentActivity() {
                             }
                             composable("settings") {
                                 SettingsScreen(
+                                    onBack = { navController.popBackStack() },
+                                    onNavigateToQibla = {
+                                        navController.navigate("qibla")
+                                    },
+                                    onNavigateToMasjidMap = { masjidId ->
+                                        if (masjidId == null) {
+                                            navController.navigate("masjid/add")
+                                        } else {
+                                            navController.navigate("masjid/edit/$masjidId")
+                                        }
+                                    }
+                                )
+                            }
+                            composable("qibla") {
+                                QiblaScreen(
+                                    onBack = { navController.popBackStack() }
+                                )
+                            }
+                            composable("masjid/add") {
+                                MasjidMapScreen(
+                                    masjidId = null,
+                                    onBack = { navController.popBackStack() }
+                                )
+                            }
+                            composable("masjid/edit/{masjidId}") { backStackEntry ->
+                                MasjidMapScreen(
+                                    masjidId = backStackEntry.arguments?.getString("masjidId"),
                                     onBack = { navController.popBackStack() }
                                 )
                             }

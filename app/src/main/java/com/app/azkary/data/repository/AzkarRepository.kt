@@ -285,6 +285,26 @@ class AzkarRepository @Inject constructor(
         )
     }
 
+    /**
+     * Reset a single item back to incomplete progress.
+     */
+    suspend fun resetItemProgress(
+        categoryId: String,
+        itemId: String,
+        date: String
+    ) {
+        val crossRef = categoryItemDao.getAllCrossRefsForCategory(categoryId).first().find { it.itemId == itemId } ?: return
+        progressDao.upsertProgress(
+            UserProgressEntity(
+                categoryId = categoryId,
+                itemId = crossRef.itemId,
+                date = date,
+                currentRepeats = 0,
+                isCompleted = false
+            )
+        )
+    }
+
     suspend fun createCustomCategory(
         name: String,
         langTag: String,

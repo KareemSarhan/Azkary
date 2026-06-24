@@ -14,6 +14,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,16 +31,27 @@ data class ReadingPreferences(
     val holdToComplete: Boolean = true
 )
 
+@Serializable
+data class SavedMasjid(
+    val id: String,
+    val name: String,
+    val location: LatLng,
+    val radiusMeters: Int = 120
+)
+
 data class MasjidPreferences(
     val enabled: Boolean = false,
     val dndEnabled: Boolean = false,
-    val savedLocation: LatLng? = null,
-    val radiusMeters: Int = 120,
-    val isInsideMasjid: Boolean = false,
+    val savedMasjids: List<SavedMasjid> = emptyList(),
+    val activeMasjidId: String? = null,
     val dndActive: Boolean = false,
     val previousDndFilter: Int? = null,
     val lastEntryNotificationAtMillis: Long? = null
-)
+) {
+    val savedLocation: LatLng? get() = savedMasjids.firstOrNull()?.location
+    val radiusMeters: Int get() = savedMasjids.firstOrNull()?.radiusMeters ?: 120
+    val isInsideMasjid: Boolean get() = activeMasjidId != null
+}
 
 @Singleton
 class UserPreferencesRepository @Inject constructor(
@@ -58,8 +70,10 @@ class UserPreferencesRepository @Inject constructor(
     private val MASJID_ENABLED = booleanPreferencesKey("masjid_enabled")
     private val MASJID_DND_ENABLED = booleanPreferencesKey("masjid_dnd_enabled")
     private val MASJID_SAVED_LOCATION = stringPreferencesKey("masjid_saved_location")
+    private val MASJID_SAVED_LOCATIONS = stringPreferencesKey("masjid_saved_locations")
     private val MASJID_RADIUS_METERS = intPreferencesKey("masjid_radius_meters")
     private val MASJID_IS_INSIDE = booleanPreferencesKey("masjid_is_inside")
+    private val MASJID_ACTIVE_ID = stringPreferencesKey("masjid_active_id")
     private val MASJID_DND_ACTIVE = booleanPreferencesKey("masjid_dnd_active")
     private val MASJID_PREVIOUS_DND_FILTER = intPreferencesKey("masjid_previous_dnd_filter")
     private val MASJID_LAST_ENTRY_NOTIFICATION_AT = longPreferencesKey("masjid_last_entry_notification_at")
@@ -87,14 +101,13 @@ class UserPreferencesRepository @Inject constructor(
     }
 
     val masjidPreferences: Flow<MasjidPreferences> = context.dataStore.data.map { preferences ->
+        val savedMasjids = decodeSavedMasjids(preferences)
         MasjidPreferences(
             enabled = preferences[MASJID_ENABLED] ?: false,
             dndEnabled = preferences[MASJID_DND_ENABLED] ?: false,
-            savedLocation = preferences[MASJID_SAVED_LOCATION]?.let {
-                try { json.decodeFromString<LatLng>(it) } catch (e: Exception) { null }
-            },
-            radiusMeters = preferences[MASJID_RADIUS_METERS] ?: 120,
-            isInsideMasjid = preferences[MASJID_IS_INSIDE] ?: false,
+            savedMasjids = savedMasjids,
+            activeMasjidId = preferences[MASJID_ACTIVE_ID]
+                ?: if (preferences[MASJID_IS_INSIDE] == true) savedMasjids.firstOrNull()?.id else null,
             dndActive = preferences[MASJID_DND_ACTIVE] ?: false,
             previousDndFilter = preferences[MASJID_PREVIOUS_DND_FILTER],
             lastEntryNotificationAtMillis = preferences[MASJID_LAST_ENTRY_NOTIFICATION_AT]
@@ -149,9 +162,52 @@ class UserPreferencesRepository @Inject constructor(
         context.dataStore.edit {
             if (location != null) {
                 it[MASJID_SAVED_LOCATION] = json.encodeToString(location)
+                val masjid = SavedMasjid(
+                    id = "legacy-current-masjid",
+                    name = "Masjid",
+                    location = location,
+                    radiusMeters = it[MASJID_RADIUS_METERS] ?: 120
+                )
+                it[MASJID_SAVED_LOCATIONS] = json.encodeToString(listOf(masjid))
             } else {
                 it.remove(MASJID_SAVED_LOCATION)
+                it.remove(MASJID_SAVED_LOCATIONS)
+                it.remove(MASJID_ACTIVE_ID)
                 it[MASJID_IS_INSIDE] = false
+            }
+        }
+    }
+
+    suspend fun upsertMasjid(masjid: SavedMasjid) {
+        context.dataStore.edit { preferences ->
+            val current = decodeSavedMasjids(preferences)
+            val normalizedMasjid = masjid.copy(
+                name = masjid.name.ifBlank { "Masjid" },
+                radiusMeters = masjid.radiusMeters.coerceIn(50, 500)
+            )
+            val updated = if (current.any { it.id == normalizedMasjid.id }) {
+                current.map { if (it.id == normalizedMasjid.id) normalizedMasjid else it }
+            } else {
+                current + normalizedMasjid
+            }
+            preferences[MASJID_SAVED_LOCATIONS] = json.encodeToString(updated)
+            preferences[MASJID_ENABLED] = true
+        }
+    }
+
+    suspend fun removeMasjid(id: String) {
+        context.dataStore.edit { preferences ->
+            val updated = decodeSavedMasjids(preferences).filterNot { it.id == id }
+            if (updated.isEmpty()) {
+                preferences.remove(MASJID_SAVED_LOCATIONS)
+                preferences.remove(MASJID_ACTIVE_ID)
+                preferences[MASJID_IS_INSIDE] = false
+            } else {
+                preferences[MASJID_SAVED_LOCATIONS] = json.encodeToString(updated)
+                if (preferences[MASJID_ACTIVE_ID] == id) {
+                    preferences.remove(MASJID_ACTIVE_ID)
+                    preferences[MASJID_IS_INSIDE] = false
+                }
             }
         }
     }
@@ -164,6 +220,18 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setMasjidInside(isInside: Boolean) {
         context.dataStore.edit { it[MASJID_IS_INSIDE] = isInside }
+    }
+
+    suspend fun setActiveMasjid(id: String?) {
+        context.dataStore.edit {
+            if (id != null) {
+                it[MASJID_ACTIVE_ID] = id
+                it[MASJID_IS_INSIDE] = true
+            } else {
+                it.remove(MASJID_ACTIVE_ID)
+                it[MASJID_IS_INSIDE] = false
+            }
+        }
     }
 
     suspend fun setMasjidDndSession(active: Boolean, previousFilter: Int?) {
@@ -223,5 +291,36 @@ class UserPreferencesRepository @Inject constructor(
         return openCount >= 5 && 
                daysSinceInstall >= 3 && 
                lastPrompt != currentVersion
+    }
+
+    private fun decodeSavedMasjids(preferences: Preferences): List<SavedMasjid> {
+        val storedList = preferences[MASJID_SAVED_LOCATIONS]?.let {
+            try {
+                json.decodeFromString<List<SavedMasjid>>(it)
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }.orEmpty()
+
+        if (storedList.isNotEmpty()) {
+            return storedList
+        }
+
+        val legacyLocation = preferences[MASJID_SAVED_LOCATION]?.let {
+            try {
+                json.decodeFromString<LatLng>(it)
+            } catch (e: Exception) {
+                null
+            }
+        } ?: return emptyList()
+
+        return listOf(
+            SavedMasjid(
+                id = "legacy-current-masjid",
+                name = "Masjid",
+                location = legacyLocation,
+                radiusMeters = preferences[MASJID_RADIUS_METERS] ?: 120
+            )
+        )
     }
 }

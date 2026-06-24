@@ -305,7 +305,15 @@ fun ReadingScreen(
                         if (!isActive) return@AzkarReadingItem
 
                         if (holdToComplete) {
+                            val isAlreadyComplete = !item.isInfinite &&
+                                (item.isCompleted || item.currentRepeats >= item.requiredRepeats)
+
                             performVibration(350L)
+                            if (isAlreadyComplete) {
+                                viewModel.resetItemProgress(item.id)
+                                return@AzkarReadingItem
+                            }
+
                             viewModel.markItemComplete(item.id)
                             if (page < items.size - 1) {
                                 scope.launch { pagerState.animateScrollToPage(page + 1) }

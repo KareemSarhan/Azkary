@@ -27,6 +27,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -68,7 +70,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()
+    onBack: () -> Unit,
+    onNavigateToQibla: () -> Unit,
+    onNavigateToMasjidMap: (String?) -> Unit,
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
     LocalContext.current
     val locationPrefs by viewModel.locationPreferences.collectAsState()
@@ -107,15 +112,6 @@ fun SettingsScreen(
             viewModel.refreshLocation()
         } else {
             // Show error or prompt to enable in settings
-        }
-    }
-
-    val masjidPermissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val granted = permissions.values.any { it }
-        if (granted) {
-            viewModel.saveCurrentLocationAsMasjid()
         }
     }
 
@@ -222,6 +218,15 @@ fun SettingsScreen(
                 }
             }
 
+            SettingsClickableItem(
+                title = stringResource(R.string.settings_qibla_title),
+                subtitle = stringResource(R.string.settings_qibla_subtitle),
+                onClick = onNavigateToQibla,
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
+
             Spacer(Modifier.height(16.dp))
 
             SectionHeader(
@@ -246,20 +251,11 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(8.dp))
 
-            val savedMasjidSubtitle = masjidPrefs.savedLocation?.let { location ->
-                "${location} - ${stringResource(R.string.settings_masjid_radius, masjidPrefs.radiusMeters)}"
-            } ?: stringResource(R.string.settings_masjid_not_saved)
-
             SettingsClickableItem(
-                title = stringResource(R.string.settings_saved_masjid),
-                subtitle = savedMasjidSubtitle,
+                title = stringResource(R.string.settings_masjid_add),
+                subtitle = stringResource(R.string.settings_masjid_add_desc),
                 onClick = {
-                    masjidPermissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        )
-                    )
+                    onNavigateToMasjidMap(null)
                 },
                 surfaceColor = surfaceColor,
                 onSurfaceColor = onSurfaceColor,
@@ -267,6 +263,29 @@ fun SettingsScreen(
             )
 
             Spacer(Modifier.height(8.dp))
+
+            masjidPrefs.savedMasjids.forEach { masjid ->
+                MasjidListItem(
+                    name = masjid.name,
+                    subtitle = "${masjid.location} - ${stringResource(R.string.settings_masjid_radius, masjid.radiusMeters)}",
+                    onEdit = { onNavigateToMasjidMap(masjid.id) },
+                    onDelete = { viewModel.removeMasjid(masjid.id) },
+                    surfaceColor = surfaceColor,
+                    onSurfaceColor = onSurfaceColor,
+                    onSurfaceVariantColor = onSurfaceVariantColor
+                )
+                Spacer(Modifier.height(8.dp))
+            }
+
+            if (masjidPrefs.savedMasjids.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.settings_masjid_not_saved),
+                    color = onSurfaceVariantColor,
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                )
+                Spacer(Modifier.height(8.dp))
+            }
 
             SettingsClickableItem(
                 title = stringResource(R.string.settings_masjid_check_now),
@@ -550,6 +569,60 @@ private fun LocationDisplayItem(
                         tint = accentColor
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MasjidListItem(
+    name: String,
+    subtitle: String,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    surfaceColor: Color,
+    onSurfaceColor: Color,
+    onSurfaceVariantColor: Color
+) {
+    Surface(
+        color = surfaceColor,
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = 2.dp,
+        shadowElevation = 2.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 20.dp, top = 12.dp, bottom = 12.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    name,
+                    color = onSurfaceColor,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    subtitle,
+                    color = onSurfaceVariantColor,
+                    fontSize = 13.sp
+                )
+            }
+            IconButton(onClick = onEdit) {
+                Icon(
+                    Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.settings_masjid_edit_content_description),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+            IconButton(onClick = onDelete) {
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = stringResource(R.string.settings_masjid_delete_content_description),
+                    tint = MaterialTheme.colorScheme.error
+                )
             }
         }
     }

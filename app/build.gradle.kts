@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.hilt)
@@ -5,6 +7,15 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kover)
+}
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { stream ->
+            load(stream)
+        }
+    }
 }
 
 android {
@@ -15,8 +26,8 @@ android {
         applicationId = "com.app.azkary"
         minSdk = 26
         targetSdk = 36
-        versionCode = 22
-        versionName = "3.1.4"
+        versionCode = 23
+        versionName = "3.1.5"
 
         testInstrumentationRunner = "com.app.azkary.HiltTestRunner"
         vectorDrawables {
@@ -24,6 +35,10 @@ android {
         }
 
         buildConfigField("String", "SELF_HOSTED_UPDATE_MANIFEST_URL", "\"\"")
+        manifestPlaceholders["mapsApiKey"] =
+            (findProperty("mapsApiKey") as? String)
+                ?: localProperties.getProperty("MAPS_API_KEY")
+                ?: ""
     }
 
     flavorDimensions += "distribution"
@@ -107,6 +122,7 @@ dependencies {
 
     implementation(libs.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.maps.compose)
 
     "playImplementation"(libs.play.services.location)
     "playImplementation"(libs.app.update)

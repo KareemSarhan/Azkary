@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.CategoryUi
 import com.app.azkary.data.model.LatLng
 import com.app.azkary.data.prefs.MasjidPreferences
+import com.app.azkary.data.prefs.SavedMasjid
 import com.app.azkary.data.prefs.ThemeMode
 import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -218,7 +220,15 @@ class SettingsViewModel @Inject constructor(
                 val location = locationRepository.getCurrentLocation()
                 if (location != null) {
                     val latLng = LatLng(location.latitude, location.longitude)
-                    userPreferencesRepository.setMasjidSavedLocation(latLng)
+                    val defaultName = context.getString(R.string.settings_masjid_default_name)
+                    userPreferencesRepository.upsertMasjid(
+                        SavedMasjid(
+                            id = UUID.randomUUID().toString(),
+                            name = defaultName,
+                            location = latLng,
+                            radiusMeters = 120
+                        )
+                    )
                     userPreferencesRepository.setMasjidEnabled(true)
                     updateMasjidSchedule()
                     _masjidStatusMessage.value = context.getString(R.string.settings_masjid_saved)
@@ -235,6 +245,36 @@ class SettingsViewModel @Inject constructor(
 
     fun runMasjidCheckNow() {
         masjidLocationScheduler.runCheckNow()
+    }
+
+    fun saveMasjidSelection(
+        masjidId: String?,
+        name: String,
+        location: LatLng,
+        radiusMeters: Int,
+        onSaved: () -> Unit
+    ) {
+        viewModelScope.launch {
+            val defaultName = context.getString(R.string.settings_masjid_default_name)
+            userPreferencesRepository.upsertMasjid(
+                SavedMasjid(
+                    id = masjidId ?: UUID.randomUUID().toString(),
+                    name = name.ifBlank { defaultName },
+                    location = location,
+                    radiusMeters = radiusMeters
+                )
+            )
+            updateMasjidSchedule()
+            _masjidStatusMessage.value = context.getString(R.string.settings_masjid_saved)
+            onSaved()
+        }
+    }
+
+    fun removeMasjid(id: String) {
+        viewModelScope.launch {
+            userPreferencesRepository.removeMasjid(id)
+            updateMasjidSchedule()
+        }
     }
 
     fun clearMasjidStatusMessage() {
@@ -277,7 +317,7 @@ class SettingsViewModel @Inject constructor(
 
     private suspend fun updateMasjidSchedule() {
         val preferences = userPreferencesRepository.masjidPreferences.first()
-        if (preferences.enabled && preferences.savedLocation != null) {
+        if (preferences.enabled && preferences.savedMasjids.isNotEmpty()) {
             masjidLocationScheduler.schedulePeriodicChecks()
             masjidLocationScheduler.runCheckNow()
         } else {

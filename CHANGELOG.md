@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.5] - 2026-06-25
+
+### Changed
+- Republished the VPS self-hosted APK channel with a higher Android version code
+
 ## [3.1.4] - 2026-06-24
 
 ### Changed
@@ -58,7 +63,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-language support (Arabic/English)
 - Custom categories
 
-[Unreleased]: https://github.com/KareemSarhan/Azkary/compare/v3.1.4...HEAD
+[Unreleased]: https://github.com/KareemSarhan/Azkary/compare/v3.1.5...HEAD
+[3.1.5]: https://github.com/KareemSarhan/Azkary/compare/v3.1.4...v3.1.5
 [3.1.4]: https://github.com/KareemSarhan/Azkary/compare/v3.1.3...v3.1.4
 [3.1.3]: https://github.com/KareemSarhan/Azkary/compare/v3.1.2...v3.1.3
 [3.1.2]: https://github.com/KareemSarhan/Azkary/compare/v3.1.0...v3.1.2

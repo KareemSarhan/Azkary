@@ -352,6 +352,37 @@ class ReadingViewModelTest {
     }
 
     @Test
+    fun `resetItemProgress should call repository with correct parameters`() = runTest {
+        coEvery { repository.resetItemProgress(any(), any(), any()) } just Runs
+
+        viewModel.resetItemProgress("item1")
+        advanceUntilIdle()
+
+        coVerify {
+            repository.resetItemProgress(testCategoryId, "item1", testDate.toString())
+        }
+    }
+
+    @Test
+    fun `resetItemProgress should do nothing when categoryId is null`() = runTest {
+        val emptySavedStateHandle = SavedStateHandle()
+        val viewModelWithoutCategory = ReadingViewModel(
+            repository = repository,
+            quranRepository = quranRepository,
+            localeManager = localeManager,
+            islamicDateProvider = islamicDateProvider,
+            userPreferencesRepository = userPreferencesRepository,
+            context = context,
+            savedStateHandle = emptySavedStateHandle
+        )
+
+        viewModelWithoutCategory.resetItemProgress("item1")
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { repository.resetItemProgress(any(), any(), any()) }
+    }
+
+    @Test
     fun `incrementRepeat should use current date from islamicDateProvider`() = runTest {
         val customDate = LocalDate.of(2026, 3, 15)
         coEvery { islamicDateProvider.getCurrentDate() } returns customDate

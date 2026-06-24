@@ -30,11 +30,19 @@
     <string name="settings_current_location">الموقع الحالي</string>
     <string name="settings_location_not_available">غير متوفر</string>
     <string name="settings_refresh_location_content_description">تحديث الموقع</string>
+    <string name="settings_qibla_title">اتجاه القبلة</string>
+    <string name="settings_qibla_subtitle">اعرف اتجاه مكة</string>
     <string name="settings_section_masjid_mode">وضع المسجد</string>
     <string name="settings_masjid_enabled_title">تذكير دخول المسجد</string>
     <string name="settings_masjid_enabled_desc">استخدم موقع المسجد المحفوظ لتذكير الدخول</string>
     <string name="settings_masjid_dnd_title">عدم الإزعاج في المسجد</string>
     <string name="settings_masjid_dnd_desc">تشغيل عدم الإزعاج أثناء وجودك داخل المسجد المحفوظ</string>
+    <string name="settings_masjid_add">إضافة مسجد</string>
+    <string name="settings_masjid_add_desc">اختر الموقع والنطاق على الخريطة</string>
+    <string name="settings_masjid_map_title">موقع المسجد</string>
+    <string name="settings_masjid_default_name">مسجد</string>
+    <string name="settings_masjid_name_label">اسم المسجد</string>
+    <string name="settings_masjid_save">حفظ</string>
     <string name="settings_saved_masjid">المسجد المحفوظ</string>
     <string name="settings_save_current_masjid">حفظ الموقع الحالي كمسجد</string>
     <string name="settings_masjid_not_saved">لم يتم حفظ مسجد بعد</string>
@@ -42,6 +50,8 @@
     <string name="settings_masjid_check_now">تحقق من موقع المسجد الآن</string>
     <string name="settings_masjid_saved">تم حفظ موقع المسجد</string>
     <string name="settings_masjid_dnd_access_needed">اسمح لأذكاري بالتحكم في عدم الإزعاج، ثم فعّل هذا الخيار مرة أخرى.</string>
+    <string name="settings_masjid_edit_content_description">تعديل المسجد</string>
+    <string name="settings_masjid_delete_content_description">حذف المسجد</string>
     <string name="settings_section_general">عام</string>
     <string name="settings_language">اللغة</string>
     <string name="settings_language_content_description">إعدادات اللغة</string>
@@ -59,6 +69,23 @@
     <string name="theme_system">النظام الافتراضي</string>
     <string name="theme_light">فاتح</string>
     <string name="theme_dark">داكن</string>
+
+    <!-- Qibla Screen -->
+    <string name="qibla_title">القبلة</string>
+    <string name="qibla_location_required">الموقع مطلوب</string>
+    <string name="qibla_use_current_location">استخدم الموقع الحالي</string>
+    <string name="qibla_refresh_location">تحديث الموقع</string>
+    <string name="qibla_bearing_label">اتجاه القبلة</string>
+    <string name="qibla_heading_label">اتجاه الجهاز</string>
+    <string name="qibla_location_label">الموقع</string>
+    <string name="qibla_compass_unavailable">البوصلة غير متوفرة</string>
+    <string name="qibla_compass_calibrating">جاري ضبط البوصلة</string>
+    <string name="qibla_aligned">متجه للقبلة</string>
+    <string name="qibla_turn_right">اتجه يميناً %d°</string>
+    <string name="qibla_turn_left">اتجه يساراً %d°</string>
+    <string name="qibla_unknown_heading">غير معروف</string>
+    <string name="qibla_degrees">%d°</string>
+    <string name="qibla_compass_content_description">بوصلة القبلة</string>
 
     <!-- Date Format (for SummaryScreen) -->
     <string name="date_format_pattern">EEEE dd MMMM</string>

@@ -71,7 +71,7 @@ class NotificationBootReceiver : BroadcastReceiver() {
 
     private suspend fun rescheduleMasjidChecks() {
         val masjidPreferences = userPreferencesRepository.masjidPreferences.first()
-        if (masjidPreferences.enabled && masjidPreferences.savedLocation != null) {
+        if (masjidPreferences.enabled && masjidPreferences.savedMasjids.isNotEmpty()) {
             masjidLocationScheduler.schedulePeriodicChecks()
         } else {
             masjidLocationScheduler.cancelChecks()

@@ -5,8 +5,8 @@ import android.location.Location
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.app.azkary.data.model.LatLng
 import com.app.azkary.data.prefs.MasjidPreferences
+import com.app.azkary.data.prefs.SavedMasjid
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.notification.AzkarNotificationManager
@@ -36,32 +36,33 @@ class MasjidLocationWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val preferences = userPreferencesRepository.masjidPreferences.first()
 
-        if (!preferences.enabled || preferences.savedLocation == null) {
+        if (!preferences.enabled || preferences.savedMasjids.isEmpty()) {
             restoreIfNeeded(preferences)
-            if (preferences.isInsideMasjid) {
-                userPreferencesRepository.setMasjidInside(false)
+            if (preferences.activeMasjidId != null) {
+                userPreferencesRepository.setActiveMasjid(null)
             }
             return Result.success()
         }
 
         val currentLocation = locationRepository.getCurrentLocation() ?: return Result.success()
-        val isInside = distanceMeters(currentLocation, preferences.savedLocation) <=
-            preferences.radiusMeters
+        val matchingMasjid = nearestMatchingMasjid(currentLocation, preferences.savedMasjids)
 
         when {
             preferences.dndActive && !preferences.dndEnabled -> restoreIfNeeded(preferences)
-            isInside && !preferences.isInsideMasjid -> handleEnter(preferences)
-            isInside && preferences.dndEnabled && !preferences.dndActive -> {
+            matchingMasjid != null && preferences.activeMasjidId != matchingMasjid.id -> {
+                handleEnter(preferences, matchingMasjid)
+            }
+            matchingMasjid != null && preferences.dndEnabled && !preferences.dndActive -> {
                 dndManager.enableForMasjid(preferences)
             }
-            !isInside && preferences.isInsideMasjid -> handleExit(preferences)
-            !isInside && preferences.dndActive -> restoreIfNeeded(preferences)
+            matchingMasjid == null && preferences.activeMasjidId != null -> handleExit(preferences)
+            matchingMasjid == null && preferences.dndActive -> restoreIfNeeded(preferences)
         }
 
         return Result.success()
     }
 
-    private suspend fun handleEnter(preferences: MasjidPreferences) {
+    private suspend fun handleEnter(preferences: MasjidPreferences, masjid: SavedMasjid) {
         val now = System.currentTimeMillis()
         val lastShown = preferences.lastEntryNotificationAtMillis
         val shouldNotify = lastShown == null ||
@@ -75,12 +76,12 @@ class MasjidLocationWorker @AssistedInject constructor(
         if (preferences.dndEnabled) {
             dndManager.enableForMasjid(preferences)
         }
-        userPreferencesRepository.setMasjidInside(true)
+        userPreferencesRepository.setActiveMasjid(masjid.id)
     }
 
     private suspend fun handleExit(preferences: MasjidPreferences) {
         restoreIfNeeded(preferences)
-        userPreferencesRepository.setMasjidInside(false)
+        userPreferencesRepository.setActiveMasjid(null)
     }
 
     private suspend fun restoreIfNeeded(preferences: MasjidPreferences) {
@@ -89,13 +90,24 @@ class MasjidLocationWorker @AssistedInject constructor(
         }
     }
 
-    private fun distanceMeters(current: Location, target: LatLng): Float {
+    private fun nearestMatchingMasjid(
+        current: Location,
+        masjids: List<SavedMasjid>
+    ): SavedMasjid? {
+        return masjids
+            .map { masjid -> masjid to distanceMeters(current, masjid) }
+            .filter { (masjid, distance) -> distance <= masjid.radiusMeters }
+            .minByOrNull { (_, distance) -> distance }
+            ?.first
+    }
+
+    private fun distanceMeters(current: Location, masjid: SavedMasjid): Float {
         val results = FloatArray(1)
         Location.distanceBetween(
             current.latitude,
             current.longitude,
-            target.latitude,
-            target.longitude,
+            masjid.location.latitude,
+            masjid.location.longitude,
             results
         )
         return results[0]

@@ -445,6 +445,33 @@ class AzkarRepositoryTest {
     }
 
     @Test
+    fun `resetItemProgress sets item to zero repeats and incomplete`() = runTest {
+        // Given
+        val crossRefs = listOf(
+            CategoryItemCrossRefEntity("cat1", "item1", 0, true, 5, false)
+        )
+
+        every { categoryItemDao.getAllCrossRefsForCategory("cat1") } returns flowOf(crossRefs)
+        coEvery { progressDao.upsertProgress(any()) } just Runs
+
+        // When
+        repository.resetItemProgress("cat1", "item1", "2026-01-01")
+
+        // Then
+        coVerify {
+            progressDao.upsertProgress(
+                match {
+                    it.categoryId == "cat1" &&
+                        it.itemId == "item1" &&
+                        it.date == "2026-01-01" &&
+                        it.currentRepeats == 0 &&
+                        !it.isCompleted
+                }
+            )
+        }
+    }
+
+    @Test
     fun `createCustomCategory creates category with items`() = runTest {
         // Given
         val itemConfigs = listOf(

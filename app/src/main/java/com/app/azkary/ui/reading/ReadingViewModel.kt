@@ -136,21 +136,29 @@ class ReadingViewModel @Inject constructor(
         initialValue = 0f
     )
 
+    private suspend fun currentDateString(): String {
+        return islamicDateProvider.currentDateFlow.value?.toString()
+            ?: islamicDateProvider.getCurrentDate().toString()
+    }
+
     fun incrementRepeat(itemId: String) {
         viewModelScope.launch {
             val id = categoryId ?: return@launch
-            val today = islamicDateProvider.currentDateFlow.value?.toString()
-                ?: islamicDateProvider.getCurrentDate().toString()
-            repository.incrementRepeat(id, itemId, today)
+            repository.incrementRepeat(id, itemId, currentDateString())
         }
     }
 
     fun markItemComplete(itemId: String) {
         viewModelScope.launch {
             val id = categoryId ?: return@launch
-            val today = islamicDateProvider.currentDateFlow.value?.toString()
-                ?: islamicDateProvider.getCurrentDate().toString()
-            repository.markItemComplete(id, itemId, today)
+            repository.markItemComplete(id, itemId, currentDateString())
+        }
+    }
+
+    fun resetItemProgress(itemId: String) {
+        viewModelScope.launch {
+            val id = categoryId ?: return@launch
+            repository.resetItemProgress(id, itemId, currentDateString())
         }
     }
 }
