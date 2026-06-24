@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Notification permission for Android 13+ -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Required before Android allows the app to toggle Do Not Disturb -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <!-- Wake lock to ensure notifications are shown -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Reschedule notifications after device reboot -->

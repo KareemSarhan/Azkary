@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.azkary.data.model.CategoryUi
 import com.app.azkary.data.model.LatLng
+import com.app.azkary.data.prefs.MasjidPreferences
 import com.app.azkary.data.prefs.ThemeMode
 import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
@@ -16,7 +17,9 @@ import com.app.azkary.domain.model.DayPrayerTimes
 import android.util.Log
 import com.app.azkary.R
 import com.app.azkary.domain.model.WindowCalculationResult
+import com.app.azkary.location.MasjidLocationScheduler
 import com.app.azkary.notification.AzkarNotificationScheduler
+import com.app.azkary.notification.MasjidDndManager
 import com.app.azkary.util.LocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,6 +43,8 @@ class SettingsViewModel @Inject constructor(
     private val prayerTimesRepository: PrayerTimesRepository,
     private val azkarRepository: AzkarRepository,
     private val notificationScheduler: AzkarNotificationScheduler,
+    private val masjidLocationScheduler: MasjidLocationScheduler,
+    private val masjidDndManager: MasjidDndManager,
     private val localeManager: LocaleManager,
     @param:ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -72,6 +77,13 @@ class SettingsViewModel @Inject constructor(
             initialValue = true
         )
 
+    val masjidPreferences: StateFlow<MasjidPreferences> = userPreferencesRepository.masjidPreferences
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = MasjidPreferences()
+        )
+
     val categories: StateFlow<List<CategoryUi>> = localeManager.currentLangTagFlow.flatMapLatest { langTag ->
         azkarRepository.observeCategoriesWithDisplayName(
             langTag = langTag,
@@ -100,6 +112,9 @@ class SettingsViewModel @Inject constructor(
 
     private val _isRefreshingPrayerTimes = MutableStateFlow(false)
     val isRefreshingPrayerTimes: StateFlow<Boolean> = _isRefreshingPrayerTimes.asStateFlow()
+
+    private val _masjidStatusMessage = MutableStateFlow<String?>(null)
+    val masjidStatusMessage: StateFlow<String?> = _masjidStatusMessage.asStateFlow()
 
     fun getCurrentLanguageDisplayName(): String {
         return localeManager.getCurrentLanguageDisplayName(context)
@@ -173,6 +188,59 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setMasjidEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.setMasjidEnabled(enabled)
+            updateMasjidSchedule()
+        }
+    }
+
+    fun setMasjidDndEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            if (enabled && !masjidDndManager.hasNotificationPolicyAccess()) {
+                masjidDndManager.openNotificationPolicyAccessSettings()
+                _masjidStatusMessage.value =
+                    context.getString(R.string.settings_masjid_dnd_access_needed)
+                return@launch
+            }
+
+            userPreferencesRepository.setMasjidDndEnabled(enabled)
+            masjidLocationScheduler.runCheckNow()
+        }
+    }
+
+    fun saveCurrentLocationAsMasjid() {
+        viewModelScope.launch {
+            _isRefreshingLocation.value = true
+            _locationError.value = null
+
+            try {
+                val location = locationRepository.getCurrentLocation()
+                if (location != null) {
+                    val latLng = LatLng(location.latitude, location.longitude)
+                    userPreferencesRepository.setMasjidSavedLocation(latLng)
+                    userPreferencesRepository.setMasjidEnabled(true)
+                    updateMasjidSchedule()
+                    _masjidStatusMessage.value = context.getString(R.string.settings_masjid_saved)
+                } else {
+                    _locationError.value = context.getString(R.string.error_location_permission)
+                }
+            } catch (e: Exception) {
+                _locationError.value = "${context.getString(R.string.error_location_generic)}: ${e.message}"
+            } finally {
+                _isRefreshingLocation.value = false
+            }
+        }
+    }
+
+    fun runMasjidCheckNow() {
+        masjidLocationScheduler.runCheckNow()
+    }
+
+    fun clearMasjidStatusMessage() {
+        _masjidStatusMessage.value = null
+    }
+
     fun setCategoryNotificationEnabled(categoryId: String, enabled: Boolean) {
         viewModelScope.launch {
             azkarRepository.setCategoryNotificationEnabled(categoryId, enabled)
@@ -204,6 +272,16 @@ class SettingsViewModel @Inject constructor(
                     Log.e("SettingsViewModel", "Failed to schedule notifications", e)
                 }
             }
+        }
+    }
+
+    private suspend fun updateMasjidSchedule() {
+        val preferences = userPreferencesRepository.masjidPreferences.first()
+        if (preferences.enabled && preferences.savedLocation != null) {
+            masjidLocationScheduler.schedulePeriodicChecks()
+            masjidLocationScheduler.runCheckNow()
+        } else {
+            masjidLocationScheduler.cancelChecks()
         }
     }
 

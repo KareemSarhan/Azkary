@@ -6,6 +6,7 @@ import android.content.Intent
 import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
+import com.app.azkary.location.MasjidLocationScheduler
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,9 @@ class NotificationBootReceiver : BroadcastReceiver() {
     lateinit var notificationScheduler: AzkarNotificationScheduler
 
     @Inject
+    lateinit var masjidLocationScheduler: MasjidLocationScheduler
+
+    @Inject
     lateinit var userPreferencesRepository: UserPreferencesRepository
 
     @Inject
@@ -36,6 +40,7 @@ class NotificationBootReceiver : BroadcastReceiver() {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
             scope.launch {
                 rescheduleNotifications()
+                rescheduleMasjidChecks()
             }
         }
     }
@@ -61,6 +66,15 @@ class NotificationBootReceiver : BroadcastReceiver() {
                 todayTimes = todayTimes,
                 categories = categories
             )
+        }
+    }
+
+    private suspend fun rescheduleMasjidChecks() {
+        val masjidPreferences = userPreferencesRepository.masjidPreferences.first()
+        if (masjidPreferences.enabled && masjidPreferences.savedLocation != null) {
+            masjidLocationScheduler.schedulePeriodicChecks()
+        } else {
+            masjidLocationScheduler.cancelChecks()
         }
     }
 

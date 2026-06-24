@@ -23,7 +23,9 @@ class AzkarNotificationManager @Inject constructor(
     companion object {
         const val CHANNEL_ID_BASE = "azkar_base_channel"
         const val CHANNEL_ID_USER = "azkar_user_channel"
+        const val CHANNEL_ID_LOCATION = "azkar_location_channel"
         const val EXTRA_CATEGORY_ID = "category_id"
+        private const val MASJID_ENTRY_NOTIFICATION_ID = 9001
     }
 
     private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -50,8 +52,17 @@ class AzkarNotificationManager @Inject constructor(
                 description = context.getString(R.string.notification_channel_user_desc)
             }
 
+            val locationChannel = NotificationChannel(
+                CHANNEL_ID_LOCATION,
+                context.getString(R.string.notification_channel_location),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = context.getString(R.string.notification_channel_location_desc)
+            }
+
             notificationManager.createNotificationChannel(baseChannel)
             notificationManager.createNotificationChannel(userChannel)
+            notificationManager.createNotificationChannel(locationChannel)
         }
     }
 
@@ -74,6 +85,19 @@ class AzkarNotificationManager @Inject constructor(
         }
     }
 
+    fun showMasjidEntryNotification() {
+        val notification = buildNotification(
+            title = context.getString(R.string.notification_masjid_entry_title),
+            content = context.getString(R.string.notification_masjid_entry_content),
+            notificationId = MASJID_ENTRY_NOTIFICATION_ID,
+            categoryId = "",
+            channelId = CHANNEL_ID_LOCATION
+        )
+        if (permissionHelper.hasNotificationPermission()) {
+            notificationManager.notify(MASJID_ENTRY_NOTIFICATION_ID, notification)
+        }
+    }
+
     private fun buildNotification(
         title: String,
         content: String,
@@ -83,7 +107,9 @@ class AzkarNotificationManager @Inject constructor(
     ): android.app.Notification {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(EXTRA_CATEGORY_ID, categoryId)
+            if (categoryId.isNotBlank()) {
+                putExtra(EXTRA_CATEGORY_ID, categoryId)
+            }
         }
 
         val pendingIntent = PendingIntent.getActivity(

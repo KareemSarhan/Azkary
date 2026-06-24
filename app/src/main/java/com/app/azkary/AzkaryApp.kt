@@ -7,6 +7,7 @@ import com.app.azkary.data.prefs.UserPreferencesRepository
 import com.app.azkary.data.quran.QuranRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
+import com.app.azkary.location.MasjidLocationScheduler
 import com.app.azkary.notification.AzkarNotificationScheduler
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +29,9 @@ class AzkaryApp : Application(), Configuration.Provider {
 
     @Inject
     lateinit var notificationScheduler: AzkarNotificationScheduler
+
+    @Inject
+    lateinit var masjidLocationScheduler: MasjidLocationScheduler
 
     @Inject
     lateinit var prayerTimesRepository: PrayerTimesRepository
@@ -53,6 +57,7 @@ class AzkaryApp : Application(), Configuration.Provider {
             userPreferencesRepository.incrementAppOpenCount()
             quranRepository.openDatabaseIfNeeded()
             scheduleNotificationsIfNeeded()
+            scheduleMasjidChecksIfNeeded()
         }
     }
 
@@ -74,5 +79,14 @@ class AzkaryApp : Application(), Configuration.Provider {
             todayTimes = todayTimes,
             categories = categories
         )
+    }
+
+    private suspend fun scheduleMasjidChecksIfNeeded() {
+        val masjidPreferences = userPreferencesRepository.masjidPreferences.first()
+        if (masjidPreferences.enabled && masjidPreferences.savedLocation != null) {
+            masjidLocationScheduler.schedulePeriodicChecks()
+        } else {
+            masjidLocationScheduler.cancelChecks()
+        }
     }
 }

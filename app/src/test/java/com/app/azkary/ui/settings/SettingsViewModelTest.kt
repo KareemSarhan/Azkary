@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import com.app.azkary.R
 import com.app.azkary.data.model.LatLng
 import com.app.azkary.data.prefs.LocationPreferences
+import com.app.azkary.data.prefs.MasjidPreferences
 import com.app.azkary.data.prefs.ThemeMode
 import com.app.azkary.data.prefs.ThemePreferencesRepository
 import com.app.azkary.data.prefs.ThemeSettings
@@ -13,7 +14,9 @@ import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.GeocodingRepository
 import com.app.azkary.data.repository.LocationRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
+import com.app.azkary.location.MasjidLocationScheduler
 import com.app.azkary.notification.AzkarNotificationScheduler
+import com.app.azkary.notification.MasjidDndManager
 import com.app.azkary.domain.model.AzkarSchedule
 import com.app.azkary.domain.model.AzkarWindow
 import com.app.azkary.domain.model.DayPrayerTimes
@@ -59,6 +62,8 @@ class SettingsViewModelTest {
     private lateinit var prayerTimesRepository: PrayerTimesRepository
     private lateinit var azkarRepository: AzkarRepository
     private lateinit var notificationScheduler: AzkarNotificationScheduler
+    private lateinit var masjidLocationScheduler: MasjidLocationScheduler
+    private lateinit var masjidDndManager: MasjidDndManager
     private lateinit var localeManager: LocaleManager
     private lateinit var context: Context
 
@@ -74,6 +79,8 @@ class SettingsViewModelTest {
         prayerTimesRepository = mockk(relaxed = true)
         azkarRepository = mockk(relaxed = true)
         notificationScheduler = mockk(relaxed = true)
+        masjidLocationScheduler = mockk(relaxed = true)
+        masjidDndManager = mockk(relaxed = true)
         localeManager = mockk(relaxed = true)
         context = mockk(relaxed = true)
 
@@ -83,7 +90,10 @@ class SettingsViewModelTest {
             LocationPreferences(useLocation = false, lastResolvedLocation = null, locationName = null)
         )
         every { userPreferencesRepository.holdToComplete } returns MutableStateFlow(true)
+        every { userPreferencesRepository.showWeeklyProgress } returns MutableStateFlow(true)
+        every { userPreferencesRepository.masjidPreferences } returns MutableStateFlow(MasjidPreferences())
         every { azkarRepository.observeCategoriesWithDisplayName(any(), any()) } returns MutableStateFlow(emptyList())
+        every { masjidDndManager.hasNotificationPolicyAccess() } returns true
 
         viewModel = SettingsViewModel(
             userPreferencesRepository = userPreferencesRepository,
@@ -93,6 +103,8 @@ class SettingsViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
+            masjidLocationScheduler = masjidLocationScheduler,
+            masjidDndManager = masjidDndManager,
             localeManager = localeManager,
             context = context
         )
@@ -122,6 +134,8 @@ class SettingsViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
+            masjidLocationScheduler = masjidLocationScheduler,
+            masjidDndManager = masjidDndManager,
             localeManager = localeManager,
             context = context
         )
@@ -302,6 +316,8 @@ class SettingsViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
+            masjidLocationScheduler = masjidLocationScheduler,
+            masjidDndManager = masjidDndManager,
             localeManager = localeManager,
             context = context
         )
@@ -335,6 +351,8 @@ class SettingsViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
+            masjidLocationScheduler = masjidLocationScheduler,
+            masjidDndManager = masjidDndManager,
             localeManager = localeManager,
             context = context
         )
@@ -378,6 +396,8 @@ class SettingsViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
+            masjidLocationScheduler = masjidLocationScheduler,
+            masjidDndManager = masjidDndManager,
             localeManager = localeManager,
             context = context
         )
@@ -411,6 +431,8 @@ class SettingsViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
+            masjidLocationScheduler = masjidLocationScheduler,
+            masjidDndManager = masjidDndManager,
             localeManager = localeManager,
             context = context
         )
@@ -448,6 +470,8 @@ class SettingsViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
+            masjidLocationScheduler = masjidLocationScheduler,
+            masjidDndManager = masjidDndManager,
             localeManager = localeManager,
             context = context
         )
@@ -507,6 +531,8 @@ class SettingsViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             azkarRepository = azkarRepository,
             notificationScheduler = notificationScheduler,
+            masjidLocationScheduler = masjidLocationScheduler,
+            masjidDndManager = masjidDndManager,
             localeManager = localeManager,
             context = context
         )

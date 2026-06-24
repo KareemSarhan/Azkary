@@ -79,6 +79,8 @@ fun SettingsScreen(
     val holdToComplete by viewModel.holdToComplete.collectAsState()
     val showWeeklyProgress by viewModel.showWeeklyProgress.collectAsState()
     val categories by viewModel.categories.collectAsState()
+    val masjidPrefs by viewModel.masjidPreferences.collectAsState()
+    val masjidStatusMessage by viewModel.masjidStatusMessage.collectAsState()
 
     // Support/Feedback sheet state
     var showSupportSheet by remember { mutableStateOf(false) }
@@ -108,6 +110,15 @@ fun SettingsScreen(
         }
     }
 
+    val masjidPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val granted = permissions.values.any { it }
+        if (granted) {
+            viewModel.saveCurrentLocationAsMasjid()
+        }
+    }
+
     // Notification permission launcher
     val notificationPermissionDeniedText = stringResource(R.string.notification_permission_denied)
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
@@ -124,6 +135,13 @@ fun SettingsScreen(
         locationError?.let {
             snackbarHostState.showSnackbar(it)
             viewModel.clearLocationError()
+        }
+    }
+
+    LaunchedEffect(masjidStatusMessage) {
+        masjidStatusMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearMasjidStatusMessage()
         }
     }
 
@@ -203,6 +221,73 @@ fun SettingsScreen(
                     Spacer(Modifier.height(8.dp))
                 }
             }
+
+            Spacer(Modifier.height(16.dp))
+
+            SectionHeader(
+                title = stringResource(R.string.settings_section_masjid_mode),
+                color = onBackgroundColor.copy(alpha = 0.6f)
+            )
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_masjid_enabled_title),
+                subtitle = stringResource(R.string.settings_masjid_enabled_desc),
+                isEnabled = masjidPrefs.enabled,
+                onToggle = { enabled ->
+                    if (enabled) {
+                        notificationPermissionLauncher.requestNotificationPermission()
+                    }
+                    viewModel.setMasjidEnabled(enabled)
+                },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            val savedMasjidSubtitle = masjidPrefs.savedLocation?.let { location ->
+                "${location} - ${stringResource(R.string.settings_masjid_radius, masjidPrefs.radiusMeters)}"
+            } ?: stringResource(R.string.settings_masjid_not_saved)
+
+            SettingsClickableItem(
+                title = stringResource(R.string.settings_saved_masjid),
+                subtitle = savedMasjidSubtitle,
+                onClick = {
+                    masjidPermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            SettingsClickableItem(
+                title = stringResource(R.string.settings_masjid_check_now),
+                subtitle = "",
+                onClick = { viewModel.runMasjidCheckNow() },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            SettingsToggleItem(
+                title = stringResource(R.string.settings_masjid_dnd_title),
+                subtitle = stringResource(R.string.settings_masjid_dnd_desc),
+                isEnabled = masjidPrefs.dndEnabled,
+                onToggle = { enabled -> viewModel.setMasjidDndEnabled(enabled) },
+                surfaceColor = surfaceColor,
+                onSurfaceColor = onSurfaceColor,
+                onSurfaceVariantColor = onSurfaceVariantColor
+            )
 
             Spacer(Modifier.height(16.dp))
 

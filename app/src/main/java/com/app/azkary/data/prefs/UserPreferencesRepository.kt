@@ -30,6 +30,17 @@ data class ReadingPreferences(
     val holdToComplete: Boolean = true
 )
 
+data class MasjidPreferences(
+    val enabled: Boolean = false,
+    val dndEnabled: Boolean = false,
+    val savedLocation: LatLng? = null,
+    val radiusMeters: Int = 120,
+    val isInsideMasjid: Boolean = false,
+    val dndActive: Boolean = false,
+    val previousDndFilter: Int? = null,
+    val lastEntryNotificationAtMillis: Long? = null
+)
+
 @Singleton
 class UserPreferencesRepository @Inject constructor(
     @param:ApplicationContext private val context: Context,
@@ -44,6 +55,14 @@ class UserPreferencesRepository @Inject constructor(
     private val APP_OPEN_COUNT = intPreferencesKey("app_open_count")
     private val FIRST_INSTALL_DATE = longPreferencesKey("first_install_date")
     private val LAST_PROMPT_VERSION = stringPreferencesKey("last_prompt_version")
+    private val MASJID_ENABLED = booleanPreferencesKey("masjid_enabled")
+    private val MASJID_DND_ENABLED = booleanPreferencesKey("masjid_dnd_enabled")
+    private val MASJID_SAVED_LOCATION = stringPreferencesKey("masjid_saved_location")
+    private val MASJID_RADIUS_METERS = intPreferencesKey("masjid_radius_meters")
+    private val MASJID_IS_INSIDE = booleanPreferencesKey("masjid_is_inside")
+    private val MASJID_DND_ACTIVE = booleanPreferencesKey("masjid_dnd_active")
+    private val MASJID_PREVIOUS_DND_FILTER = intPreferencesKey("masjid_previous_dnd_filter")
+    private val MASJID_LAST_ENTRY_NOTIFICATION_AT = longPreferencesKey("masjid_last_entry_notification_at")
 
     val locationPreferences: Flow<LocationPreferences> = context.dataStore.data.map { preferences ->
         LocationPreferences(
@@ -65,6 +84,21 @@ class UserPreferencesRepository @Inject constructor(
 
     val showWeeklyProgress: Flow<Boolean> = context.dataStore.data.map { preferences ->
         preferences[SHOW_WEEKLY_PROGRESS] ?: true
+    }
+
+    val masjidPreferences: Flow<MasjidPreferences> = context.dataStore.data.map { preferences ->
+        MasjidPreferences(
+            enabled = preferences[MASJID_ENABLED] ?: false,
+            dndEnabled = preferences[MASJID_DND_ENABLED] ?: false,
+            savedLocation = preferences[MASJID_SAVED_LOCATION]?.let {
+                try { json.decodeFromString<LatLng>(it) } catch (e: Exception) { null }
+            },
+            radiusMeters = preferences[MASJID_RADIUS_METERS] ?: 120,
+            isInsideMasjid = preferences[MASJID_IS_INSIDE] ?: false,
+            dndActive = preferences[MASJID_DND_ACTIVE] ?: false,
+            previousDndFilter = preferences[MASJID_PREVIOUS_DND_FILTER],
+            lastEntryNotificationAtMillis = preferences[MASJID_LAST_ENTRY_NOTIFICATION_AT]
+        )
     }
 
     suspend fun setUseLocation(enabled: Boolean) {
@@ -101,6 +135,50 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setShowWeeklyProgress(enabled: Boolean) {
         context.dataStore.edit { it[SHOW_WEEKLY_PROGRESS] = enabled }
+    }
+
+    suspend fun setMasjidEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[MASJID_ENABLED] = enabled }
+    }
+
+    suspend fun setMasjidDndEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[MASJID_DND_ENABLED] = enabled }
+    }
+
+    suspend fun setMasjidSavedLocation(location: LatLng?) {
+        context.dataStore.edit {
+            if (location != null) {
+                it[MASJID_SAVED_LOCATION] = json.encodeToString(location)
+            } else {
+                it.remove(MASJID_SAVED_LOCATION)
+                it[MASJID_IS_INSIDE] = false
+            }
+        }
+    }
+
+    suspend fun setMasjidRadiusMeters(radiusMeters: Int) {
+        context.dataStore.edit {
+            it[MASJID_RADIUS_METERS] = radiusMeters.coerceIn(50, 500)
+        }
+    }
+
+    suspend fun setMasjidInside(isInside: Boolean) {
+        context.dataStore.edit { it[MASJID_IS_INSIDE] = isInside }
+    }
+
+    suspend fun setMasjidDndSession(active: Boolean, previousFilter: Int?) {
+        context.dataStore.edit {
+            it[MASJID_DND_ACTIVE] = active
+            if (previousFilter != null) {
+                it[MASJID_PREVIOUS_DND_FILTER] = previousFilter
+            } else {
+                it.remove(MASJID_PREVIOUS_DND_FILTER)
+            }
+        }
+    }
+
+    suspend fun setMasjidLastEntryNotificationAt(timestampMillis: Long) {
+        context.dataStore.edit { it[MASJID_LAST_ENTRY_NOTIFICATION_AT] = timestampMillis }
     }
 
     val appOpenCount: Flow<Int> = context.dataStore.data.map { preferences ->

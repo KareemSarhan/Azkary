@@ -30,6 +30,18 @@
     <string name="settings_current_location">الموقع الحالي</string>
     <string name="settings_location_not_available">غير متوفر</string>
     <string name="settings_refresh_location_content_description">تحديث الموقع</string>
+    <string name="settings_section_masjid_mode">وضع المسجد</string>
+    <string name="settings_masjid_enabled_title">تذكير دخول المسجد</string>
+    <string name="settings_masjid_enabled_desc">استخدم موقع المسجد المحفوظ لتذكير الدخول</string>
+    <string name="settings_masjid_dnd_title">عدم الإزعاج في المسجد</string>
+    <string name="settings_masjid_dnd_desc">تشغيل عدم الإزعاج أثناء وجودك داخل المسجد المحفوظ</string>
+    <string name="settings_saved_masjid">المسجد المحفوظ</string>
+    <string name="settings_save_current_masjid">حفظ الموقع الحالي كمسجد</string>
+    <string name="settings_masjid_not_saved">لم يتم حفظ مسجد بعد</string>
+    <string name="settings_masjid_radius">النطاق: %d م</string>
+    <string name="settings_masjid_check_now">تحقق من موقع المسجد الآن</string>
+    <string name="settings_masjid_saved">تم حفظ موقع المسجد</string>
+    <string name="settings_masjid_dnd_access_needed">اسمح لأذكاري بالتحكم في عدم الإزعاج، ثم فعّل هذا الخيار مرة أخرى.</string>
     <string name="settings_section_general">عام</string>
     <string name="settings_language">اللغة</string>
     <string name="settings_language_content_description">إعدادات اللغة</string>
@@ -208,6 +220,8 @@
     <string name="notification_channel_base_desc">تذكيرات لفئات الأذكار المدمجة (الصباح، المساء، النوم)</string>
     <string name="notification_channel_user">أذكاري</string>
     <string name="notification_channel_user_desc">تذكيرات لفئات أذكارك المخصصة</string>
+    <string name="notification_channel_location">تذكيرات الموقع</string>
+    <string name="notification_channel_location_desc">تذكيرات بناءً على الأماكن المحفوظة</string>
     <string name="notification_channel_morning">أذكار الصباح</string>
     <string name="notification_channel_morning_desc">تذكيرات لأذكار الصباح بعد الفجر</string>
     <string name="notification_channel_night">أذكار المساء</string>
@@ -217,6 +231,8 @@
 
     <!-- Notification Content -->
     <string name="notification_reminder_content">حان وقت أذكارك.</string>
+    <string name="notification_masjid_entry_title">ذكر دخول المسجد</string>
+    <string name="notification_masjid_entry_content">اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ</string>
     <string name="notification_morning_title">☀️ أذكار الصباح</string>
     <string name="notification_morning_content">حان وقت أذكار الصباح. ابدأ يومك بذكر الله.</string>
     <string name="notification_night_title">🌅 أذكار المساء</string>
