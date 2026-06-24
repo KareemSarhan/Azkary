@@ -178,6 +178,19 @@
     <!-- In-App Update -->
     <string name="update_ready_message">تم تحميل تحديث جديد.</string>
     <string name="update_restart">إعادة التشغيل</string>
+    <string name="update_available_title">تحديث متاح</string>
+    <string name="update_required_title">التحديث مطلوب</string>
+    <string name="update_available_message">أذكاري %1$s جاهز. أنت تستخدم %2$s.</string>
+    <string name="update_required_message">ثبّت هذا التحديث للمتابعة في استخدام أذكاري.</string>
+    <string name="update_whats_new">ما الجديد</string>
+    <string name="update_button">تحديث</string>
+    <string name="update_later">لاحقاً</string>
+    <string name="update_downloading">جاري تنزيل التحديث...</string>
+    <string name="update_installer_opened">تم فتح المثبت. أكّد التحديث للمتابعة.</string>
+    <string name="update_error_message">%s</string>
+    <string name="update_install_permission_title">إذن مطلوب</string>
+    <string name="update_install_permission_message">اسمح لأذكاري بتثبيت التطبيقات من هذا المصدر، ثم اضغط تحديث مرة أخرى.</string>
+    <string name="update_open_settings">فتح الإعدادات</string>
 
     <!-- Notification Settings -->
     <string name="settings_section_notifications">الإشعارات</string>

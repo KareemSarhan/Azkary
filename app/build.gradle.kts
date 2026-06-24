@@ -22,6 +22,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "SELF_HOSTED_UPDATE_MANIFEST_URL", "\"\"")
     }
 
     flavorDimensions += "distribution"
@@ -33,6 +35,15 @@ android {
         create("fdroid") {
             dimension = "distribution"
             applicationIdSuffix = ".fdroid"
+        }
+        create("selfHosted") {
+            dimension = "distribution"
+            applicationIdSuffix = ""
+            buildConfigField(
+                "String",
+                "SELF_HOSTED_UPDATE_MANIFEST_URL",
+                "\"${(findProperty("selfHostedUpdateManifestUrl") as? String) ?: "https://apiexpenserabbit.hearo.support/azkary/releases/update.json"}\""
+            )
         }
     }
 
@@ -60,6 +71,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {

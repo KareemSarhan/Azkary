@@ -178,6 +178,19 @@
     <!-- In-App Update -->
     <string name="update_ready_message">An update has just been downloaded.</string>
     <string name="update_restart">Restart</string>
+    <string name="update_available_title">Update available</string>
+    <string name="update_required_title">Update required</string>
+    <string name="update_available_message">Azkary %1$s is ready. You are using %2$s.</string>
+    <string name="update_required_message">Install this update to continue using Azkary.</string>
+    <string name="update_whats_new">What\'s new</string>
+    <string name="update_button">Update</string>
+    <string name="update_later">Later</string>
+    <string name="update_downloading">Downloading update...</string>
+    <string name="update_installer_opened">Installer opened. Confirm the update to continue.</string>
+    <string name="update_error_message">%s</string>
+    <string name="update_install_permission_title">Permission needed</string>
+    <string name="update_install_permission_message">Allow Azkary to install apps from this source, then tap Update again.</string>
+    <string name="update_open_settings">Open settings</string>
 
     <!-- Notification Settings -->
     <string name="settings_section_notifications">NOTIFICATIONS</string>
