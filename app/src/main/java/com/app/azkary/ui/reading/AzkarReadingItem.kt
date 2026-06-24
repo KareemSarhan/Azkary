@@ -202,7 +202,7 @@ fun AzkarReadingItem(
 
             // Reference card
             if (!item.reference.isNullOrBlank()) {
-                HadithInformationCardLtr(referenceText = item.reference)
+                HadithInformationCard(referenceText = item.reference)
             }
 
             // Read Surah chip - only show for single-ayah items (full surahs are already shown inline)
@@ -266,8 +266,9 @@ private fun ReadingSectionLtr(
 }
 
 @Composable
-private fun HadithInformationCardLtr(referenceText: String) {
+private fun HadithInformationCard(referenceText: String) {
     val colors = MaterialTheme.colorScheme
+    val isArabicReference = referenceText.containsArabicScript()
 
     Card(
         colors = CardDefaults.cardColors(containerColor = colors.surfaceVariant.copy(alpha = 0.5f)),
@@ -275,14 +276,26 @@ private fun HadithInformationCardLtr(referenceText: String) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            LtrText(
-                text = referenceText,
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = colors.onSurfaceVariant.copy(alpha = 0.85f),
-                    lineHeight = 18.sp,
-                    fontSize = 13.sp
-                )
+            val referenceStyle = MaterialTheme.typography.bodySmall.copy(
+                color = colors.onSurfaceVariant.copy(alpha = 0.85f),
+                lineHeight = 18.sp,
+                fontSize = 13.sp
             )
+
+            if (isArabicReference) {
+                Text(
+                    text = referenceText,
+                    style = referenceStyle.merge(TextStyle(textDirection = TextDirection.Rtl)),
+                    textAlign = TextAlign.Right,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                LtrText(
+                    text = referenceText,
+                    style = referenceStyle,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -296,6 +309,15 @@ private fun HadithInformationCardLtr(referenceText: String) {
         }
     }
 }
+
+private fun String.containsArabicScript(): Boolean =
+    any { char ->
+        char in '\u0600'..'\u06FF' ||
+            char in '\u0750'..'\u077F' ||
+            char in '\u08A0'..'\u08FF' ||
+            char in '\uFB50'..'\uFDFF' ||
+            char in '\uFE70'..'\uFEFF'
+    }
 
 @Composable
 private fun LtrText(

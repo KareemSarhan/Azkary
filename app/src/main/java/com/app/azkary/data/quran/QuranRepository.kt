@@ -19,6 +19,11 @@ import kotlin.math.abs
 class QuranRepository @Inject constructor(
     @param:ApplicationContext private val applicationContext: Context
 ) {
+    private companion object {
+        const val CANONICAL_BISMILLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"
+        const val BISMILLAH_TARGET = "بسماللهالرحمنالرحيم"
+    }
+
     @Volatile
     private var quranDatabase: QuranDatabase? = null
     private val dbMutex = Mutex()
@@ -50,29 +55,7 @@ class QuranRepository @Inject constructor(
             withContext(Dispatchers.IO) {
                 val name = db.getNameOfSurah(surahNumber)
                 val rawAyahs = db.getAyahsInSurah(surahNumber)
-                // Extract bismillah from the first ayah for surahs other than Al-Fatihah (1) and At-Tawbah (9)
-                // The SDK prepends "بسم الله الرحمن الرحيم" to the first ayah text.
-                // Split on الرحيم to separate bismillah from the actual ayah content.
-                val bismillahMarker = "\u0627\u0644\u0631\u0651\u064E\u062D\u0650\u064A\u0645\u0650" // الرحيم
-                var bismillahText: String? = null
-                val ayahList = rawAyahs.mapIndexed { index, text ->
-                    AyahUi(ayahNumber = index + 1, text = text)
-                }.toMutableList()
-
-                if (surahNumber != 1 && surahNumber != 9 && ayahList.isNotEmpty()) {
-                    val firstAyah = ayahList[0]
-                    val splitIndex = firstAyah.text.indexOf(bismillahMarker)
-                    if (splitIndex >= 0) {
-                        val afterMarker = splitIndex + bismillahMarker.length
-                        bismillahText = firstAyah.text.substring(0, afterMarker).trim()
-                        val remaining = firstAyah.text.substring(afterMarker).trim()
-                        if (remaining.isNotEmpty()) {
-                            ayahList[0] = firstAyah.copy(text = remaining)
-                        } else {
-                            ayahList.removeAt(0)
-                        }
-                    }
-                }
+                val (bismillahText, ayahList) = splitLeadingBismillah(surahNumber, rawAyahs)
 
                 QuranSurahUi(
                     surahNumber = surahNumber,
@@ -83,6 +66,69 @@ class QuranRepository @Inject constructor(
             }
         } catch (_: Exception) {
             null
+        }
+    }
+
+    private fun splitLeadingBismillah(
+        surahNumber: Int,
+        rawAyahs: List<String>
+    ): Pair<String?, List<AyahUi>> {
+        val ayahList = rawAyahs.mapIndexed { index, text ->
+            AyahUi(ayahNumber = index + 1, text = text)
+        }.toMutableList()
+
+        if (surahNumber == 1 || surahNumber == 9 || ayahList.isEmpty()) {
+            return null to ayahList
+        }
+
+        val firstAyah = ayahList[0]
+        val bismillahEndIndex = firstAyah.text.leadingBismillahEndIndex()
+            ?: return CANONICAL_BISMILLAH to ayahList
+
+        val bismillahText = firstAyah.text.substring(0, bismillahEndIndex).trim()
+        val remaining = firstAyah.text.substring(bismillahEndIndex).trim()
+
+        if (remaining.isNotEmpty()) {
+            ayahList[0] = firstAyah.copy(text = remaining)
+        } else {
+            ayahList.removeAt(0)
+        }
+
+        return bismillahText to ayahList
+    }
+
+    private fun String.leadingBismillahEndIndex(): Int? {
+        val normalized = StringBuilder()
+
+        for (index in indices) {
+            val normalizedChar = this[index].normalizedForBismillah() ?: continue
+
+            if (normalized.isEmpty() && normalizedChar != BISMILLAH_TARGET.first()) {
+                return null
+            }
+
+            normalized.append(normalizedChar)
+            val current = normalized.toString()
+
+            if (!BISMILLAH_TARGET.startsWith(current)) {
+                return null
+            }
+
+            if (current == BISMILLAH_TARGET) {
+                return index + 1
+            }
+        }
+
+        return null
+    }
+
+    private fun Char.normalizedForBismillah(): Char? {
+        return when (this) {
+            '\u0622', '\u0623', '\u0625', '\u0671' -> '\u0627'
+            '\u0640', '\u0670' -> null
+            in '\u064B'..'\u065F' -> null
+            in '\u06D6'..'\u06ED' -> null
+            else -> if (isWhitespace()) null else this
         }
     }
 

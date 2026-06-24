@@ -8,6 +8,7 @@ import com.app.azkary.data.model.LatLng
 import com.app.azkary.data.model.SystemCategoryKey
 import com.app.azkary.data.prefs.LocationPreferences
 import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.quran.QuranRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.data.repository.PrayerTimesRepository
 import com.app.azkary.domain.IslamicDateProvider
@@ -55,6 +56,7 @@ class SummaryViewModelTest {
     private lateinit var prayerTimesRepository: PrayerTimesRepository
     private lateinit var islamicDateProvider: IslamicDateProvider
     private lateinit var localeManager: LocaleManager
+    private lateinit var quranRepository: QuranRepository
     private lateinit var context: Context
 
     private val testCategories = listOf(
@@ -97,6 +99,7 @@ class SummaryViewModelTest {
         prayerTimesRepository = mockk(relaxed = true)
         islamicDateProvider = mockk(relaxed = true)
         localeManager = mockk(relaxed = true)
+        quranRepository = mockk(relaxed = true)
         context = mockk(relaxed = true)
 
         // Default mock behaviors
@@ -114,9 +117,10 @@ class SummaryViewModelTest {
         every {
             repository.observeCategoriesWithDisplayName(any(), any())
         } returns flowOf(testCategories)
-        coEvery { 
+        coEvery {
             prayerTimesRepository.getCurrentWindows(any(), any(), any(), any()) 
         } returns createMockWindowCalculationResult()
+        coEvery { quranRepository.getVerseOfDay(any()) } returns null
 
         viewModel = SummaryViewModel(
             repository = repository,
@@ -124,6 +128,7 @@ class SummaryViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             islamicDateProvider = islamicDateProvider,
             localeManager = localeManager,
+            quranRepository = quranRepository,
             context = context
         )
     }
@@ -165,6 +170,7 @@ class SummaryViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             islamicDateProvider = islamicDateProvider,
             localeManager = localeManager,
+            quranRepository = quranRepository,
             context = context
         )
 
@@ -271,6 +277,7 @@ class SummaryViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             islamicDateProvider = islamicDateProvider,
             localeManager = localeManager,
+            quranRepository = quranRepository,
             context = context
         )
 
@@ -303,6 +310,7 @@ class SummaryViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             islamicDateProvider = islamicDateProvider,
             localeManager = localeManager,
+            quranRepository = quranRepository,
             context = context
         )
 
@@ -326,6 +334,7 @@ class SummaryViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             islamicDateProvider = islamicDateProvider,
             localeManager = localeManager,
+            quranRepository = quranRepository,
             context = context
         )
 
@@ -357,6 +366,7 @@ class SummaryViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             islamicDateProvider = islamicDateProvider,
             localeManager = localeManager,
+            quranRepository = quranRepository,
             context = context
         )
 
@@ -423,6 +433,7 @@ class SummaryViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             islamicDateProvider = islamicDateProvider,
             localeManager = localeManager,
+            quranRepository = quranRepository,
             context = context
         )
 
@@ -460,6 +471,7 @@ class SummaryViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             islamicDateProvider = islamicDateProvider,
             localeManager = localeManager,
+            quranRepository = quranRepository,
             context = context
         )
 
@@ -493,6 +505,7 @@ class SummaryViewModelTest {
             prayerTimesRepository = prayerTimesRepository,
             islamicDateProvider = islamicDateProvider,
             localeManager = localeManager,
+            quranRepository = quranRepository,
             context = context
         )
 

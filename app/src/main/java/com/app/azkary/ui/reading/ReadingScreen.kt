@@ -71,6 +71,7 @@ fun ReadingScreen(
     val weightedProgress by viewModel.weightedProgress.collectAsState(initial = 0f)
     val holdToComplete by viewModel.holdToComplete.collectAsState(initial = true)
     val vibrationEnabled by viewModel.vibrationEnabled.collectAsState(initial = true)
+    val categoryName by viewModel.categoryName.collectAsState()
 
     LaunchedEffect(Unit) {
         if (viewModel.categoryId == null) {
@@ -168,7 +169,8 @@ fun ReadingScreen(
                     title = {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = stringResource(R.string.reading_title),
+                                text = categoryName?.takeIf { it.isNotBlank() }
+                                    ?: stringResource(R.string.reading_title),
                                 style = MaterialTheme.typography.titleMedium
                             )
 

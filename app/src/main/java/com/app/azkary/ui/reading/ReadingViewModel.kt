@@ -108,6 +108,18 @@ class ReadingViewModel @Inject constructor(
         initialValue = emptyList()
     )
 
+    val categoryName: StateFlow<String?> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
+        if (categoryId == null) {
+            flowOf(null)
+        } else {
+            repository.observeCategoryDisplayName(categoryId, lang)
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
+    )
+
     val weightedProgress: StateFlow<Float> = localeManager.currentLangTagFlow.flatMapLatest { lang ->
         if (categoryId == null) {
             flowOf(0f)

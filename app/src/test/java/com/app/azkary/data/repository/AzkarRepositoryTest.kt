@@ -166,6 +166,29 @@ class AzkarRepositoryTest {
     }
 
     @Test
+    fun `observeCategoryDisplayName returns best localized name`() = runTest {
+        val categoryTexts = listOf(
+            CategoryTextEntity(categoryId = "cat1", langTag = "en", name = "Morning Azkar"),
+            CategoryTextEntity(categoryId = "cat1", langTag = "ar", name = "أذكار الصباح")
+        )
+
+        every { categoryTextDao.getCategoryTexts("cat1") } returns flowOf(categoryTexts)
+
+        val result = repository.observeCategoryDisplayName("cat1", "ar").first()
+
+        assertEquals("أذكار الصباح", result)
+    }
+
+    @Test
+    fun `observeCategoryDisplayName returns null when category has no text`() = runTest {
+        every { categoryTextDao.getCategoryTexts("cat1") } returns flowOf(emptyList())
+
+        val result = repository.observeCategoryDisplayName("cat1", "en").first()
+
+        assertNull(result)
+    }
+
+    @Test
     fun `observeItemsForCategory returns items with correct progress`() = runTest {
         // Given
         val crossRefs = listOf(

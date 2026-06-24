@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.app.azkary.data.model.AzkarItemUi
 import com.app.azkary.data.prefs.UserPreferencesRepository
+import com.app.azkary.data.quran.QuranRepository
 import com.app.azkary.data.repository.AzkarRepository
 import com.app.azkary.domain.IslamicDateProvider
 import com.app.azkary.util.LocaleManager
@@ -36,6 +37,7 @@ class ReadingViewModelTest {
 
     private lateinit var viewModel: ReadingViewModel
     private lateinit var repository: AzkarRepository
+    private lateinit var quranRepository: QuranRepository
     private lateinit var userPreferencesRepository: UserPreferencesRepository
     private lateinit var islamicDateProvider: IslamicDateProvider
     private lateinit var localeManager: LocaleManager
@@ -87,6 +89,7 @@ class ReadingViewModelTest {
     @Before
     fun setup() {
         repository = mockk(relaxed = true)
+        quranRepository = mockk(relaxed = true)
         userPreferencesRepository = mockk(relaxed = true)
         islamicDateProvider = mockk(relaxed = true)
         localeManager = mockk(relaxed = true)
@@ -104,15 +107,21 @@ class ReadingViewModelTest {
         coEvery { islamicDateProvider.refreshDate() } coAnswers {
             // Simulate refreshDate updating the flow - no-op in tests since we use a MutableStateFlow
         }
+        coEvery { quranRepository.openDatabaseIfNeeded() } just Runs
+        coEvery { quranRepository.getSurah(any()) } returns null
         every {
             repository.observeItemsForCategory(any(), any(), any())
         } returns flowOf(testItems)
+        every {
+            repository.observeCategoryDisplayName(any(), any())
+        } returns flowOf("Test Category")
         every {
             repository.getWeightedProgress(any(), any(), any())
         } returns flowOf(0.5f)
 
         viewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -131,6 +140,7 @@ class ReadingViewModelTest {
         val emptySavedStateHandle = SavedStateHandle()
         val viewModelWithoutCategory = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -142,12 +152,21 @@ class ReadingViewModelTest {
     }
 
     @Test
+    fun `categoryName should emit name from repository`() = runTest {
+        viewModel.categoryName.test {
+            assertEquals("Test Category", awaitItem() ?: awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `holdToComplete should emit value from user preferences`() = runTest {
         val holdToCompleteFlow = MutableStateFlow(true)
         every { userPreferencesRepository.holdToComplete } returns holdToCompleteFlow
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -182,6 +201,7 @@ class ReadingViewModelTest {
         val emptySavedStateHandle = SavedStateHandle()
         val viewModelWithoutCategory = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -208,6 +228,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -235,6 +256,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -253,6 +275,7 @@ class ReadingViewModelTest {
         val emptySavedStateHandle = SavedStateHandle()
         val viewModelWithoutCategory = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -283,6 +306,7 @@ class ReadingViewModelTest {
         val emptySavedStateHandle = SavedStateHandle()
         val viewModelWithoutCategory = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -313,6 +337,7 @@ class ReadingViewModelTest {
         val emptySavedStateHandle = SavedStateHandle()
         val viewModelWithoutCategory = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -336,6 +361,7 @@ class ReadingViewModelTest {
         // Recreate viewModel with custom date
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -356,6 +382,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -396,6 +423,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -418,6 +446,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -462,6 +491,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -488,6 +518,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -510,6 +541,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -566,6 +598,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -586,6 +619,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,
@@ -605,6 +639,7 @@ class ReadingViewModelTest {
 
         val newViewModel = ReadingViewModel(
             repository = repository,
+            quranRepository = quranRepository,
             localeManager = localeManager,
             islamicDateProvider = islamicDateProvider,
             userPreferencesRepository = userPreferencesRepository,

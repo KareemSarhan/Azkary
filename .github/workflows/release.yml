@@ -84,6 +84,18 @@ jobs:
             -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
             -Pandroid.injected.signing.key.password=$KEY_PASSWORD
 
+      - name: Build Self-Hosted Release APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          ./gradlew assembleSelfHostedRelease \
+            -Pandroid.injected.signing.store.file=${{ github.workspace }}/app/keystore.jks \
+            -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+
       - name: Build Release AAB
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -104,6 +116,9 @@ jobs:
           mv app/build/outputs/apk/play/release/app-play-release.apk \
              "app/build/outputs/apk/play/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk"
 
+          mv app/build/outputs/apk/selfHosted/release/app-selfHosted-release.apk \
+             "app/build/outputs/apk/selfHosted/release/Azkary-v${VERSION}-${VERSION_CODE}-selfHosted-release.apk"
+
           mv app/build/outputs/bundle/playRelease/app-play-release.aab \
              "app/build/outputs/bundle/playRelease/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
 
@@ -114,9 +129,11 @@ jobs:
           VERSION_CODE="${{ steps.get_version_code.outputs.VERSION_CODE }}"
 
           APK_PATH="app/build/outputs/apk/play/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk"
+          SELF_HOSTED_APK_PATH="app/build/outputs/apk/selfHosted/release/Azkary-v${VERSION}-${VERSION_CODE}-selfHosted-release.apk"
           AAB_PATH="app/build/outputs/bundle/playRelease/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
 
           APK_SHA=$(sha256sum "$APK_PATH" | cut -d' ' -f1)
+          SELF_HOSTED_APK_SHA=$(sha256sum "$SELF_HOSTED_APK_PATH" | cut -d' ' -f1)
           AAB_SHA=$(sha256sum "$AAB_PATH" | cut -d' ' -f1)
 
           # Extract this version's section from CHANGELOG.md
@@ -148,12 +165,14 @@ jobs:
             echo "| File | Description |"
             echo "|------|-------------|"
             echo "| \`Azkary-v${VERSION}-${VERSION_CODE}-release.apk\` | Direct install on any Android device |"
+            echo "| \`Azkary-v${VERSION}-${VERSION_CODE}-selfHosted-release.apk\` | VPS self-hosted update APK |"
             echo "| \`Azkary-v${VERSION}-${VERSION_CODE}-release.aab\` | Google Play Store bundle |"
             echo ""
             echo "### Verify (SHA-256 checksums)"
             echo ""
             echo '```'
             echo "APK: ${APK_SHA}"
+            echo "Self-hosted APK: ${SELF_HOSTED_APK_SHA}"
             echo "AAB: ${AAB_SHA}"
             echo '```'
             echo ""
@@ -177,6 +196,7 @@ jobs:
             --title "Azkary v${VERSION}" \
             --notes-file release_notes.md \
             "app/build/outputs/apk/play/release/Azkary-v${VERSION}-${VERSION_CODE}-release.apk" \
+            "app/build/outputs/apk/selfHosted/release/Azkary-v${VERSION}-${VERSION_CODE}-selfHosted-release.apk" \
             "app/build/outputs/bundle/playRelease/Azkary-v${VERSION}-${VERSION_CODE}-release.aab"
 
       - name: Upload APK Artifact
@@ -184,6 +204,12 @@ jobs:
         with:
           name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-release-apk
           path: app/build/outputs/apk/play/release/Azkary-v*.apk
+
+      - name: Upload Self-Hosted APK Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: Azkary-v${{ steps.get_version.outputs.VERSION }}-${{ steps.get_version_code.outputs.VERSION_CODE }}-self-hosted-apk
+          path: app/build/outputs/apk/selfHosted/release/Azkary-v*.apk
 
       - name: Upload AAB Artifact
         uses: actions/upload-artifact@v7

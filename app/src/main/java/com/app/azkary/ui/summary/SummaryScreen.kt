@@ -193,6 +193,13 @@ fun SummaryScreen(
                 if (showWeeklyProgress && weeklyProgress.isNotEmpty()) {
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = stringResource(R.string.weekly_progress_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                         WeeklyProgressCard(days = weeklyProgress)
                         Spacer(modifier = Modifier.height(16.dp))
                     }

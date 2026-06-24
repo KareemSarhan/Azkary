@@ -108,6 +108,15 @@ class AzkarRepository @Inject constructor(
         }
     }
 
+    fun observeCategoryDisplayName(
+        categoryId: String,
+        langTag: String
+    ): Flow<String?> {
+        return categoryTextDao.getCategoryTexts(categoryId).map { texts ->
+            selectBestText(texts, { it.langTag }, langTag)?.name
+        }
+    }
+
     fun observeItemsForCategory(
         categoryId: String,
         langTag: String,

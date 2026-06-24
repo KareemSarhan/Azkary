@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.3] - 2026-06-24
+
+### Added
+- Added a self-hosted APK update channel for VPS-hosted releases
+- Added direct APK publish tooling, Caddy routing docs, and signed self-hosted APK workflow support
+
+### Changed
+- Bumped the Android release version for the VPS latest-release channel
+
 ## [3.1.2] - 2025-03-10
 
 ### Fixed
@@ -44,7 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-language support (Arabic/English)
 - Custom categories
 
-[Unreleased]: https://github.com/KareemSarhan/Azkary/compare/v3.1.2...HEAD
+[Unreleased]: https://github.com/KareemSarhan/Azkary/compare/v3.1.3...HEAD
+[3.1.3]: https://github.com/KareemSarhan/Azkary/compare/v3.1.2...v3.1.3
 [3.1.2]: https://github.com/KareemSarhan/Azkary/compare/v3.1.0...v3.1.2
 [3.1.0]: https://github.com/KareemSarhan/Azkary/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/KareemSarhan/Azkary/compare/v2.0.0...v3.0.0

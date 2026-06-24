@@ -35,15 +35,6 @@ fun WeeklyProgressCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(
-                text = stringResource(R.string.weekly_progress_title),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
