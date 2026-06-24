@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -527,19 +528,21 @@ fun VerseOfDayCard(
             Text(
                 text = verseOfDay.ayahText,
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    lineHeight = MaterialTheme.typography.bodyLarge.fontSize * 1.7
+                    lineHeight = MaterialTheme.typography.bodyLarge.fontSize * 1.7,
+                    textDirection = TextDirection.Rtl
                 ),
-                textAlign = TextAlign.End,
+                textAlign = TextAlign.Right,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = stringResource(R.string.quran_surah_ayah, verseOfDay.surahName, verseOfDay.ayahNumber),
                 style = MaterialTheme.typography.bodySmall.copy(
-                    color = colors.onSurfaceVariant
+                    color = colors.onSurfaceVariant,
+                    textDirection = TextDirection.Rtl
                 ),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.End
+                textAlign = TextAlign.Right
             )
         }
     }
