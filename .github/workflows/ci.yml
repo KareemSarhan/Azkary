@@ -28,7 +28,7 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
 
       - name: Cache Gradle dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.gradle/caches
@@ -69,7 +69,7 @@ jobs:
   #         distribution: ${{ env.JAVA_DISTRIBUTION }}
   #
   #     - name: Cache Gradle dependencies
-  #       uses: actions/cache@v5
+  #       uses: actions/cache@v6
   #       with:
   #         path: |
   #           ~/.gradle/caches
